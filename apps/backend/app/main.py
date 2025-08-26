@@ -3,10 +3,10 @@ from flask_migrate import Migrate
 from datetime import timedelta
 # from flask_bcrypt import Bcrypt
 # from flask_jwt_extended import JWTManager
-from extensions import db, migrate
+from extensions import db
 # from flask_cors import CORS
 from instance.config import Config
-
+from models import user
 
 def create_app():
     #crea y configura la aplicación Flask:
@@ -17,7 +17,6 @@ def create_app():
     db.init_app(app)
     # ma.init_app(app)
     migrate= Migrate(app,db,render_as_batch=False)
-    migrate.init_app(app,db)
     #bcrypt.init_app(app)
     #jwt = JWTManager(app)
     # app.config["SQLALCHEMY_DATABASE_URI"]= "postgresql://postgres:26964663@localhost:5432/proyecto_Sentya"
@@ -26,26 +25,6 @@ def create_app():
     #BLUEPRINTS 
     # from app.routes import 
     
-    # db= SQLAlchemy(app)
-    # class User(db.Model):
-    #     id = db.Column(db.Integer,primary_key=True)
-    #     name= db.Column(db.String(80))
-
-    # @app.route("/")
-    # def auth():
-    #     return "Todo esta funcionando"
-
-# @app.route("/test-db")
-# def test_db():
-#     try:
-#         test_user = User(name="Prueba de usuario")
-#         db.session.add(test_user)
-#         db.session.commit()
-        
-#         users = User.query.all()
-#         return f"Funcionoo: {len(users)}"
-#     except Exception as e:
-#         return f"Fallo :() : {str(e)}"
     
     return app
 

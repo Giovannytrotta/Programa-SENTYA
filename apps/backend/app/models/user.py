@@ -3,7 +3,7 @@ from sqlalchemy import String, Boolean, Integer, DateTime, Date, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from typing import List,Optional
 from datetime import datetime,timezone
-from app.extensions import db 
+from extensions import db 
 
     
 class User(db.Model):
