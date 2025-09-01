@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react'
-
-import './App.css'
-import SentyaLoginDesigns from './components/Login'
+import SentyaLoginDesigns from './components/LoginPresentation'
+import LandingPage from './pages/LandingPage'
 
 
 function App() {
@@ -9,7 +8,7 @@ function App() {
 
   return (
     <div className="App">
-     <SentyaLoginDesigns />
+     <LandingPage />
     </div>
   )
 }

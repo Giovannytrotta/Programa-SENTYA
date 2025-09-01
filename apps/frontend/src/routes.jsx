@@ -1,18 +1,18 @@
 // Import necessary components and functions from react-router-dom.
-
 import {
     createBrowserRouter,
     createRoutesFromElements,
     Route,
 } from "react-router-dom";
-import { NotFound } from "./pages/404";
-import App from "./App";
+
+import LoginAdminPage from "./pages/LoginAdmin";
+import App from "./App"
 
 export const router = createBrowserRouter(
     createRoutesFromElements(
-   
-<Route path= "/" element={<App/>} errorElement={<NotFound />}/> 
-       
-    
+        <>
+            <Route path="/" element={<App/>} />
+            <Route path="/aossadmin" element={<LoginAdminPage />} />
+        </>
     )
 );
