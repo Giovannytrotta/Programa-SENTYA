@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import './LoginAdmin.css';
+import { useNavigate } from 'react-router-dom';
 
 const LoginAdmin = () => {
   const [formData, setFormData] = useState({
@@ -9,6 +10,8 @@ const LoginAdmin = () => {
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+
+  const navigate = useNavigate()
 
   // Manejo de cambios en los inputs
   const handleChange = (e) => {
@@ -74,7 +77,7 @@ const LoginAdmin = () => {
       //   // Dispatch para llevarme la informacion del usuario 
       //      y su autenticacion a la store
       //   // Redirigir al dashboard administrativo
-      //   navigate('/admin/dashboard');
+         navigate('/aossadmin/2fa');
       // } else {
       //   const errorData = await response.json();
       //   setErrors({ general: errorData.message });
