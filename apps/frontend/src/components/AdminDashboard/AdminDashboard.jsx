@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from "react"
+import React, { useState, useEffect, useCallback } from "react"
 import { Link } from "react-router-dom"
 import "./AdminDashboard.css"
+import ExitToggle from "./ExitToggle"
 
 const AdminDashboard = () => {
     const [activeSection, setActiveSection] = useState('overview')
@@ -8,38 +9,206 @@ const AdminDashboard = () => {
     const [users, setUsers] = useState([])
     const [filteredUsers, setFilteredUsers] = useState([])
     const [searchQuery, setSearchQuery] = useState('')
+    const [roleFilter, setRoleFilter] = useState('all')
+    const [statusFilter, setStatusFilter] = useState('all')
     const [currentPage, setCurrentPage] = useState(1)
     const [loading, setLoading] = useState(false)
+    const [currentStep, setCurrentStep] = useState(1)
+    
+    // Estado para responsive
+    const [isMobile, setIsMobile] = useState(false)
+    
     const [newUser, setNewUser] = useState({
-        name: '',
+        nombre: '',
+        apellidos: '',
         email: '',
-        role: 'user'
+        dni: '',
+        fechaNacimiento: '',
+        edad: '',
+        telefono: '',
+        role: 'usuario',
+        password: ''
     })
 
-    const usersPerPage = 10
+    const usersPerPage = isMobile ? 5 : 10
+    const totalSteps = 3
 
-    // Mock data - Reemplazar con datos reales del backend
+    // Detectar tamaño de pantalla
+    useEffect(() => {
+        const handleResize = () => {
+            setIsMobile(window.innerWidth < 768)
+        }
+
+        handleResize()
+        window.addEventListener('resize', handleResize)
+        
+        return () => window.removeEventListener('resize', handleResize)
+    }, [])
+
+    // Función para calcular la edad automáticamente
+    const calculateAge = useCallback((birthDate) => {
+        if (!birthDate) return ''
+        const today = new Date()
+        const birth = new Date(birthDate)
+        let age = today.getFullYear() - birth.getFullYear()
+        const monthDiff = today.getMonth() - birth.getMonth()
+        
+        if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birth.getDate())) {
+            age--
+        }
+        
+        return age
+    }, [])
+
+    // Función para generar contraseña aleatoria
+    const generateRandomPassword = useCallback(() => {
+        const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*'
+        let password = ''
+        for (let i = 0; i < 12; i++) {
+            password += chars.charAt(Math.floor(Math.random() * chars.length))
+        }
+        return password
+    }, [])
+
+    // Navegación entre pasos
+    const nextStep = useCallback(() => {
+        if (currentStep < totalSteps) {
+            setCurrentStep(prev => prev + 1)
+        }
+    }, [currentStep, totalSteps])
+
+    const prevStep = useCallback(() => {
+        if (currentStep > 1) {
+            setCurrentStep(prev => prev - 1)
+        }
+    }, [currentStep])
+
+    // Validación por paso
+    const validateStep = useCallback((step) => {
+        switch (step) {
+            case 1:
+                return newUser.nombre && newUser.apellidos && newUser.dni && newUser.fechaNacimiento
+            case 2:
+                return newUser.email && newUser.telefono
+            case 3:
+                return newUser.role && newUser.password
+            default:
+                return false
+        }
+    }, [newUser])
+
+    // Reiniciar formulario
+    const resetForm = useCallback(() => {
+        setNewUser({ 
+            nombre: '', 
+            apellidos: '', 
+            email: '', 
+            dni: '', 
+            fechaNacimiento: '', 
+            edad: '', 
+            telefono: '', 
+            role: 'usuario',
+            password: '' 
+        })
+        setCurrentStep(1)
+    }, [])
+
+    // Mock data actualizado con la nueva estructura
     const mockUsers = [
-        { id: 1, name: 'Carlos Mendoza', email: 'carlos@example.com', role: 'admin', isOnline: true, joinDate: '2024-01-15' },
-        { id: 2, name: 'Ana García', email: 'ana@example.com', role: 'user', isOnline: false, joinDate: '2024-01-20' },
-        { id: 3, name: 'Miguel Torres', email: 'miguel@example.com', role: 'moderator', isOnline: true, joinDate: '2024-02-01' },
-        { id: 4, name: 'Laura Ruiz', email: 'laura@example.com', role: 'user', isOnline: true, joinDate: '2024-02-05' },
-        { id: 5, name: 'David López', email: 'david@example.com', role: 'user', isOnline: false, joinDate: '2024-02-10' },
-        { id: 6, name: 'Sofia Martinez', email: 'sofia@example.com', role: 'admin', isOnline: true, joinDate: '2024-02-15' },
-        { id: 7, name: 'Roberto Silva', email: 'roberto@example.com', role: 'user', isOnline: false, joinDate: '2024-02-20' },
-        { id: 8, name: 'Isabel Morales', email: 'isabel@example.com', role: 'moderator', isOnline: true, joinDate: '2024-02-25' },
-        { id: 9, name: 'Carlos Mendiola', email: 'carlos1@example.com', role: 'admin', isOnline: true, joinDate: '2024-01-15' },
-        { id: 10, name: 'Ana Garca', email: 'ana1@example.com', role: 'user', isOnline: false, joinDate: '2024-01-20' },
-        { id: 11, name: 'Miguel Tobex', email: 'miguel1@example.com', role: 'moderator', isOnline: true, joinDate: '2024-02-01' },
-        { id: 12, name: 'Laura Rucos', email: 'laura1@example.com', role: 'user', isOnline: true, joinDate: '2024-02-05' },
-        { id: 13, name: 'David chopo', email: 'david1@example.com', role: 'user', isOnline: false, joinDate: '2024-02-10' },
-        { id: 14, name: 'Sofia Manguesa', email: 'sofia1@example.com', role: 'admin', isOnline: true, joinDate: '2024-02-15' },
-        { id: 15, name: 'Roberto Silvias', email: 'robert1o@example.com', role: 'user', isOnline: false, joinDate: '2024-02-20' },
-        { id: 16, name: 'Isabel Moragres', email: 'isabel1@example.com', role: 'moderator', isOnline: true, joinDate: '2024-02-25' },
+        { 
+            id: 1, 
+            nombre: 'Carlos', 
+            apellidos: 'Mendoza García', 
+            email: 'carlos@example.com', 
+            dni: '12345678A',
+            fechaNacimiento: '1985-03-15',
+            edad: 39,
+            telefono: '666123456',
+            role: 'admin', 
+            isOnline: true, 
+            joinDate: '2024-01-15' 
+        },
+        { 
+            id: 2, 
+            nombre: 'Ana', 
+            apellidos: 'García López', 
+            email: 'ana@example.com', 
+            dni: '87654321B',
+            fechaNacimiento: '1990-07-22',
+            edad: 34,
+            telefono: '666789123',
+            role: 'usuario', 
+            isOnline: false, 
+            joinDate: '2024-01-20' 
+        },
+        { 
+            id: 3, 
+            nombre: 'Miguel', 
+            apellidos: 'Torres Ruiz', 
+            email: 'miguel@example.com', 
+            dni: '11223344C',
+            fechaNacimiento: '1988-11-10',
+            edad: 35,
+            telefono: '666456789',
+            role: 'coordinador', 
+            isOnline: true, 
+            joinDate: '2024-02-01' 
+        },
+        { 
+            id: 4, 
+            nombre: 'Laura', 
+            apellidos: 'Ruiz Martínez', 
+            email: 'laura@example.com', 
+            dni: '44332211D',
+            fechaNacimiento: '1992-05-18',
+            edad: 32,
+            telefono: '666321654',
+            role: 'profesor', 
+            isOnline: true, 
+            joinDate: '2024-02-05' 
+        },
+        { 
+            id: 5, 
+            nombre: 'David', 
+            apellidos: 'López Fernández', 
+            email: 'david@example.com', 
+            dni: '55667788E',
+            fechaNacimiento: '1987-12-03',
+            edad: 36,
+            telefono: '666987654',
+            role: 'trabajador_css', 
+            isOnline: false, 
+            joinDate: '2024-02-10' 
+        },
+        { 
+            id: 6, 
+            nombre: 'Sofia', 
+            apellidos: 'Martinez González', 
+            email: 'sofia@example.com', 
+            dni: '99887766F',
+            fechaNacimiento: '1991-09-25',
+            edad: 32,
+            telefono: '666147258',
+            role: 'admin', 
+            isOnline: true, 
+            joinDate: '2024-02-15' 
+        }
     ]
 
+    // Función para obtener el nombre del rol en español
+    const getRoleName = useCallback((role) => {
+        const roles = {
+            'admin': 'Administrador',
+            'coordinador': 'Coordinador',
+            'profesor': 'Profesor',
+            'trabajador_css': 'Trabajador CSS',
+            'usuario': 'Usuario'
+        }
+        return roles[role] || role
+    }, [])
+
+    // Cargar datos iniciales
     useEffect(() => {
-        // Simular carga de datos
         setLoading(true)
         setTimeout(() => {
             setUsers(mockUsers)
@@ -48,21 +217,70 @@ const AdminDashboard = () => {
         }, 1000)
     }, [])
 
+    // Filtrar usuarios
     useEffect(() => {
-        const filtered = users.filter(user =>
-            user.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            user.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            user.role.toLowerCase().includes(searchQuery.toLowerCase())
-        )
+        let filtered = users.filter(user => {
+            const matchesSearch = 
+                user.nombre.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                user.apellidos.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                user.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                user.telefono.includes(searchQuery) ||
+                getRoleName(user.role).toLowerCase().includes(searchQuery.toLowerCase())
+            
+            const matchesRole = roleFilter === 'all' || user.role === roleFilter
+            const matchesStatus = statusFilter === 'all' || 
+                (statusFilter === 'online' && user.isOnline) ||
+                (statusFilter === 'offline' && !user.isOnline)
+            
+            return matchesSearch && matchesRole && matchesStatus
+        })
+        
         setFilteredUsers(filtered)
         setCurrentPage(1)
-    }, [searchQuery, users])
+    }, [searchQuery, roleFilter, statusFilter, users, getRoleName])
 
-    const handleRegisterSubmit = (e) => {
+    // Limpiar búsqueda
+    const clearSearch = useCallback(() => {
+        setSearchQuery('')
+    }, [])
+
+    // Limpiar filtros
+    const clearFilters = useCallback(() => {
+        setSearchQuery('')
+        setRoleFilter('all')
+        setStatusFilter('all')
+    }, [])
+
+    // Manejar cambio en fecha de nacimiento y calcular edad automáticamente
+    const handleBirthDateChange = useCallback((e) => {
+        const birthDate = e.target.value
+        const age = calculateAge(birthDate)
+        setNewUser(prev => ({
+            ...prev,
+            fechaNacimiento: birthDate,
+            edad: age
+        }))
+    }, [calculateAge])
+
+    // Generar contraseña automáticamente
+    const handleGeneratePassword = useCallback(() => {
+        const password = generateRandomPassword()
+        setNewUser(prev => ({...prev, password}))
+    }, [generateRandomPassword])
+
+    // Manejar envío del formulario
+    const handleRegisterSubmit = useCallback((e) => {
         e.preventDefault()
+        
+        if (currentStep < totalSteps) {
+            if (validateStep(currentStep)) {
+                nextStep()
+            }
+            return
+        }
+
         setLoading(true)
         
-        // Simular registro - Reemplazar con llamada al backend
         setTimeout(() => {
             const newUserData = {
                 id: users.length + 1,
@@ -72,22 +290,39 @@ const AdminDashboard = () => {
             }
             
             setUsers(prev => [...prev, newUserData])
-            setNewUser({ name: '', email: '', role: 'user' })
+            resetForm()
             setShowRegisterModal(false)
             setLoading(false)
         }, 1500)
-    }
+    }, [currentStep, totalSteps, validateStep, nextStep, newUser, users.length, resetForm])
 
+    // Calcular paginación
     const totalPages = Math.ceil(filteredUsers.length / usersPerPage)
     const startIndex = (currentPage - 1) * usersPerPage
     const currentUsers = filteredUsers.slice(startIndex, startIndex + usersPerPage)
 
+    // Estadísticas
     const stats = {
         totalUsers: users.length,
         onlineUsers: users.filter(u => u.isOnline).length,
         admins: users.filter(u => u.role === 'admin').length,
-        moderators: users.filter(u => u.role === 'moderator').length
+        coordinadores: users.filter(u => u.role === 'coordinador').length,
+        profesores: users.filter(u => u.role === 'profesor').length,
+        trabajadoresCSS: users.filter(u => u.role === 'trabajador_css').length
     }
+
+    // Manejo de teclado para modal
+    useEffect(() => {
+        const handleKeyDown = (e) => {
+            if (showRegisterModal && e.key === 'Escape') {
+                setShowRegisterModal(false)
+                resetForm()
+            }
+        }
+
+        document.addEventListener('keydown', handleKeyDown)
+        return () => document.removeEventListener('keydown', handleKeyDown)
+    }, [showRegisterModal, resetForm])
 
     return (
         <div className="dashboard-container">
@@ -98,7 +333,7 @@ const AdminDashboard = () => {
                 <div className="header-content">
                     <div className="logo-section">
                         <div className="logo-container">
-                            <div className="main-logo">AOSSA</div>
+                            <div className="main-logo">SENTYA</div>
                             <div className="logo-accent"></div>
                         </div>
                         <span className="admin-label">Panel de Administración</span>
@@ -112,7 +347,7 @@ const AdminDashboard = () => {
                             <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <path d="M3 12L5 10M5 10L12 3L19 10M5 10V20C5 20.5523 5.44772 21 6 21H9M19 10L21 12M19 10V20C19 20.5523 18.5523 21 18 21H15M9 21C9.55228 21 10 20.5523 10 20V16C10 15.4477 10.4477 15 11 15H13C13.5523 15 14 15.4477 14 16V20C14 20.5523 14.4477 21 15 21M9 21H15" stroke="currentColor" strokeWidth="2"/>
                             </svg>
-                            Resumen
+                            <span>Resumen</span>
                         </button>
                         <button 
                             className={`nav-button ${activeSection === 'users' ? 'active' : ''}`}
@@ -124,18 +359,12 @@ const AdminDashboard = () => {
                                 <path d="M23 21V19C23 18.1645 22.7155 17.3541 22.2094 16.7138C21.7033 16.0736 20.9983 15.6434 20.2 15.5" stroke="currentColor" strokeWidth="2"/>
                                 <path d="M16 3.13C16.8604 3.35031 17.623 3.85071 18.1676 4.55232C18.7122 5.25392 18.9018 6.11683 18.6947 6.9353C18.4875 7.75377 17.9965 8.45677 17.3103 8.91398C16.6241 9.3712 15.7909 9.55117 14.99 9.42" stroke="currentColor" strokeWidth="2"/>
                             </svg>
-                            Usuarios
+                            <span>Usuarios</span>
                         </button>
                     </nav>
 
                     <div className="header-actions">
-                        <Link to="/aossadmin/auth2fa" className="settings-button">
-                            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <circle cx="12" cy="12" r="3" stroke="currentColor" strokeWidth="2"/>
-                                <path d="M19.4 15C19.2669 15.3016 19.2272 15.6362 19.286 15.9606C19.3448 16.285 19.4995 16.5843 19.73 16.82L19.79 16.88C19.976 17.0657 20.1235 17.2863 20.2241 17.5291C20.3248 17.7719 20.3766 18.0322 20.3766 18.295C20.3766 18.5578 20.3248 18.8181 20.2241 19.0609C20.1235 19.3037 19.976 19.5243 19.79 19.71C19.6043 19.896 19.3837 20.0435 19.1409 20.1441C18.8981 20.2448 18.6378 20.2966 18.375 20.2966C18.1122 20.2966 17.8519 20.2448 17.6091 20.1441C17.3663 20.0435 17.1457 19.896 16.96 19.71L16.9 19.65C16.6643 19.4195 16.365 19.2648 16.0406 19.206C15.7162 19.1472 15.3816 19.1869 15.08 19.32C14.7842 19.4468 14.532 19.6572 14.3543 19.9255C14.1766 20.1938 14.0813 20.5082 14.08 20.83V21C14.08 21.5304 13.8693 22.0391 13.4942 22.4142C13.1191 22.7893 12.6104 23 12.08 23C11.5496 23 11.0409 22.7893 10.6658 22.4142C10.2907 22.0391 10.08 21.5304 10.08 21V20.91C10.0723 20.579 9.96512 20.258 9.77251 19.9887C9.5799 19.7194 9.31074 19.5143 9 19.4C8.69838 19.2669 8.36381 19.2272 8.03941 19.286C7.71502 19.3448 7.41568 19.4995 7.18 19.73L7.12 19.79C6.93425 19.976 6.71368 20.1235 6.47088 20.2241C6.22808 20.3248 5.96783 20.3766 5.705 20.3766C5.44217 20.3766 5.18192 20.3248 4.93912 20.2241C4.69632 20.1235 4.47575 19.976 4.29 19.79C4.10405 19.6043 3.95653 19.3837 3.85588 19.1409C3.75523 18.8981 3.70343 18.6378 3.70343 18.375C3.70343 18.1122 3.75523 17.8519 3.85588 17.6091C3.95653 17.3663 4.10405 17.1457 4.29 16.96L4.35 16.9C4.58054 16.6643 4.73519 16.365 4.794 16.0406C4.85282 15.7162 4.81312 15.3816 4.68 15.08C4.55324 14.7842 4.34276 14.532 4.07447 14.3543C3.80618 14.1766 3.49179 14.0813 3.17 14.08H3C2.46957 14.08 1.96086 13.8693 1.58579 13.4942C1.21071 13.1191 1 12.6104 1 12.08C1 11.5496 1.21071 11.0409 1.58579 10.6658C1.96086 10.2907 2.46957 10.08 3 10.08H3.09C3.42099 10.0723 3.742 9.96512 4.0113 9.77251C4.28059 9.5799 4.48572 9.31074 4.6 9C4.73312 8.69838 4.77282 8.36381 4.714 8.03941C4.65519 7.71502 4.50054 7.41568 4.27 7.18L4.21 7.12C4.02405 6.93425 3.87653 6.71368 3.77588 6.47088C3.67523 6.22808 3.62343 5.96783 3.62343 5.705C3.62343 5.44217 3.67523 5.18192 3.77588 4.93912C3.87653 4.69632 4.02405 4.47575 4.21 4.29C4.39575 4.10405 4.61632 3.95653 4.85912 3.85588C5.10192 3.75523 5.36217 3.70343 5.625 3.70343C5.88783 3.70343 6.14808 3.75523 6.39088 3.85588C6.63368 3.95653 6.85425 4.10405 7.04 4.29L7.1 4.35C7.33568 4.58054 7.63502 4.73519 7.95941 4.794C8.28381 4.85282 8.61838 4.81312 8.92 4.68H9C9.29577 4.55324 9.54802 4.34276 9.72569 4.07447C9.90337 3.80618 9.99872 3.49179 10 3.17V3C10 2.46957 10.2107 1.96086 10.5858 1.58579C10.9609 1.21071 11.4696 1 12 1C12.5304 1 13.0391 1.21071 13.4142 1.58579C13.7893 1.96086 14 2.46957 14 3V3.09C14.0013 3.41179 14.0966 3.72618 14.2743 3.99447C14.452 4.26276 14.7042 4.47324 15 4.6C15.3016 4.73312 15.6362 4.77282 15.9606 4.714C16.285 4.65519 16.5843 4.50054 16.82 4.27L16.88 4.21C17.0657 4.02405 17.2863 3.87653 17.5291 3.77588C17.7719 3.67523 18.0322 3.62343 18.295 3.62343C18.5578 3.62343 18.8181 3.67523 19.0609 3.77588C19.3037 3.87653 19.5243 4.02405 19.71 4.21C19.896 4.39575 20.0435 4.61632 20.1441 4.85912C20.2448 5.10192 20.2966 5.36217 20.2966 5.625C20.2966 5.88783 20.2448 6.14808 20.1441 6.39088C20.0435 6.63368 19.896 6.85425 19.71 7.04L19.65 7.1C19.4195 7.33568 19.2648 7.63502 19.206 7.95941C19.1472 8.28381 19.1869 8.61838 19.32 8.92V9C19.4468 9.29577 19.6572 9.54802 19.9255 9.72569C20.1938 9.90337 20.5082 9.99872 20.83 10H21C21.5304 10 22.0391 10.2107 22.4142 10.5858C22.7893 10.9609 23 11.4696 23 12C23 12.5304 22.7893 13.0391 22.4142 13.4142C22.0391 13.7893 21.5304 14 21 14H20.91C20.5882 14.0013 20.2738 14.0966 20.0055 14.2743C19.7372 14.452 19.5268 14.7042 19.4 15Z" stroke="currentColor" strokeWidth="2"/>
-                            </svg>
-                        </Link>
-                        <button className="logout-button">Salir</button>
+                         <ExitToggle />
                     </div>
                 </div>
             </header>
@@ -166,21 +395,6 @@ const AdminDashboard = () => {
                                 </div>
 
                                 <div className="stat-card">
-                                    <div className="stat-icon online-icon">
-                                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                            <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2"/>
-                                            <path d="M8 14S9.5 16 12 16 16 14 16 14" stroke="currentColor" strokeWidth="2"/>
-                                            <circle cx="9" cy="9" r="1" fill="currentColor"/>
-                                            <circle cx="15" cy="9" r="1" fill="currentColor"/>
-                                        </svg>
-                                    </div>
-                                    <div className="stat-info">
-                                        <span className="stat-number">{stats.onlineUsers}</span>
-                                        <span className="stat-label">En Línea</span>
-                                    </div>
-                                </div>
-
-                                <div className="stat-card">
                                     <div className="stat-icon admin-icon">
                                         <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                             <path d="M12 1L3 5V11C3 16.55 6.84 21.74 12 23C17.16 21.74 21 16.55 21 11V5L12 1Z" stroke="currentColor" strokeWidth="2"/>
@@ -193,15 +407,45 @@ const AdminDashboard = () => {
                                 </div>
 
                                 <div className="stat-card">
-                                    <div className="stat-icon mod-icon">
+                                    <div className="stat-icon coord-icon">
                                         <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                             <path d="M9 12L11 14L15 10" stroke="currentColor" strokeWidth="2"/>
                                             <path d="M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z" stroke="currentColor" strokeWidth="2"/>
                                         </svg>
                                     </div>
                                     <div className="stat-info">
-                                        <span className="stat-number">{stats.moderators}</span>
-                                        <span className="stat-label">Moderadores</span>
+                                        <span className="stat-number">{stats.coordinadores}</span>
+                                        <span className="stat-label">Coordinadores</span>
+                                    </div>
+                                </div>
+
+                                <div className="stat-card">
+                                    <div className="stat-icon prof-icon">
+                                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M22 10V6C22 5.46957 21.7893 4.96086 21.4142 4.58579C21.0391 4.21071 20.5304 4 20 4H4C3.46957 4 2.96086 4.21071 2.58579 4.58579C2.21071 4.96086 2 5.46957 2 6V10" stroke="currentColor" strokeWidth="2"/>
+                                            <path d="M7 16H6C4.89543 16 4 15.1046 4 14V11H20V14C20 15.1046 19.1046 16 18 16H17" stroke="currentColor" strokeWidth="2"/>
+                                            <path d="M12 10L8 21L10.5 17.5L12 10Z" stroke="currentColor" strokeWidth="2"/>
+                                            <path d="M12 10L16 21L13.5 17.5L12 10Z" stroke="currentColor" strokeWidth="2"/>
+                                        </svg>
+                                    </div>
+                                    <div className="stat-info">
+                                        <span className="stat-number">{stats.profesores}</span>
+                                        <span className="stat-label">Profesores</span>
+                                    </div>
+                                </div>
+
+                                <div className="stat-card">
+                                    <div className="stat-icon css-icon">
+                                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M19 3H5C3.89543 3 3 3.89543 3 5V19C3 20.1046 3.89543 21 5 21H19C20.1046 21 21 20.1046 21 19V5C21 3.89543 20.1046 3 19 3Z" stroke="currentColor" strokeWidth="2"/>
+                                            <path d="M9 9H15" stroke="currentColor" strokeWidth="2"/>
+                                            <path d="M9 13H15" stroke="currentColor" strokeWidth="2"/>
+                                            <path d="M9 17H13" stroke="currentColor" strokeWidth="2"/>
+                                        </svg>
+                                    </div>
+                                    <div className="stat-info">
+                                        <span className="stat-number">{stats.trabajadoresCSS}</span>
+                                        <span className="stat-label">Trabajadores CSS</span>
                                     </div>
                                 </div>
                             </div>
@@ -281,16 +525,66 @@ const AdminDashboard = () => {
                                     </svg>
                                     <input
                                         type="text"
-                                        placeholder="Buscar por nombre, email o rol..."
+                                        placeholder="Buscar por nombre, apellidos, email, teléfono o rol..."
                                         value={searchQuery}
                                         onChange={(e) => setSearchQuery(e.target.value)}
                                         className="search-input"
                                     />
+                                    {searchQuery && (
+                                        <button 
+                                            className="clear-search"
+                                            onClick={clearSearch}
+                                        >
+                                            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                <line x1="18" y1="6" x2="6" y2="18" stroke="currentColor" strokeWidth="2"/>
+                                                <line x1="6" y1="6" x2="18" y2="18" stroke="currentColor" strokeWidth="2"/>
+                                            </svg>
+                                        </button>
+                                    )}
                                 </div>
 
-                                <div className="results-info">
-                                    <span>{filteredUsers.length} usuario{filteredUsers.length !== 1 ? 's' : ''} encontrado{filteredUsers.length !== 1 ? 's' : ''}</span>
+                                <div className="filters-container">
+                                    <div className="filter-group">
+                                        <label htmlFor="roleFilter">Filtrar por rol:</label>
+                                        <select
+                                            id="roleFilter"
+                                            value={roleFilter}
+                                            onChange={(e) => setRoleFilter(e.target.value)}
+                                            className="filter-select"
+                                        >
+                                            <option value="all">Todos los roles</option>
+                                            <option value="admin">Administrador</option>
+                                            <option value="coordinador">Coordinador</option>
+                                            <option value="profesor">Profesor</option>
+                                            <option value="trabajador_css">Trabajador CSS</option>
+                                            <option value="usuario">Usuario</option>
+                                        </select>
+                                    </div>
+
+                                    <div className="filter-group">
+                                        <label htmlFor="statusFilter">Estado:</label>
+                                        <select
+                                            id="statusFilter"
+                                            value={statusFilter}
+                                            onChange={(e) => setStatusFilter(e.target.value)}
+                                            className="filter-select"
+                                        >
+                                            <option value="all">Todos</option>
+                                            <option value="online">En línea</option>
+                                            <option value="offline">Desconectado</option>
+                                        </select>
+                                    </div>
+
+                                    {(roleFilter !== 'all' || statusFilter !== 'all' || searchQuery) && (
+                                        <button 
+                                            className="clear-filters"
+                                            onClick={clearFilters}
+                                        >
+                                            Limpiar filtros
+                                        </button>
+                                    )}
                                 </div>
+
                             </div>
 
                             {loading ? (
@@ -306,6 +600,9 @@ const AdminDashboard = () => {
                                                 <tr>
                                                     <th>Usuario</th>
                                                     <th>Email</th>
+                                                    <th>Teléfono</th>
+                                                    <th>Edad</th>
+                                                    <th>Fecha Nac.</th>
                                                     <th>Rol</th>
                                                     <th>Estado</th>
                                                     <th>Registro</th>
@@ -317,15 +614,19 @@ const AdminDashboard = () => {
                                                     <tr key={user.id} className="user-row">
                                                         <td className="user-info">
                                                             <div className="user-avatar">
-                                                                {user.name.split(' ').map(n => n[0]).join('')}
+                                                                {user.nombre.charAt(0)}{user.apellidos.charAt(0)}
                                                             </div>
-                                                            <span className="user-name">{user.name}</span>
+                                                            <div className="user-details">
+                                                                <span className="user-name">{user.nombre} {user.apellidos}</span>
+                                                            </div>
                                                         </td>
                                                         <td className="user-email">{user.email}</td>
-                                                        <td>
+                                                        <td className="user-phone">{user.telefono}</td>
+                                                        <td className="user-age">{user.edad}</td>
+                                                        <td className="user-birth">{user.fechaNacimiento}</td>
+                                                        <td className="user-role"> 
                                                             <span className={`role-badge ${user.role}`}>
-                                                                {user.role === 'admin' ? 'Admin' : 
-                                                                 user.role === 'moderator' ? 'Moderador' : 'Usuario'}
+                                                                {getRoleName(user.role)}
                                                             </span>
                                                         </td>
                                                         <td>
@@ -369,15 +670,28 @@ const AdminDashboard = () => {
                                                 </svg>
                                             </button>
                                             
-                                            {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
-                                                <button
-                                                    key={page}
-                                                    className={`pagination-btn ${currentPage === page ? 'active' : ''}`}
-                                                    onClick={() => setCurrentPage(page)}
-                                                >
-                                                    {page}
-                                                </button>
-                                            ))}
+                                            {Array.from({ length: Math.min(totalPages, isMobile ? 3 : 5) }, (_, i) => {
+                                                let pageNum;
+                                                if (totalPages <= (isMobile ? 3 : 5)) {
+                                                    pageNum = i + 1;
+                                                } else if (currentPage <= (isMobile ? 2 : 3)) {
+                                                    pageNum = i + 1;
+                                                } else if (currentPage >= totalPages - (isMobile ? 1 : 2)) {
+                                                    pageNum = totalPages - (isMobile ? 2 : 4) + i;
+                                                } else {
+                                                    pageNum = currentPage - (isMobile ? 1 : 2) + i;
+                                                }
+                                                
+                                                return (
+                                                    <button
+                                                        key={pageNum}
+                                                        className={`pagination-btn ${currentPage === pageNum ? 'active' : ''}`}
+                                                        onClick={() => setCurrentPage(pageNum)}
+                                                    >
+                                                        {pageNum}
+                                                    </button>
+                                                );
+                                            })}
                                             
                                             <button 
                                                 className="pagination-btn"
@@ -397,15 +711,21 @@ const AdminDashboard = () => {
                 </div>
             </main>
 
-            {/* Modal de registro de usuario */}
+            {/* Modal de registro de usuario - Multi-step */}
             {showRegisterModal && (
                 <div className="modal-overlay">
                     <div className="modal-container">
                         <div className="modal-header">
-                            <h2>Registrar Nuevo Usuario</h2>
+                            <div className="modal-title-section">
+                                <h2>Registrar Nuevo Usuario</h2>
+                                <span className="step-indicator">Paso {currentStep} de {totalSteps}</span>
+                            </div>
                             <button 
                                 className="close-button"
-                                onClick={() => setShowRegisterModal(false)}
+                                onClick={() => {
+                                    setShowRegisterModal(false)
+                                    resetForm()
+                                }}
                             >
                                 <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                     <line x1="18" y1="6" x2="6" y2="18" stroke="currentColor" strokeWidth="2"/>
@@ -413,60 +733,274 @@ const AdminDashboard = () => {
                                 </svg>
                             </button>
                         </div>
+
+                        {/* Indicador de progreso */}
+                        <div className="progress-indicator">
+                            {[1, 2, 3].map((step) => (
+                                <div key={step} className="progress-step-container">
+                                    <div className={`progress-step ${currentStep >= step ? 'active' : ''} ${currentStep > step ? 'completed' : ''}`}>
+                                        {currentStep > step ? (
+                                            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                <path d="M20 6L9 17L4 12" stroke="currentColor" strokeWidth="2"/>
+                                            </svg>
+                                        ) : (
+                                            <span>{step}</span>
+                                        )}
+                                    </div>
+                                    <span className="progress-label">
+                                        {step === 1 && 'Datos Personales'}
+                                        {step === 2 && 'Contacto'}
+                                        {step === 3 && 'Cuenta'}
+                                    </span>
+                                    {step < totalSteps && <div className={`progress-line ${currentStep > step ? 'completed' : ''}`}></div>}
+                                </div>
+                            ))}
+                        </div>
                         
                         <form onSubmit={handleRegisterSubmit} className="register-form">
-                            <div className="form-group">
-                                <label htmlFor="name">Nombre completo</label>
-                                <input
-                                    type="text"
-                                    id="name"
-                                    required
-                                    value={newUser.name}
-                                    onChange={(e) => setNewUser(prev => ({...prev, name: e.target.value}))}
-                                    placeholder="Nombre del usuario"
-                                />
-                            </div>
+                            {/* Paso 1: Datos Personales */}
+                            {currentStep === 1 && (
+                                <div className="form-step">
+                                    <div className="step-header">
+                                        <h3>Información Personal</h3>
+                                        <p>Ingresa los datos personales del usuario</p>
+                                    </div>
+                                    
+                                    <div className="form-row">
+                                        <div className="form-group">
+                                            <label htmlFor="nombre">Nombre *</label>
+                                            <input
+                                                type="text"
+                                                id="nombre"
+                                                required
+                                                value={newUser.nombre}
+                                                onChange={(e) => setNewUser(prev => ({...prev, nombre: e.target.value}))}
+                                                placeholder="Nombre"
+                                            />
+                                        </div>
+                                        
+                                        <div className="form-group">
+                                            <label htmlFor="apellidos">Apellidos *</label>
+                                            <input
+                                                type="text"
+                                                id="apellidos"
+                                                required
+                                                value={newUser.apellidos}
+                                                onChange={(e) => setNewUser(prev => ({...prev, apellidos: e.target.value}))}
+                                                placeholder="Apellidos"
+                                            />
+                                        </div>
+                                    </div>
+
+                                    <div className="form-row">
+                                        <div className="form-group">
+                                            <label htmlFor="dni">DNI *</label>
+                                            <input
+                                                type="text"
+                                                id="dni"
+                                                required
+                                                value={newUser.dni}
+                                                onChange={(e) => setNewUser(prev => ({...prev, dni: e.target.value}))}
+                                                placeholder="12345678A"
+                                                maxLength="9"
+                                            />
+                                        </div>
+                                        
+                                        <div className="form-group">
+                                            <label htmlFor="fechaNacimiento">Fecha de Nacimiento *</label>
+                                            <input
+                                                type="date"
+                                                id="fechaNacimiento"
+                                                required
+                                                value={newUser.fechaNacimiento}
+                                                onChange={handleBirthDateChange}
+                                            />
+                                        </div>
+                                    </div>
+
+                                    <div className="form-group">
+                                        <label htmlFor="edad">Edad</label>
+                                        <input
+                                            type="number"
+                                            id="edad"
+                                            value={newUser.edad}
+                                            readOnly
+                                            placeholder="Se calcula automáticamente"
+                                            className="readonly-input"
+                                        />
+                                        <small className="form-note">La edad se calcula automáticamente</small>
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* Paso 2: Datos de Contacto */}
+                            {currentStep === 2 && (
+                                <div className="form-step">
+                                    <div className="step-header">
+                                        <h3>Información de Contacto</h3>
+                                        <p>Proporciona los datos de contacto del usuario</p>
+                                    </div>
+                                    
+                                    <div className="form-group">
+                                        <label htmlFor="email">Correo Electrónico *</label>
+                                        <input
+                                            type="email"
+                                            id="email"
+                                            required
+                                            value={newUser.email}
+                                            onChange={(e) => setNewUser(prev => ({...prev, email: e.target.value}))}
+                                            placeholder="email@ejemplo.com"
+                                        />
+                                    </div>
+                                    
+                                    <div className="form-group">
+                                        <label htmlFor="telefono">Número de Teléfono *</label>
+                                        <input
+                                            type="tel"
+                                            id="telefono"
+                                            required
+                                            value={newUser.telefono}
+                                            onChange={(e) => setNewUser(prev => ({...prev, telefono: e.target.value}))}
+                                            placeholder="666123456"
+                                        />
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* Paso 3: Configuración de Cuenta */}
+                            {currentStep === 3 && (
+                                <div className="form-step">
+                                    <div className="step-header">
+                                        <h3>Configuración de Cuenta</h3>
+                                        <p>Define el rol y contraseña del usuario</p>
+                                    </div>
+                                    
+                                    <div className="form-group">
+                                        <label htmlFor="role">Rol del Usuario *</label>
+                                        <select
+                                            id="role"
+                                            value={newUser.role}
+                                            onChange={(e) => setNewUser(prev => ({...prev, role: e.target.value}))}
+                                        >
+                                            <option value="usuario">Usuario</option>
+                                            <option value="trabajador_css">Trabajador CSS</option>
+                                            <option value="profesor">Profesor</option>
+                                            <option value="coordinador">Coordinador</option>
+                                            <option value="admin">Administrador</option>
+                                        </select>
+                                    </div>
+
+                                    <div className="form-group password-group">
+                                        <label htmlFor="password">Contraseña Temporal *</label>
+                                        <div className="password-input-container">
+                                            <input
+                                                type="text"
+                                                id="password"
+                                                required
+                                                value={newUser.password}
+                                                onChange={(e) => setNewUser(prev => ({...prev, password: e.target.value}))}
+                                                placeholder="Contraseña generada automáticamente"
+                                            />
+                                            <button 
+                                                type="button" 
+                                                className="generate-password-btn"
+                                                onClick={handleGeneratePassword}
+                                            >
+                                                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                    <path d="M1 4V10H7" stroke="currentColor" strokeWidth="2"/>
+                                                    <path d="M23 20V14H17" stroke="currentColor" strokeWidth="2"/>
+                                                    <path d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10M23 14L18.36 18.36A9 9 0 0 1 3.51 15" stroke="currentColor" strokeWidth="2"/>
+                                                </svg>
+                                                Generar
+                                            </button>
+                                        </div>
+                                        <small className="password-note">
+                                            El usuario deberá cambiar esta contraseña en su primer inicio de sesión
+                                        </small>
+                                    </div>
+
+                                    {/* Resumen de datos */}
+                                    <div className="user-summary">
+                                        <h4>Resumen del Usuario</h4>
+                                        <div className="summary-grid">
+                                            <div className="summary-item">
+                                                <span className="summary-label">Nombre:</span>
+                                                <span className="summary-value">{newUser.nombre} {newUser.apellidos}</span>
+                                            </div>
+                                            <div className="summary-item">
+                                                <span className="summary-label">Email:</span>
+                                                <span className="summary-value">{newUser.email}</span>
+                                            </div>
+                                            <div className="summary-item">
+                                                <span className="summary-label">Teléfono:</span>
+                                                <span className="summary-value">{newUser.telefono}</span>
+                                            </div>
+                                            <div className="summary-item">
+                                                <span className="summary-label">Edad:</span>
+                                                <span className="summary-value">{newUser.edad} años</span>
+                                            </div>
+                                            <div className="summary-item">
+                                                <span className="summary-label">Rol:</span>
+                                                <span className="summary-value">{getRoleName(newUser.role)}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
                             
-                            <div className="form-group">
-                                <label htmlFor="email">Email</label>
-                                <input
-                                    type="email"
-                                    id="email"
-                                    required
-                                    value={newUser.email}
-                                    onChange={(e) => setNewUser(prev => ({...prev, email: e.target.value}))}
-                                    placeholder="email@ejemplo.com"
-                                />
-                            </div>
-                            
-                            <div className="form-group">
-                                <label htmlFor="role">Rol</label>
-                                <select
-                                    id="role"
-                                    value={newUser.role}
-                                    onChange={(e) => setNewUser(prev => ({...prev, role: e.target.value}))}
-                                >
-                                    <option value="user">Usuario</option>
-                                    <option value="moderator">Moderador</option>
-                                    <option value="admin">Administrador</option>
-                                </select>
-                            </div>
-                            
-                            <div className="modal-actions">
-                                <button 
-                                    type="button" 
-                                    className="cancel-button"
-                                    onClick={() => setShowRegisterModal(false)}
-                                >
-                                    Cancelar
-                                </button>
-                                <button 
-                                    type="submit" 
-                                    className="submit-button"
-                                    disabled={loading}
-                                >
-                                    {loading ? <div className="spinner"></div> : 'Crear Usuario'}
-                                </button>
+                            {/* Navegación del formulario */}
+                            <div className="form-navigation">
+                                <div className="nav-buttons">
+                                    {currentStep > 1 && (
+                                        <button 
+                                            type="button" 
+                                            className="nav-button prev-button"
+                                            onClick={prevStep}
+                                        >
+                                            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                <polyline points="15,18 9,12 15,6" stroke="currentColor" strokeWidth="2"/>
+                                            </svg>
+                                            Anterior
+                                        </button>
+                                    )}
+                                    
+                                    <div className="nav-spacer"></div>
+                                    
+                                    <button 
+                                        type="button" 
+                                        className="nav-button cancel-button"
+                                        onClick={() => {
+                                            setShowRegisterModal(false)
+                                            resetForm()
+                                        }}
+                                    >
+                                        Cancelar
+                                    </button>
+                                    
+                                    <button 
+                                        type="submit" 
+                                        className="nav-button next-button"
+                                        disabled={loading || !validateStep(currentStep)}
+                                    >
+                                        {loading ? (
+                                            <div className="spinner"></div>
+                                        ) : currentStep === totalSteps ? (
+                                            <>
+                                                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                    <path d="M20 6L9 17L4 12" stroke="currentColor" strokeWidth="2"/>
+                                                </svg>
+                                                Crear Usuario
+                                            </>
+                                        ) : (
+                                            <>
+                                                Siguiente
+                                                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                    <polyline points="9,18 15,12 9,6" stroke="currentColor" strokeWidth="2"/>
+                                                </svg>
+                                            </>
+                                        )}
+                                    </button>
+                                </div>
                             </div>
                         </form>
                     </div>

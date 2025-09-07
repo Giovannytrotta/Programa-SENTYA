@@ -1,0 +1,399 @@
+/* ===== EXIT TOGGLE - PUERTA DE SALIDA AOSSA ===== */
+
+.exit-toggle-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.exit-toggle {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 16px;
+  background: rgba(248, 250, 252, 0.1);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(248, 250, 252, 0.2);
+  border-radius: 14px;
+  cursor: pointer;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow: hidden;
+  min-width: 80px;
+  min-height: 70px;
+}
+
+.exit-toggle:hover {
+  background: rgba(248, 250, 252, 0.15);
+  border-color: rgba(248, 250, 252, 0.3);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(37, 99, 235, 0.15);
+}
+
+.exit-toggle:disabled {
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+/* ===== MARCO Y PUERTA ===== */
+.door-frame {
+  position: relative;
+  width: 32px;
+  height: 36px;
+  background: linear-gradient(145deg, #8b7355, #6d5a42);
+  border-radius: 2px;
+  box-shadow: 
+    inset 2px 2px 4px rgba(255, 255, 255, 0.3),
+    inset -2px -2px 4px rgba(0, 0, 0, 0.3);
+  perspective: 100px;
+}
+
+.door {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  right: 2px;
+  bottom: 2px;
+  transform-style: preserve-3d;
+  transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.door-panel {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(145deg, #4a5568, #2d3748);
+  border-radius: 1px;
+  position: relative;
+  transform-origin: left center;
+  transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 
+    2px 0 8px rgba(0, 0, 0, 0.3),
+    inset 1px 1px 2px rgba(255, 255, 255, 0.1);
+}
+
+/* Ventana de la puerta */
+.door-window {
+  position: absolute;
+  top: 4px;
+  left: 3px;
+  right: 8px;
+  height: 8px;
+  background: linear-gradient(145deg, rgba(37, 99, 235, 0.3), rgba(5, 150, 105, 0.3));
+  border-radius: 1px;
+  opacity: 0.8;
+  box-shadow: inset 1px 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+/* Manija de la puerta */
+.door-handle {
+  position: absolute;
+  right: 2px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 3px;
+  height: 3px;
+  background: linear-gradient(145deg, #ffd700, #b8860b);
+  border-radius: 50%;
+  box-shadow: 
+    1px 1px 2px rgba(0, 0, 0, 0.4),
+    inset 0.5px 0.5px 1px rgba(255, 255, 255, 0.6);
+}
+
+/* ===== ICONO EXIT ===== */
+.exit-sign {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 16px;
+  height: 16px;
+  color: rgba(248, 250, 252, 0.7);
+  opacity: 0;
+  transition: all 0.4s ease;
+  z-index: 5;
+}
+
+.exit-sign svg {
+  width: 100%;
+  height: 100%;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.3));
+}
+
+/* ===== TEXTO ===== */
+.exit-text {
+  color: rgba(248, 250, 252, 0.8);
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.025em;
+  transition: all 0.3s ease;
+  text-align: center;
+  line-height: 1;
+}
+
+/* ===== EFECTO DE LUZ ===== */
+.light-beam {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(
+    circle at center,
+    rgba(255, 255, 255, 0.1) 0%,
+    rgba(255, 255, 255, 0.05) 30%,
+    transparent 70%
+  );
+  opacity: 0;
+  transition: all 0.6s ease;
+  pointer-events: none;
+}
+
+/* ===== ESTADOS HOVER ===== */
+.exit-toggle:hover .door-panel {
+  transform: rotateY(-15deg);
+  box-shadow: 
+    4px 0 12px rgba(0, 0, 0, 0.4),
+    inset 1px 1px 2px rgba(255, 255, 255, 0.1);
+}
+
+.exit-toggle:hover .exit-sign {
+  opacity: 0.3;
+}
+
+.exit-toggle:hover .exit-text {
+  color: rgba(248, 250, 252, 0.95);
+}
+
+.exit-toggle:hover .light-beam {
+  opacity: 0.3;
+}
+
+/* ===== ESTADO OPENING (PUERTA ABIERTA) ===== */
+.exit-toggle.opening {
+  background: rgba(248, 250, 252, 0.2);
+  border-color: rgba(37, 99, 235, 0.4);
+  box-shadow: 0 12px 40px rgba(37, 99, 235, 0.25);
+  transform: translateY(-4px);
+}
+
+.exit-toggle.opening .door-panel {
+  transform: rotateY(-90deg);
+  box-shadow: 
+    8px 0 20px rgba(0, 0, 0, 0.6),
+    inset 1px 1px 2px rgba(255, 255, 255, 0.1);
+}
+
+.exit-toggle.opening .exit-sign {
+  opacity: 1;
+  color: rgba(37, 99, 235, 0.9);
+  animation: exitGlow 0.6s ease-in-out;
+}
+
+.exit-toggle.opening .exit-text {
+  color: rgba(37, 99, 235, 0.9);
+  animation: exitPulse 0.6s ease-in-out;
+}
+
+.exit-toggle.opening .light-beam {
+  opacity: 0.8;
+  background: radial-gradient(
+    circle at center,
+    rgba(37, 99, 235, 0.2) 0%,
+    rgba(37, 99, 235, 0.1) 30%,
+    rgba(255, 255, 255, 0.05) 60%,
+    transparent 100%
+  );
+  animation: lightBeam 0.8s ease-out;
+}
+
+/* ===== ANIMACIONES ===== */
+@keyframes exitGlow {
+  0%, 100% {
+    transform: translate(-50%, -50%) scale(1);
+    filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.3));
+  }
+  50% {
+    transform: translate(-50%, -50%) scale(1.1);
+    filter: drop-shadow(0 2px 8px rgba(37, 99, 235, 0.5));
+  }
+}
+
+@keyframes exitPulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+@keyframes lightBeam {
+  0% {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.2);
+  }
+  100% {
+    opacity: 0.8;
+    transform: scale(1);
+  }
+}
+
+/* ===== VARIANTE COMPACTA ===== */
+.exit-toggle.compact {
+  min-width: 60px;
+  min-height: 50px;
+  padding: 8px 12px;
+  gap: 6px;
+}
+
+.exit-toggle.compact .door-frame {
+  width: 24px;
+  height: 28px;
+}
+
+.exit-toggle.compact .exit-sign {
+  width: 12px;
+  height: 12px;
+}
+
+.exit-toggle.compact .exit-text {
+  font-size: 0.75rem;
+}
+
+/* ===== RESPONSIVE DESIGN ===== */
+@media (max-width: 768px) {
+  .exit-toggle {
+    min-width: 70px;
+    min-height: 60px;
+    padding: 10px 14px;
+    gap: 6px;
+  }
+
+  .door-frame {
+    width: 28px;
+    height: 32px;
+  }
+
+  .exit-sign {
+    width: 14px;
+    height: 14px;
+  }
+
+  .exit-text {
+    font-size: 0.8rem;
+  }
+
+  /* Simplificar animaciones en móvil */
+  .exit-toggle:hover .door-panel {
+    transform: rotateY(-10deg);
+  }
+}
+
+@media (max-width: 480px) {
+  .exit-toggle {
+    min-width: 60px;
+    min-height: 50px;
+    padding: 8px 12px;
+    gap: 4px;
+  }
+
+  .door-frame {
+    width: 24px;
+    height: 28px;
+  }
+
+  .exit-sign {
+    width: 12px;
+    height: 12px;
+  }
+
+  .exit-text {
+    font-size: 0.75rem;
+  }
+
+  /* Animación más simple en móviles pequeños */
+  .exit-toggle:hover .door-panel {
+    transform: rotateY(-8deg);
+  }
+
+  .exit-toggle.opening .door-panel {
+    transform: rotateY(-75deg);
+  }
+}
+
+/* ===== MODO ALTO CONTRASTE ===== */
+@media (prefers-contrast: high) {
+  .exit-toggle {
+    background: rgba(248, 250, 252, 0.3);
+    border: 2px solid rgba(248, 250, 252, 0.6);
+  }
+
+  .door-frame {
+    background: linear-gradient(145deg, #a0a0a0, #606060);
+  }
+
+  .door-panel {
+    background: linear-gradient(145deg, #606060, #303030);
+  }
+
+  .exit-text {
+    color: rgba(248, 250, 252, 0.95);
+    font-weight: 700;
+  }
+}
+
+/* ===== MODO REDUCED MOTION ===== */
+@media (prefers-reduced-motion: reduce) {
+  .exit-toggle,
+  .door,
+  .door-panel,
+  .exit-sign,
+  .exit-text,
+  .light-beam {
+    transition: none !important;
+    animation: none !important;
+  }
+
+  .exit-toggle:hover .door-panel {
+    transform: rotateY(-5deg);
+  }
+
+  .exit-toggle.opening .door-panel {
+    transform: rotateY(-30deg);
+  }
+}
+
+/* ===== FOCUS STATES PARA ACCESIBILIDAD ===== */
+.exit-toggle:focus-visible {
+  outline: 2px solid rgba(37, 99, 235, 0.6);
+  outline-offset: 2px;
+}
+
+.exit-toggle:focus-visible .exit-text {
+  color: rgba(37, 99, 235, 0.9);
+}
+
+/* ===== ESTADOS DE CARGA ===== */
+.exit-toggle.loading .exit-text::after {
+  content: '';
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border: 1px solid rgba(248, 250, 252, 0.3);
+  border-top: 1px solid rgba(248, 250, 252, 0.8);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-left: 6px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}

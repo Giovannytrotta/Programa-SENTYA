@@ -200,8 +200,6 @@ const LoginAdmin = () => {
                   disabled={loading}
                   // TODO: Implementar funcionalidad "recordar sesión"
                 />
-                <span className="checkmark"></span>
-                <span className="checkbox-text">Mantener sesión activa</span>
               </label>
 
               {/* TODO: Implementar recuperación de contraseña */}
