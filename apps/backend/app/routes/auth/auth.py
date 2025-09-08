@@ -232,6 +232,17 @@ def get_all_users():
             is_active = active_filter.lower() == 'true'
             query = query.filter(SystemUser.is_active == is_active)
         
+        #BUSQUEDA DETALLADA DEL USUARIO POR NOMBRE EMAIL LASTNAME O DNI
+        
+        if search:
+            like = f"%{search}%"
+            query = query.filter(
+                (SystemUser.email.ilike(like)) |
+                (SystemUser.name.ilike(like)) |
+                (SystemUser.last_name.ilike(like)) |
+                (SystemUser.dni.ilike(like))
+            )
+        
         # Ordenar por fecha de creación (más recientes primero)
         users = query.order_by(SystemUser.created_at.desc()).all()
         
@@ -255,8 +266,8 @@ def get_all_users():
                     "last_login": user.last_login.isoformat() if user.last_login else None,
                     "birth_date": user.birth_date.isoformat() if user.birth_date else None
                 }
-                for user in users
-            ],
+                for user in users],
+            
             "total": len(users),
             "stats": {
                 "total_users": total_count,
@@ -299,7 +310,7 @@ def get_all_users():
 def admin_change_role(user_id: int):
     admin_id = get_jwt_identity()
     if user_id == admin_id:
-        raise ValidationError("Cannot change your own role")
+        raise ValidationError("Cannot change your own role")#POR HABLAR CON SERGIO PARA MOSTRARLO MENSAJES PARA MOSTRAR AL USUARIO EN ESPAÑOL
 
     u = SystemUser.query.get(user_id)
     if not u:
@@ -362,13 +373,13 @@ def admin_change_status(user_id: int):
 @auth_bp.route("/admin/users/<int:user_id>", methods=['DELETE'])
 @requires_admin
 def admin_delete_user(user_id: int):
-    """Borrar usuario.- Soft delete (default): /auth/admin/users/<id>- 
+    """Borrar usuario.- Soft delete (default): /auth/admin/users/<id>- MOSTRAR INFORMACION QUE SE DESACTIVO
     Hard delete (peligroso): /auth/admin/users/<id>?force=true"""
     admin_id = get_jwt_identity()
     # 1) NO SE PUEDE BORRAR A SI MISMO
     if user_id == admin_id:
         raise ValidationError("Cannot delete your own account")
-
+#MOSTRAR A SERGIO PARA ESTA IMPLEMENTACION DE DELETE 
     # 2) Buscar usuario
     user = SystemUser.query.get(user_id)
     if not user:
