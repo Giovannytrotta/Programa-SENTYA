@@ -41,9 +41,30 @@ class ApiService {
 
       const data = await response.json().catch(() => null);
       
+      // Manejar respuestas especiales de 2FA
+      if (response.status === 200 && data) {
+        // Si requiere setup de 2FA (primera vez)
+        if (data.requires_2fa_setup) {
+          console.log('📱 2FA Setup requerido');
+          return {
+            ...data,
+            requires_2fa_setup: true
+          };
+        }
+        
+        // Si requiere código 2FA (ya configurado)
+        if (data.requires_2fa) {
+          console.log('🔐 2FA requerido');
+          return {
+            ...data,
+            requires_2fa: true
+          };
+        }
+      }
+      
       if (!response.ok) {
         throw new ApiError(
-          data?.message || `HTTP Error: ${response.status}`,
+          data?.message || data?.msg || `Error HTTP: ${response.status}`,
           response.status,
           data
         );
@@ -91,7 +112,7 @@ class ApiService {
   }
 
   async verify2FASetup(token) {
-    return this.request('/auth/verify-2fa-setup', {
+    return this.request('/auth/2fa/verify-setup', {
       method: 'POST',
       body: { token }
     });

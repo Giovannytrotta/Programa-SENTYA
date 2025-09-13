@@ -1,4 +1,4 @@
-// pages/LoginAdmin.jsx
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
@@ -11,18 +11,20 @@ const LoginAdminPage = () => {
   });
   const [errors, setErrors] = useState({});
   const [showPassword, setShowPassword] = useState(false);
+  const [touched, setTouched] = useState({});
 
   const { 
     login,
     isLoading,
     error,
-    requires2FA,
-    clearErrors 
+    clearErrors,
+    validateLoginForm,
+    MESSAGES
   } = useAuth();
 
   const navigate = useNavigate();
 
-  // Limpiar errores automáticamente después de 5 segundos
+  // Limpiar errores globales después de 5 segundos
   useEffect(() => {
     if (error) {
       const timer = setTimeout(() => {
@@ -32,60 +34,91 @@ const LoginAdminPage = () => {
     }
   }, [error, clearErrors]);
 
-  // Si ya requiere 2FA, redirigir a página de 2FA
-  useEffect(() => {
-    if (requires2FA) {
-      navigate('/aossadmin/2fa', {
-        state: { email: formData.email, password: formData.password }
-      });
+  // Validación en tiempo real
+  const validateField = (name, value) => {
+    let fieldError = '';
+    
+    if (name === 'email') {
+      if (!value) {
+        fieldError = MESSAGES.VALIDATION.EMAIL_REQUIRED;
+      } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
+        fieldError = MESSAGES.VALIDATION.EMAIL_INVALID;
+      }
     }
-  }, [requires2FA, navigate, formData]);
+    
+    if (name === 'password') {
+      if (!value) {
+        fieldError = MESSAGES.VALIDATION.PASSWORD_REQUIRED;
+      } else if (value.length < 8) {
+        fieldError = MESSAGES.VALIDATION.PASSWORD_MIN_LENGTH;
+      }
+    }
+    
+    return fieldError;
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
+    
     setFormData(prev => ({
       ...prev,
       [name]: value
     }));
     
-    // Limpiar error específico
-    if (errors[name]) {
+    // Validar solo si el campo ha sido tocado
+    if (touched[name]) {
+      const fieldError = validateField(name, value);
       setErrors(prev => ({
         ...prev,
-        [name]: ''
+        [name]: fieldError
       }));
     }
   };
 
-  const validateForm = () => {
-    const newErrors = {};
-
-    if (!formData.email) {
-      newErrors.email = 'El correo electrónico es requerido';
-    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-      newErrors.email = 'Ingresa un correo electrónico válido';
-    }
-
-    if (!formData.password) {
-      newErrors.password = 'La contraseña es requerida';
-    } else if (formData.password.length < 6) {
-      newErrors.password = 'La contraseña debe tener al menos 6 caracteres';
-    }
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
+  const handleBlur = (e) => {
+    const { name, value } = e.target;
+    
+    setTouched(prev => ({
+      ...prev,
+      [name]: true
+    }));
+    
+    const fieldError = validateField(name, value);
+    setErrors(prev => ({
+      ...prev,
+      [name]: fieldError
+    }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     
-    if (!validateForm()) return;
+    // Marcar todos los campos como tocados
+    setTouched({ email: true, password: true });
+    
+    // Validar todo el formulario
+    const validationErrors = validateLoginForm(formData);
+    setErrors(validationErrors);
+    
+    if (Object.keys(validationErrors).length > 0) {
+      return;
+    }
 
+    // Intentar login
     const result = await login(formData);
     
-    if (!result.success && result.error && !result.requires2FA) {
+    if (!result.success && result.error && !result.requires2FA && !result.requires2FASetup) {
+      // Si hay un error general, mostrarlo
       setErrors({ general: result.error });
     }
+  };
+
+  // Función para limpiar el formulario
+  const clearForm = () => {
+    setFormData({ email: '', password: '' });
+    setErrors({});
+    setTouched({});
+    clearErrors();
   };
 
   return (
@@ -102,7 +135,7 @@ const LoginAdminPage = () => {
             <p className="login-subtitle">Sistema de gestión integral</p>
           </div>
 
-          {/* Error del store global o del formulario */}
+          {/* Error general */}
           {(error || errors.general) && (
             <div className="error-message general">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor">
@@ -114,10 +147,10 @@ const LoginAdminPage = () => {
             </div>
           )}
 
-          <form className="login-form" onSubmit={handleSubmit}>
+          <form className="login-form" onSubmit={handleSubmit} noValidate>
             {/* Campo Email */}
             <div className="input-group">
-              <div className={`input-container ${errors.email ? 'error' : ''}`}>
+              <div className={`input-container ${errors.email && touched.email ? 'error' : ''}`}>
                 <input
                   type="email"
                   name="email"
@@ -125,8 +158,12 @@ const LoginAdminPage = () => {
                   className="input-field"
                   value={formData.email}
                   onChange={handleChange}
+                  onBlur={handleBlur}
                   disabled={isLoading}
                   autoComplete="email"
+                  autoCapitalize="off"
+                  autoCorrect="off"
+                  spellCheck="false"
                 />
                 <div className="input-icon">
                   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor">
@@ -135,12 +172,14 @@ const LoginAdminPage = () => {
                   </svg>
                 </div>
               </div>
-              {errors.email && <span className="error-text">{errors.email}</span>}
+              {errors.email && touched.email && (
+                <span className="error-text">{errors.email}</span>
+              )}
             </div>
 
             {/* Campo Password */}
             <div className="input-group">
-              <div className={`input-container ${errors.password ? 'error' : ''}`}>
+              <div className={`input-container ${errors.password && touched.password ? 'error' : ''}`}>
                 <input
                   type={showPassword ? 'text' : 'password'}
                   name="password"
@@ -148,6 +187,7 @@ const LoginAdminPage = () => {
                   className="input-field"
                   value={formData.password}
                   onChange={handleChange}
+                  onBlur={handleBlur}
                   disabled={isLoading}
                   autoComplete="current-password"
                 />
@@ -156,6 +196,8 @@ const LoginAdminPage = () => {
                   className="input-icon toggle-password"
                   onClick={() => setShowPassword(!showPassword)}
                   disabled={isLoading}
+                  tabIndex="-1"
+                  aria-label={showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'}
                 >
                   {showPassword ? (
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor">
@@ -170,7 +212,9 @@ const LoginAdminPage = () => {
                   )}
                 </button>
               </div>
-              {errors.password && <span className="error-text">{errors.password}</span>}
+              {errors.password && touched.password && (
+                <span className="error-text">{errors.password}</span>
+              )}
             </div>
 
             {/* Opciones adicionales */}
