@@ -41,24 +41,15 @@ class ApiService {
 
       const data = await response.json().catch(() => null);
       
-      // Manejar respuestas especiales de 2FA
-      if (response.status === 200 && data) {
-        // Si requiere setup de 2FA (primera vez)
-        if (data.requires_2fa_setup) {
-          console.log('📱 2FA Setup requerido');
-          return {
-            ...data,
-            requires_2fa_setup: true
-          };
-        }
-        
-        // Si requiere código 2FA (ya configurado)
-        if (data.requires_2fa) {
-          console.log('🔐 2FA requerido');
-          return {
-            ...data,
-            requires_2fa: true
-          };
+      // NO lanzar error si es 401 con datos de 2FA
+      if (response.status === 401 && data) {
+        if (data.requires_2fa_setup || data.requires_2fa) {
+          // Lanzar error especial con los datos
+          throw new ApiError(
+            data.message || 'Autenticación requerida',
+            401,
+            data // Pasar todos los datos
+          );
         }
       }
       

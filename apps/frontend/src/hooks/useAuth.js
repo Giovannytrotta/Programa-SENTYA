@@ -60,48 +60,7 @@ export const useAuth = () => {
     try {
       const response = await apiService.login(credentials);
       
-      // Caso 1: Requiere configurar 2FA por primera vez
-      if (response && response.requires_2fa_setup) {
-        dispatch({ type: ACTION_TYPES.LOGIN_REQUIRES_2FA_SETUP });
-        showNotification(MESSAGES.LOGIN.REQUIRES_2FA_SETUP, 'warning');
-        
-        // Navegar a la página de 2FA con flag de setup inicial
-        navigate('/aossadmin/2fa', {
-          state: { 
-            email: credentials.email,
-            password: credentials.password,
-            isFirstTimeSetup: true,
-            userId: response.user_id
-          }
-        });
-        
-        return { 
-          success: false, 
-          requires2FASetup: true 
-        };
-      }
-      
-      // Caso 2: Requiere código 2FA (ya configurado)
-      if (response && response.requires_2fa) {
-        dispatch({ type: ACTION_TYPES.LOGIN_REQUIRES_2FA });
-        showNotification(MESSAGES.LOGIN.REQUIRES_2FA, 'info');
-        
-        // Navegar a la página de 2FA
-        navigate('/aossadmin/2fa', {
-          state: { 
-            email: credentials.email,
-            password: credentials.password,
-            isFirstTimeSetup: false
-          }
-        });
-        
-        return { 
-          success: false, 
-          requires2FA: true 
-        };
-      }
-      
-      // Caso 3: Login exitoso (sin 2FA o con 2FA incluido)
+      // NUNCA debería llegar aquí si requiere 2FA porque el backend devuelve 401
       if (response && response.msg === 'Login successful') {
         dispatch({
           type: ACTION_TYPES.LOGIN_SUCCESS,
@@ -116,28 +75,54 @@ export const useAuth = () => {
         return { success: true };
       }
       
-      // Caso 4: Respuesta inesperada
+      // Respuesta inesperada
       throw new Error('Respuesta inesperada del servidor');
       
     } catch (error) {
       console.error('Login error:', error);
       
+      // CLAVE: Manejar los 401 con flags de 2FA
+      if (error instanceof ApiError && error.status === 401 && error.data) {
+        // Caso 1: Requiere configurar 2FA por primera vez
+        if (error.data.requires_2fa_setup) {
+          dispatch({ type: ACTION_TYPES.LOGIN_REQUIRES_2FA_SETUP });
+          showNotification('📱 Debes configurar la autenticación de dos factores', 'warning');
+          
+          navigate('/aossadmin/2fa', {
+            state: { 
+              email: credentials.email,
+              password: credentials.password,
+              isFirstTimeSetup: true,
+              userId: error.data.user_id
+            }
+          });
+          
+          return { success: false, requires2FASetup: true };
+        }
+        
+        // Caso 2: Requiere código 2FA (ya configurado)
+        if (error.data.requires_2fa) {
+          dispatch({ type: ACTION_TYPES.LOGIN_REQUIRES_2FA });
+          showNotification('🔐 Ingresa tu código de autenticación', 'info');
+          
+          navigate('/aossadmin/2fa', {
+            state: { 
+              email: credentials.email,
+              password: credentials.password,
+              isFirstTimeSetup: false
+            }
+          });
+          
+          return { success: false, requires2FA: true };
+        }
+      }
+      
+      // Otros errores
       let errorMessage = MESSAGES.LOGIN.ERROR;
       
       if (error instanceof ApiError) {
-        // Mapear errores específicos a mensajes en español
         if (error.status === 401) {
-          if (error.message.includes('Credenciales')) {
-            errorMessage = MESSAGES.LOGIN.INVALID_CREDENTIALS;
-          } else if (error.message.includes('inactivo')) {
-            errorMessage = MESSAGES.LOGIN.INACTIVE_USER;
-          } else if (error.message.includes('2FA')) {
-            errorMessage = MESSAGES.TWO_FA.INVALID_CODE;
-          } else {
-            errorMessage = error.message || MESSAGES.LOGIN.INVALID_CREDENTIALS;
-          }
-        } else if (error.status === 429) {
-          errorMessage = MESSAGES.LOGIN.TOO_MANY_ATTEMPTS;
+          errorMessage = MESSAGES.LOGIN.INVALID_CREDENTIALS;
         } else if (error.status === 0) {
           errorMessage = MESSAGES.LOGIN.CONNECTION_ERROR;
         } else {

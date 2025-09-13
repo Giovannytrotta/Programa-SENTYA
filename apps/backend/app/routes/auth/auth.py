@@ -2,7 +2,7 @@ from flask import Blueprint, jsonify, request, session
 from app.extensions import db, jwt, bcrypt
 from app.models.user import SystemUser, UserRole
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity, unset_jwt_cookies, set_access_cookies
-from app.exceptions import ValidationError, UnauthorizedError, ForbiddenError, AppError, BadRequestError, NotFoundError
+from app.exceptions import ValidationError, UnauthorizedError, ForbiddenError, AppError, BadRequestError
 from app.utils.helper import build_qr_data_uri, issue_tokens_for_user
 from datetime import datetime, timezone, timedelta
 import re
@@ -64,32 +64,33 @@ def login():
         else:
             raise UnauthorizedError("Usuario inactivo. Contacte al administrador.")
     
-    # NUEVO: Si es la primera vez (no tiene 2FA configurado), forzar configuración
-    if not user.two_factor_enabled and not user.two_factor_secret:
+    # IMPORTANTE: Si es la primera vez (no tiene 2FA configurado), forzar configuración
+    if not user.two_factor_enabled or not user.two_factor_secret:
         # Guardar credenciales temporalmente en sesión para después del setup 2FA
         session['temp_email'] = email
         session['temp_user_id'] = user.id
         
+        # NO DAR ACCESO - Devolver 401 con flag especial
         return jsonify({
             "requires_2fa_setup": True,
             "message": "Primera vez: Debe configurar autenticación de dos factores",
             "user_id": user.id
-        }), 200
+        }), 401  # CAMBIO CLAVE: 401 en lugar de 200
     
-    # Si tiene 2FA habilitado, verificar el token
+    # Si tiene 2FA habilitado, SIEMPRE verificar el token
     if user.two_factor_enabled:
         if not token_2fa:
-            # No se proporcionó token 2FA
+            # No se proporcionó token 2FA - NO DAR ACCESO
             return jsonify({
                 "requires_2fa": True,
                 "message": "Se requiere código de autenticación de dos factores"
-            }), 200
+            }), 401  # CAMBIO CLAVE: 401 en lugar de 200
         
         # Verificar el token 2FA
         if not user.verify_2fa_token(token_2fa):
             raise UnauthorizedError("Código de autenticación inválido")
     
-    # Login exitoso
+    # SOLO si pasó todas las verificaciones: Login exitoso
     user.last_login = datetime.now(timezone.utc)
     db.session.commit()
     

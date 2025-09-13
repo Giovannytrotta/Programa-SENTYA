@@ -1,4 +1,4 @@
-
+// components/Auth2fa/AuthAdmin2fa.jsx
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
@@ -10,15 +10,13 @@ const Auth2faPage = () => {
     const [qrData, setQrData] = useState(null);
     const [showSetup, setShowSetup] = useState(false);
     const [isSettingUp, setIsSettingUp] = useState(false);
-    const [setupStep, setSetupStep] = useState(1); // 1: QR, 2: Verificar
+    const [setupStep, setSetupStep] = useState(1);
     
     const location = useLocation();
     const navigate = useNavigate();
     
-    // Datos del login anterior (enviados desde LoginAdmin)
     const { email, password, isFirstTimeSetup, userId } = location.state || {};
     
-    // Hook de autenticación
     const { 
         loginWith2FA, 
         setup2FA, 
@@ -30,19 +28,16 @@ const Auth2faPage = () => {
     } = useAuth();
 
     useEffect(() => {
-        // Si no hay credenciales del login anterior, redirigir al login
         if (!email || !password) {
             navigate('/aossadmin');
             return;
         }
         
-        // Si es primera vez (setup inicial obligatorio), mostrar QR automáticamente
         if (isFirstTimeSetup) {
             handleSetup2FA();
         }
     }, [email, password, navigate, isFirstTimeSetup]);
 
-    // Configurar 2FA por primera vez
     const handleSetup2FA = async () => {
         setIsSettingUp(true);
         setError('');
@@ -52,13 +47,12 @@ const Auth2faPage = () => {
             setShowSetup(true);
             setSetupStep(1);
         } catch (error) {
-            setError(error.message || 'Error al configurar 2FA');
+            setError(error.message || 'Error al configurar autenticación');
         } finally {
             setIsSettingUp(false);
         }
     };
 
-    // Verificar código durante setup inicial
     const handleVerifySetup = async (e) => {
         e.preventDefault();
         
@@ -70,15 +64,12 @@ const Auth2faPage = () => {
 
         setError('');
         try {
-            // Verificar el código y completar el setup
             const result = await verify2FASetup(token, isFirstTimeSetup);
             
             if (isFirstTimeSetup && result.success) {
-                // Si es setup inicial y fue exitoso, ya el hook maneja la navegación
                 return;
             }
             
-            // Si no es setup inicial, volver a intentar el login con 2FA
             if (!isFirstTimeSetup) {
                 const loginResult = await loginWith2FA({ 
                     email, 
@@ -87,15 +78,14 @@ const Auth2faPage = () => {
                 });
                 
                 if (!loginResult.success) {
-                    setError(loginResult.error || MESSAGES.TWO_FA.INVALID_CODE);
+                    setError(loginResult.error || 'Código incorrecto');
                 }
             }
         } catch (error) {
-            setError(error.message || MESSAGES.TWO_FA.INVALID_CODE);
+            setError(error.message || 'Código de verificación inválido');
         }
     };
 
-    // Login con código 2FA (usuario ya tiene 2FA configurado)
     const handleLogin2FA = async (e) => {
         e.preventDefault();
         
@@ -108,7 +98,7 @@ const Auth2faPage = () => {
         setError('');
         const result = await loginWith2FA({ email, password, token_2fa: token });
         if (!result.success) {
-            setError(result.error || MESSAGES.TWO_FA.INVALID_CODE);
+            setError(result.error || 'Código de verificación inválido');
         }
     };
 
@@ -118,19 +108,16 @@ const Auth2faPage = () => {
         if (error) setError('');
     };
 
-    const formatToken = (value) => {
-        // Formatear como XXX XXX para mejor legibilidad
-        if (value.length > 3) {
-            return value.slice(0, 3) + ' ' + value.slice(3);
-        }
-        return value;
-    };
-
-    // Si es primera vez y estamos en modo setup
+    // Setup inicial (primera vez)
     if (isFirstTimeSetup && showSetup) {
         return (
             <div className="auth2fa-container">
-                <div className="dynamic-bg"></div>
+                {/* Orbs flotantes de fondo */}
+                <div className="floating-orbs">
+                    <div className="orb"></div>
+                    <div className="orb"></div>
+                    <div className="orb"></div>
+                </div>
                 
                 <div className="auth2fa-wrapper">
                     <div className="maintenance-header">
@@ -139,115 +126,162 @@ const Auth2faPage = () => {
                             <div className="logo-accent"></div>
                         </div>
                         <h1 className="maintenance-title">
-                            Configuración Obligatoria de Seguridad
+                            Configuración de Seguridad Avanzada
                         </h1>
-                        <span className="development-badge">PRIMERA VEZ</span>
+                        <span className="subtitle-badge">CONFIGURACIÓN INICIAL</span>
                     </div>
 
                     {setupStep === 1 ? (
-                        // Paso 1: Mostrar QR
                         <div className="setup-content">
                             <div className="security-icon">
-                                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M12 1L3 5V11C3 16.55 6.84 21.74 12 23C17.16 21.74 21 16.55 21 11V5L12 1Z" 
-                                          stroke="currentColor" strokeWidth="2"/>
-                                    <path d="M9 12L11 14L15 10" stroke="currentColor" strokeWidth="2"/>
-                                </svg>
+                                <div className="security-shield">
+                                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M12 1L3 5V11C3 16.55 6.84 21.74 12 23C17.16 21.74 21 16.55 21 11V5L12 1Z" 
+                                              stroke="currentColor" strokeWidth="2"/>
+                                        <path d="M9 12L11 14L15 10" stroke="currentColor" strokeWidth="2"/>
+                                    </svg>
+                                </div>
                             </div>
                             
                             <div className="setup-instructions">
-                                <h3>📱 Configuración de Autenticación en Dos Pasos</h3>
-                                <p className="setup-description">
-                                    Para proteger tu cuenta, es obligatorio configurar la autenticación 
-                                    de dos factores en tu primer inicio de sesión.
+                                <h3 style={{ color: 'rgba(255,255,255,0.95)', marginBottom: '24px' }}>
+                                    Autenticación de Dos Factores
+                                </h3>
+                                <p style={{ color: 'rgba(255,255,255,0.8)', marginBottom: '32px', lineHeight: '1.6' }}>
+                                    Para proteger tu cuenta administrativa, es obligatorio configurar 
+                                    la autenticación de dos factores. Este proceso solo toma un minuto.
                                 </p>
                                 
-                                <ol className="setup-steps">
-                                    <li>
-                                        <strong>Descarga una aplicación autenticadora</strong>
-                                        <ul>
-                                            <li>Google Authenticator</li>
-                                            <li>Microsoft Authenticator</li>
-                                            <li>Authy</li>
-                                        </ul>
-                                    </li>
-                                    <li>
-                                        <strong>Escanea el código QR con la aplicación</strong>
-                                    </li>
-                                    <li>
-                                        <strong>Ingresa el código de 6 dígitos que aparece en la app</strong>
-                                    </li>
-                                </ol>
+                                <div style={{ 
+                                    background: 'rgba(255,255,255,0.05)', 
+                                    padding: '24px', 
+                                    borderRadius: '16px',
+                                    border: '1px solid rgba(255,255,255,0.1)',
+                                    marginBottom: '32px'
+                                }}>
+                                    <h4 style={{ color: 'rgba(255,255,255,0.9)', marginBottom: '16px' }}>
+                                        Pasos a seguir:
+                                    </h4>
+                                    <ol style={{ color: 'rgba(255,255,255,0.7)', lineHeight: '2' }}>
+                                        <li>Instala una aplicación autenticadora en tu móvil</li>
+                                        <li>Escanea el código QR que aparecerá a continuación</li>
+                                        <li>Ingresa el código de 6 dígitos para verificar</li>
+                                    </ol>
+                                </div>
+
+                                <div style={{ 
+                                    display: 'grid', 
+                                    gridTemplateColumns: 'repeat(3, 1fr)', 
+                                    gap: '16px',
+                                    marginBottom: '32px'
+                                }}>
+                                    <div style={{ 
+                                        padding: '16px', 
+                                        background: 'rgba(255,255,255,0.05)',
+                                        borderRadius: '12px',
+                                        border: '1px solid rgba(255,255,255,0.1)',
+                                        textAlign: 'center'
+                                    }}>
+                                        <div style={{ color: 'rgba(255,255,255,0.9)', fontWeight: '600' }}>
+                                            Google Auth
+                                        </div>
+                                    </div>
+                                    <div style={{ 
+                                        padding: '16px', 
+                                        background: 'rgba(255,255,255,0.05)',
+                                        borderRadius: '12px',
+                                        border: '1px solid rgba(255,255,255,0.1)',
+                                        textAlign: 'center'
+                                    }}>
+                                        <div style={{ color: 'rgba(255,255,255,0.9)', fontWeight: '600' }}>
+                                            Microsoft Auth
+                                        </div>
+                                    </div>
+                                    <div style={{ 
+                                        padding: '16px', 
+                                        background: 'rgba(255,255,255,0.05)',
+                                        borderRadius: '12px',
+                                        border: '1px solid rgba(255,255,255,0.1)',
+                                        textAlign: 'center'
+                                    }}>
+                                        <div style={{ color: 'rgba(255,255,255,0.9)', fontWeight: '600' }}>
+                                            Authy
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
 
                             {qrData?.qr_data_uri && (
-                                <div className="qr-container">
-                                    <img 
-                                        src={qrData.qr_data_uri} 
-                                        alt="Código QR para 2FA" 
-                                        className="qr-code"
-                                    />
-                                    <p className="qr-note">
-                                        📷 Escanea este código con tu aplicación autenticadora
+                                <div style={{ textAlign: 'center', marginBottom: '32px' }}>
+                                    <div className="qr-container">
+                                        <div className="qr-corners"></div>
+                                        <img 
+                                            src={qrData.qr_data_uri} 
+                                            alt="Código QR para autenticación" 
+                                            className="qr-code"
+                                            style={{ width: '220px', height: '220px' }}
+                                        />
+                                    </div>
+                                    <p style={{ 
+                                        color: 'rgba(255,255,255,0.6)', 
+                                        fontSize: '0.875rem',
+                                        marginTop: '16px'
+                                    }}>
+                                        Escanea este código con tu aplicación autenticadora
                                     </p>
                                 </div>
                             )}
 
-                            <div className="manual-entry">
-                                <details>
-                                    <summary>¿No puedes escanear el código?</summary>
-                                    <div className="manual-code">
-                                        <p>Ingresa este código manualmente en tu aplicación:</p>
-                                        <code className="secret-code">
-                                            {qrData?.otpauth_uri?.split('secret=')[1]?.split('&')[0]}
-                                        </code>
-                                    </div>
-                                </details>
-                            </div>
-
                             <button 
-                                className="primary-cta"
+                                className="verify-button"
                                 onClick={() => setSetupStep(2)}
                             >
-                                Ya escaneé el código →
+                                Continuar con la verificación
                             </button>
                         </div>
                     ) : (
-                        // Paso 2: Verificar código
                         <div className="setup-content">
-                            <div className="security-icon success">
-                                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M9 12L11 14L15 10" stroke="currentColor" strokeWidth="2"/>
-                                    <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2"/>
-                                </svg>
+                            <div className="security-icon">
+                                <div className="security-shield" style={{ background: 'linear-gradient(135deg, rgba(5,150,105,0.1), rgba(34,197,94,0.1))' }}>
+                                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M9 12L11 14L15 10" stroke="currentColor" strokeWidth="2"/>
+                                        <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2"/>
+                                    </svg>
+                                </div>
                             </div>
 
-                            <h3>✅ Verificación del Código</h3>
-                            <p className="verification-description">
-                                Ingresa el código de 6 dígitos que aparece en tu aplicación 
-                                autenticadora para completar la configuración.
+                            <h3 style={{ 
+                                color: 'rgba(255,255,255,0.95)', 
+                                textAlign: 'center',
+                                marginBottom: '16px'
+                            }}>
+                                Verificación del Código
+                            </h3>
+                            <p style={{ 
+                                color: 'rgba(255,255,255,0.7)', 
+                                textAlign: 'center',
+                                marginBottom: '32px'
+                            }}>
+                                Ingresa el código de 6 dígitos que aparece en tu aplicación
                             </p>
 
                             <form onSubmit={handleVerifySetup} className="token-form">
                                 <div className="input-group">
                                     <input
                                         type="text"
-                                        placeholder="000 000"
-                                        value={formatToken(token)}
+                                        placeholder="000000"
+                                        value={token}
                                         onChange={handleTokenChange}
-                                        className={`token-input large ${error ? 'error' : ''}`}
-                                        maxLength="7"
+                                        className={`token-input ${error ? 'error' : ''}`}
+                                        maxLength="6"
                                         disabled={isLoading}
                                         autoFocus
                                         autoComplete="off"
                                     />
-                                    <label className="token-label">
-                                        Código de verificación
-                                    </label>
                                 </div>
                                 
                                 {error && (
-                                    <div className="error-message with-icon">
+                                    <div className="error-message">
                                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor">
                                             <circle cx="12" cy="12" r="10"/>
                                             <line x1="12" y1="8" x2="12" y2="12"/>
@@ -257,38 +291,40 @@ const Auth2faPage = () => {
                                     </div>
                                 )}
                                 
-                                <div className="button-group">
+                                <div style={{ display: 'flex', gap: '16px' }}>
                                     <button 
                                         type="button"
                                         className="secondary-button"
                                         onClick={() => setSetupStep(1)}
                                         disabled={isLoading}
+                                        style={{ flex: 1 }}
                                     >
-                                        ← Volver al QR
+                                        Volver al código QR
                                     </button>
                                     
                                     <button 
                                         type="submit"
-                                        className={`primary-button ${isLoading ? 'loading' : ''}`}
+                                        className={`verify-button ${isLoading ? 'loading' : ''}`}
                                         disabled={isLoading || token.length !== 6}
+                                        style={{ flex: 1 }}
                                     >
-                                        {isLoading ? (
-                                            <>
-                                                <div className="spinner"></div>
-                                                Verificando...
-                                            </>
-                                        ) : (
-                                            'Verificar y Continuar'
-                                        )}
+                                        {!isLoading && 'Verificar y Continuar'}
                                     </button>
                                 </div>
                             </form>
 
-                            <div className="help-text">
-                                <p>
-                                    💡 <strong>Consejo:</strong> El código cambia cada 30 segundos. 
-                                    Si no funciona, espera a que aparezca uno nuevo.
-                                </p>
+                            <div className="help-section" style={{ marginTop: '32px' }}>
+                                <details>
+                                    <summary>¿El código no funciona?</summary>
+                                    <div className="help-content">
+                                        <p>Posibles soluciones:</p>
+                                        <ul style={{ marginTop: '12px', paddingLeft: '20px' }}>
+                                            <li>Verifica que la hora de tu dispositivo esté sincronizada</li>
+                                            <li>Espera a que aparezca un nuevo código (cambia cada 30 segundos)</li>
+                                            <li>Asegúrate de estar usando la cuenta correcta en tu aplicación</li>
+                                        </ul>
+                                    </div>
+                                </details>
                             </div>
                         </div>
                     )}
@@ -297,10 +333,14 @@ const Auth2faPage = () => {
         );
     }
 
-    // Vista normal de 2FA (usuario ya tiene 2FA configurado)
+    // Vista normal de 2FA (usuario ya configurado)
     return (
         <div className="auth2fa-container">
-            <div className="dynamic-bg"></div>
+            <div className="floating-orbs">
+                <div className="orb"></div>
+                <div className="orb"></div>
+                <div className="orb"></div>
+            </div>
             
             <div className="auth2fa-wrapper">
                 <div className="maintenance-header">
@@ -309,31 +349,38 @@ const Auth2faPage = () => {
                         <div className="logo-accent"></div>
                     </div>
                     <h1 className="maintenance-title">Verificación de Seguridad</h1>
+                    <span className="subtitle-badge">AUTENTICACIÓN REQUERIDA</span>
                 </div>
 
                 <div className="maintenance-content">
                     <div className="security-icon">
-                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M12 1L3 5V11C3 16.55 6.84 21.74 12 23C17.16 21.74 21 16.55 21 11V5L12 1Z" 
-                                  stroke="currentColor" strokeWidth="2"/>
-                            <path d="M9 12L11 14L15 10" stroke="currentColor" strokeWidth="2"/>
-                        </svg>
+                        <div className="security-shield">
+                            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M12 1L3 5V11C3 16.55 6.84 21.74 12 23C17.16 21.74 21 16.55 21 11V5L12 1Z" 
+                                      stroke="currentColor" strokeWidth="2"/>
+                                <path d="M9 12L11 14L15 10" stroke="currentColor" strokeWidth="2"/>
+                            </svg>
+                        </div>
                     </div>
 
-                    <p className="maintenance-description">
-                        🔐 Ingresa el código de 6 dígitos de tu aplicación autenticadora 
-                        para acceder al panel de administración.
+                    <p style={{ 
+                        color: 'rgba(255,255,255,0.8)', 
+                        textAlign: 'center',
+                        marginBottom: '40px',
+                        fontSize: '1.125rem'
+                    }}>
+                        Ingresa el código de verificación de tu aplicación autenticadora
                     </p>
 
                     <form onSubmit={handleLogin2FA} className="token-form">
                         <div className="input-group">
                             <input
                                 type="text"
-                                placeholder="000 000"
-                                value={formatToken(token)}
+                                placeholder="000000"
+                                value={token}
                                 onChange={handleTokenChange}
                                 className={`token-input ${error ? 'error' : ''}`}
-                                maxLength="7"
+                                maxLength="6"
                                 disabled={isLoading}
                                 autoFocus
                                 autoComplete="off"
@@ -341,7 +388,7 @@ const Auth2faPage = () => {
                         </div>
                         
                         {error && (
-                            <div className="error-message with-icon">
+                            <div className="error-message">
                                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor">
                                     <circle cx="12" cy="12" r="10"/>
                                     <line x1="12" y1="8" x2="12" y2="12"/>
@@ -356,34 +403,13 @@ const Auth2faPage = () => {
                             className={`verify-button ${isLoading ? 'loading' : ''}`}
                             disabled={isLoading || token.length !== 6}
                         >
-                            {isLoading ? (
-                                <>
-                                    <div className="spinner"></div>
-                                    Verificando...
-                                </>
-                            ) : (
-                                'Verificar Código'
-                            )}
+                            {!isLoading && 'Verificar Código'}
                         </button>
                     </form>
-
-                    <div className="additional-options">
-                        <details className="help-section">
-                            <summary>¿Problemas con el código?</summary>
-                            <div className="help-content">
-                                <p>Si tienes problemas:</p>
-                                <ul>
-                                    <li>Verifica que la hora de tu dispositivo esté sincronizada</li>
-                                    <li>Espera a que aparezca un nuevo código (cambia cada 30 segundos)</li>
-                                    <li>Asegúrate de usar la cuenta correcta en tu app autenticadora</li>
-                                </ul>
-                            </div>
-                        </details>
-                    </div>
                 </div>
 
                 <div className="footer-section">
-                    <p className="footer-text">Panel de Administración SENTYA - Acceso Seguro</p>
+                    <p className="footer-text">Sistema de Seguridad SENTYA</p>
                 </div>
             </div>
         </div>
