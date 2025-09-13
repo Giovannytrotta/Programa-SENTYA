@@ -128,7 +128,7 @@ def login():
     
     if user.two_factor_enabled:
         if not token_2fa or not user.verify_2fa_token(token_2fa):
-            raise UnauthorizedError("Se requiere 2FA válido")
+            raise UnauthorizedError("Se requiere 2FA válido", payload={"requires_2fa": True})
     
     #lógica de activación y last_login
     if not user.is_active:
