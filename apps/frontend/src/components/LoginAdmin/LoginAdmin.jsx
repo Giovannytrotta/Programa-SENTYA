@@ -1,19 +1,46 @@
-import React, { useState } from 'react';
-import './LoginAdmin.css';
+// pages/LoginAdmin.jsx
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../../hooks/useAuth';
+import './LoginAdmin.css';
 
-const LoginAdmin = () => {
+const LoginAdminPage = () => {
   const [formData, setFormData] = useState({
     email: '',
     password: ''
   });
   const [errors, setErrors] = useState({});
-  const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
-  const navigate = useNavigate()
+  const { 
+    login,
+    isLoading,
+    error,
+    requires2FA,
+    clearErrors 
+  } = useAuth();
 
-  // Manejo de cambios en los inputs
+  const navigate = useNavigate();
+
+  // Limpiar errores automáticamente después de 5 segundos
+  useEffect(() => {
+    if (error) {
+      const timer = setTimeout(() => {
+        clearErrors();
+      }, 5000);
+      return () => clearTimeout(timer);
+    }
+  }, [error, clearErrors]);
+
+  // Si ya requiere 2FA, redirigir a página de 2FA
+  useEffect(() => {
+    if (requires2FA) {
+      navigate('/aossadmin/2fa', {
+        state: { email: formData.email, password: formData.password }
+      });
+    }
+  }, [requires2FA, navigate, formData]);
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({
@@ -21,7 +48,7 @@ const LoginAdmin = () => {
       [name]: value
     }));
     
-    // Limpiar error específico cuando el usuario empieza a escribir
+    // Limpiar error específico
     if (errors[name]) {
       setErrors(prev => ({
         ...prev,
@@ -30,18 +57,15 @@ const LoginAdmin = () => {
     }
   };
 
-  // Validaciones del formulario
   const validateForm = () => {
     const newErrors = {};
 
-    // Validación email
     if (!formData.email) {
       newErrors.email = 'El correo electrónico es requerido';
     } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
       newErrors.email = 'Ingresa un correo electrónico válido';
     }
 
-    // Validación password
     if (!formData.password) {
       newErrors.password = 'La contraseña es requerida';
     } else if (formData.password.length < 6) {
@@ -52,53 +76,15 @@ const LoginAdmin = () => {
     return Object.keys(newErrors).length === 0;
   };
 
-  // Manejo del envío del formulario
   const handleSubmit = async (e) => {
     e.preventDefault();
     
     if (!validateForm()) return;
 
-    setLoading(true);
+    const result = await login(formData);
     
-    try {
-      // TODO: Integrar con API del backend
-      // const response = await fetch('/api/admin/login', {
-      //   method: 'POST',
-      //   headers: {
-      //     'Content-Type': 'application/json',
-      //   },
-      //   body: JSON.stringify(formData),
-      // });
-      // 
-      // if (response.ok) {
-      //   const data = await response.json();
-      //   // Guardar token de autenticación
-      //   localStorage.setItem('adminToken', data.token);
-      //   // Dispatch para llevarme la informacion del usuario 
-      //      y su autenticacion a la store
-      //   // Redirigir al dashboard administrativo
-         navigate('/aossadmin/2fa');
-      // } else {
-      //   const errorData = await response.json();
-      //   setErrors({ general: errorData.message });
-      // }
-
-      // Simulación temporal del login
-      console.log('Datos de login:', formData);
-      
-      // Simular delay de red
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      // Aquí iría la lógica de redirección exitosa
-      alert('Login simulado exitoso');
-      
-    } catch (error) {
-      console.error('Error en el login:', error);
-      setErrors({ 
-        general: 'Error de conexión. Por favor intenta nuevamente.' 
-      });
-    } finally {
-      setLoading(false);
+    if (!result.success && result.error && !result.requires2FA) {
+      setErrors({ general: result.error });
     }
   };
 
@@ -106,7 +92,7 @@ const LoginAdmin = () => {
     <div className="login-admin-container">
       <div className="login-admin-wrapper">
         <div className="login-admin-form">
-          {/* Header del formulario */}
+          {/* Header */}
           <div className="login-header">
             <div className="logo-container">
               <h1 className="logo">Sentya</h1>
@@ -116,20 +102,19 @@ const LoginAdmin = () => {
             <p className="login-subtitle">Sistema de gestión integral</p>
           </div>
 
-          {/* Mensaje de error general */}
-          {errors.general && (
+          {/* Error del store global o del formulario */}
+          {(error || errors.general) && (
             <div className="error-message general">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor">
                 <circle cx="12" cy="12" r="10"/>
                 <line x1="15" y1="9" x2="9" y2="15"/>
                 <line x1="9" y1="9" x2="15" y2="15"/>
               </svg>
-              {errors.general}
+              {error || errors.general}
             </div>
           )}
 
-          {/* Formulario */}
-          <form className="login-form" onSubmit={handleSubmit} noValidate>
+          <form className="login-form" onSubmit={handleSubmit}>
             {/* Campo Email */}
             <div className="input-group">
               <div className={`input-container ${errors.email ? 'error' : ''}`}>
@@ -140,7 +125,7 @@ const LoginAdmin = () => {
                   className="input-field"
                   value={formData.email}
                   onChange={handleChange}
-                  disabled={loading}
+                  disabled={isLoading}
                   autoComplete="email"
                 />
                 <div className="input-icon">
@@ -150,9 +135,7 @@ const LoginAdmin = () => {
                   </svg>
                 </div>
               </div>
-              {errors.email && (
-                <span className="error-text">{errors.email}</span>
-              )}
+              {errors.email && <span className="error-text">{errors.email}</span>}
             </div>
 
             {/* Campo Password */}
@@ -165,14 +148,14 @@ const LoginAdmin = () => {
                   className="input-field"
                   value={formData.password}
                   onChange={handleChange}
-                  disabled={loading}
+                  disabled={isLoading}
                   autoComplete="current-password"
                 />
                 <button
                   type="button"
                   className="input-icon toggle-password"
                   onClick={() => setShowPassword(!showPassword)}
-                  disabled={loading}
+                  disabled={isLoading}
                 >
                   {showPassword ? (
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor">
@@ -187,9 +170,7 @@ const LoginAdmin = () => {
                   )}
                 </button>
               </div>
-              {errors.password && (
-                <span className="error-text">{errors.password}</span>
-              )}
+              {errors.password && <span className="error-text">{errors.password}</span>}
             </div>
 
             {/* Opciones adicionales */}
@@ -197,12 +178,12 @@ const LoginAdmin = () => {
               <label className="checkbox-container">
                 <input 
                   type="checkbox" 
-                  disabled={loading}
-                  // TODO: Implementar funcionalidad "recordar sesión"
+                  disabled={isLoading}
                 />
+                <span className="checkmark"></span>
+                <span className="checkbox-text">Recordar sesión</span>
               </label>
 
-              {/* TODO: Implementar recuperación de contraseña */}
               <a href="#" className="forgot-password">
                 ¿Olvidaste tu contraseña?
               </a>
@@ -211,10 +192,10 @@ const LoginAdmin = () => {
             {/* Botón de envío */}
             <button 
               type="submit" 
-              className={`login-button ${loading ? 'loading' : ''}`}
-              disabled={loading}
+              className={`login-button ${isLoading ? 'loading' : ''}`}
+              disabled={isLoading}
             >
-              {loading ? (
+              {isLoading ? (
                 <>
                   <div className="spinner"></div>
                   <span className="button-text">Iniciando sesión...</span>
@@ -237,9 +218,9 @@ const LoginAdmin = () => {
           {/* Footer */}
           <div className="login-footer">
             <p className="footer-text">
-              © 2025 AOSSA Global. 
-              <p className="footer-text">30 años de experiencia en servicios integrales.</p>
+              © 2025 AOSSA Global.
             </p>
+            <p className="footer-text">30 años de experiencia en servicios integrales.</p>
           </div>
         </div>
       </div>
@@ -247,4 +228,4 @@ const LoginAdmin = () => {
   );
 };
 
-export default LoginAdmin;
+export default LoginAdminPage;

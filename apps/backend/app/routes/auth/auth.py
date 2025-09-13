@@ -117,12 +117,14 @@ def login():
     #campos requeridos
     if not email or not password:
         raise UnauthorizedError("Email and password are required.")
-    
+    print(email)
 #Verificamos si el usuario existe 
     user = SystemUser.query.filter_by(email=email).first()
     if not user:
         raise UnauthorizedError("Invalid credentials")
-    
+    print(user)
+    print(repr(user.password))
+
     if not bcrypt.check_password_hash(user.password, password):
         raise UnauthorizedError("Invalid credentials")
     

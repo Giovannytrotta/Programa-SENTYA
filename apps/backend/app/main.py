@@ -9,16 +9,17 @@ from app.exceptions import AppError
 from marshmallow import ValidationError as MarshmallowError 
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager
+from sqlalchemy import text
 
 def create_app():
     #crea y configura la aplicación Flask:
     app= Flask(__name__, instance_relative_config=True)#Permite usar configuraciones desde la carpeta
-    CORS(app)
-    # CORS(app, 
-    #  origins=['*'], 
-    #  methods=['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    #  allow_headers=['Content-Type', 'Authorization', 'Access-Control-Allow-Credentials'],
-    #  supports_credentials=True)
+   
+    CORS(app, 
+    origins=['*'], 
+    methods=['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allow_headers=['Content-Type', 'Authorization', 'Access-Control-Allow-Credentials'],
+    supports_credentials=True)
     # 1) Config
     app.config.from_object(Config)
     db.init_app(app)
@@ -30,7 +31,15 @@ def create_app():
     # jwt = JWTManager(app)
     # app.config["SQLALCHEMY_DATABASE_URI"]= "postgresql://postgres:26964663@localhost:5432/proyecto_Sentya"
     # app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-    
+    @app.route("/testdb")
+    def test_db():
+        try:
+            test=db.session.execute(text("show tables"))
+            return "ok"
+        except Exception as e :
+            print(e)
+            return f"{str(e)}"
+
     #BLUEPRINTS 
     from app.routes.auth.auth import auth_bp
     app.register_blueprint(auth_bp)

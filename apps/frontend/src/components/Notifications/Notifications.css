@@ -1,0 +1,226 @@
+/* components/Notifications.css */
+
+/* Contenedor de todas las notificaciones */
+.notifications-container {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-width: 400px;
+  pointer-events: none; /* Permite clics detrás */
+}
+
+/* Notificación individual */
+.notification {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 16px;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+  border-left: 4px solid;
+  pointer-events: auto; /* Permite interacción */
+  animation: slideInRight 0.3s ease-out;
+  min-width: 320px;
+  max-width: 400px;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Tipos de notificación */
+.notification-success {
+  border-left-color: #10b981;
+  background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+}
+
+.notification-error {
+  border-left-color: #ef4444;
+  background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+}
+
+.notification-warning {
+  border-left-color: #f59e0b;
+  background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
+}
+
+.notification-info {
+  border-left-color: #3b82f6;
+  background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+}
+
+/* Icono de la notificación */
+.notification-icon {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  margin-top: 2px;
+}
+
+.notification-success .notification-icon {
+  color: #10b981;
+}
+
+.notification-error .notification-icon {
+  color: #ef4444;
+}
+
+.notification-warning .notification-icon {
+  color: #f59e0b;
+}
+
+.notification-info .notification-icon {
+  color: #3b82f6;
+}
+
+/* Contenido del mensaje */
+.notification-content {
+  flex: 1;
+  min-width: 0; /* Permite que se contraiga */
+}
+
+.notification-message {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.4;
+  color: #374151;
+  word-wrap: break-word;
+}
+
+/* Botón de cerrar */
+.notification-close {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  background: none;
+  border: none;
+  color: #6b7280;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+  margin-top: 2px;
+}
+
+.notification-close:hover {
+  background: rgba(0, 0, 0, 0.05);
+  color: #374151;
+}
+
+.notification-close:active {
+  transform: scale(0.95);
+}
+
+/* Animación de entrada */
+@keyframes slideInRight {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+/* Animación de salida (opcional) */
+.notification-exit {
+  animation: slideOutRight 0.2s ease-in forwards;
+}
+
+@keyframes slideOutRight {
+  from {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+}
+
+/* Progress bar (si quieres mostrar tiempo restante) */
+.notification::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 2px;
+  background: currentColor;
+  opacity: 0.3;
+  animation: progressBar 5s linear forwards;
+}
+
+@keyframes progressBar {
+  from {
+    width: 100%;
+  }
+  to {
+    width: 0%;
+  }
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+  .notifications-container {
+    top: 10px;
+    right: 10px;
+    left: 10px;
+    max-width: none;
+  }
+  
+  .notification {
+    min-width: auto;
+    max-width: none;
+  }
+  
+  .notification-message {
+    font-size: 13px;
+  }
+}
+
+/* Tema oscuro (opcional) */
+@media (prefers-color-scheme: dark) {
+  .notification {
+    background: #1f2937;
+    color: #f9fafb;
+  }
+  
+  .notification-message {
+    color: #f9fafb;
+  }
+  
+  .notification-close {
+    color: #9ca3af;
+  }
+  
+  .notification-close:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: #f9fafb;
+  }
+  
+  .notification-success {
+    background: linear-gradient(135deg, #064e3b 0%, #065f46 100%);
+  }
+  
+  .notification-error {
+    background: linear-gradient(135deg, #7f1d1d 0%, #991b1b 100%);
+  }
+  
+  .notification-warning {
+    background: linear-gradient(135deg, #78350f 0%, #92400e 100%);
+  }
+  
+  .notification-info {
+    background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%);
+  }
+}
