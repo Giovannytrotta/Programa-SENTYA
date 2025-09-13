@@ -1,0 +1,625 @@
+/* ===== AUTH2FA GLASSMORPHISM STYLES - AOSSA THEME ===== */
+
+/* Variables de colores AOSSA - Consistentes con el resto de la aplicación */
+:root {
+  --aossa-primary: #2563eb;        /* Azul principal - confianza */
+  --aossa-secondary: #059669;      /* Verde esmeralda - crecimiento */
+  --aossa-accent: #f97316;         /* Coral - calidez humana */
+  --aossa-neutral: #64748b;        /* Gris azulado - profesionalismo */
+  --aossa-light: #f8fafc;          /* Blanco suave - limpieza */
+  --aossa-gradient-start: rgba(37, 99, 235, 0.4);   /* Azul translúcido */
+  --aossa-gradient-mid: rgba(5, 150, 105, 0.3);     /* Verde translúcido */
+  --aossa-gradient-end: rgba(249, 115, 22, 0.3);    /* Coral translúcido */
+}
+
+/* Contenedor principal con gradiente AOSSA animado */
+.auth2fa-container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, 
+    var(--aossa-gradient-start) 0%, 
+    var(--aossa-gradient-mid) 50%, 
+    var(--aossa-gradient-end) 100%
+  );
+  background-size: 400% 400%;
+  animation: gradientMove 20s ease infinite;
+  padding: 20px;
+  position: relative;
+  overflow: hidden;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Animación del fondo gradiente - igual que en landing y login */
+@keyframes gradientMove {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* Efectos de partículas de fondo con colores AOSSA */
+.dynamic-bg {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  background-image: 
+    radial-gradient(circle at 20% 80%, var(--aossa-gradient-start) 0%, transparent 60%),
+    radial-gradient(circle at 80% 20%, var(--aossa-gradient-end) 0%, transparent 60%),
+    radial-gradient(circle at 40% 40%, var(--aossa-gradient-mid) 0%, transparent 60%);
+  animation: floatParticles 25s ease-in-out infinite;
+  transition: opacity 0.3s ease;
+  z-index: 1;
+}
+
+@keyframes floatParticles {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(-20px) rotate(5deg); }
+}
+
+/* Wrapper principal con glassmorphism AOSSA */
+.auth2fa-wrapper {
+  background: rgba(248, 250, 252, 0.15);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border-radius: 24px;
+  border: 1px solid rgba(248, 250, 252, 0.25);
+  box-shadow: 
+    0 12px 40px rgba(37, 99, 235, 0.12),
+    inset 0 1px 0 rgba(248, 250, 252, 0.25),
+    0 4px 16px rgba(5, 150, 105, 0.08);
+  width: 100%;
+  max-width: 600px;
+  padding: 48px;
+  position: relative;
+  z-index: 2;
+  animation: slideInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Header del mantenimiento con branding AOSSA */
+.maintenance-header {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.logo-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.main-logo {
+  font-size: 32px;
+  font-weight: 800;
+  background: linear-gradient(135deg, var(--aossa-primary) 0%, var(--aossa-secondary) 100%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin: 0;
+  letter-spacing: -0.5px;
+  filter: drop-shadow(0 2px 4px rgba(37, 99, 235, 0.1));
+}
+
+.logo-accent {
+  width: 8px;
+  height: 8px;
+  background: linear-gradient(135deg, var(--aossa-primary) 0%, var(--aossa-accent) 100%);
+  border-radius: 50%;
+  animation: pulse-smooth 3s ease-in-out infinite;
+}
+
+@keyframes pulse-smooth {
+  0%, 100% { 
+    transform: scale(1); 
+    opacity: 1;
+  }
+  50% { 
+    transform: scale(1.2); 
+    opacity: 0.8;
+  }
+}
+
+.maintenance-title {
+  font-size: 2.2rem;
+  font-weight: 700;
+  color: rgba(248, 250, 252, 0.95);
+  margin: 0 0 20px 0;
+  text-shadow: 0 2px 8px rgba(37, 99, 235, 0.15);
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+}
+
+.development-badge {
+  display: inline-block;
+  background: linear-gradient(135deg, var(--aossa-accent), #f59e0b);
+  color: white;
+  padding: 8px 20px;
+  border-radius: 16px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  box-shadow: 0 4px 16px rgba(249, 115, 22, 0.25);
+}
+
+/* Contenido principal */
+.maintenance-content {
+  margin-bottom: 40px;
+}
+
+.security-icon {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 30px;
+}
+
+.security-icon svg {
+  width: 80px;
+  height: 80px;
+  color: rgba(248, 250, 252, 0.9);
+  padding: 20px;
+  background: rgba(248, 250, 252, 0.1);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(248, 250, 252, 0.2);
+  border-radius: 50%;
+  box-shadow: 0 8px 24px rgba(37, 99, 235, 0.1);
+  transition: all 0.3s ease;
+}
+
+.security-icon svg:hover {
+  transform: scale(1.05);
+  color: var(--aossa-primary);
+  box-shadow: 0 12px 32px rgba(37, 99, 235, 0.2);
+}
+
+.maintenance-description {
+  font-size: 1.125rem;
+  color: rgba(248, 250, 252, 0.85);
+  line-height: 1.6;
+  text-align: center;
+  margin-bottom: 40px;
+  font-weight: 400;
+}
+
+/* Showcase de características */
+.feature-showcase {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+  margin: 40px 0;
+}
+
+.feature-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 24px 16px;
+  background: rgba(248, 250, 252, 0.08);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(248, 250, 252, 0.15);
+  border-radius: 16px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.05);
+}
+
+.feature-item:hover {
+  background: rgba(248, 250, 252, 0.15);
+  border-color: rgba(248, 250, 252, 0.25);
+  transform: translateY(-4px);
+  box-shadow: 0 12px 28px rgba(37, 99, 235, 0.12);
+}
+
+.feature-icon {
+  font-size: 2rem;
+  margin-bottom: 12px;
+}
+
+.feature-item span {
+  color: rgba(248, 250, 252, 0.9);
+  font-weight: 600;
+  font-size: 0.95rem;
+  text-align: center;
+  letter-spacing: 0.025em;
+}
+
+/* Barra de progreso */
+.progress-container {
+  background: rgba(248, 250, 252, 0.08);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(248, 250, 252, 0.15);
+  padding: 28px;
+  border-radius: 18px;
+  margin: 32px 0;
+  box-shadow: 0 4px 16px rgba(37, 99, 235, 0.06);
+}
+
+.progress-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.progress-label {
+  color: rgba(248, 250, 252, 0.8);
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.progress-value {
+  color: var(--aossa-primary);
+  font-weight: 700;
+  font-size: 1.125rem;
+}
+
+.progress-track {
+  width: 100%;
+  height: 8px;
+  background: rgba(248, 250, 252, 0.15);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  width: 75%;
+  height: 100%;
+  background: linear-gradient(90deg, var(--aossa-primary), var(--aossa-secondary));
+  border-radius: 4px;
+  animation: progressShimmer 2s ease-in-out infinite;
+  position: relative;
+}
+
+@keyframes progressShimmer {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.8; }
+}
+
+.progress-fill::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+  animation: shimmer 3s ease-in-out infinite;
+}
+
+@keyframes shimmer {
+  0% { left: -100%; }
+  100% { left: 100%; }
+}
+
+/* Mensaje del equipo */
+.team-message {
+  background: rgba(249, 115, 22, 0.08);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(249, 115, 22, 0.2);
+  border-radius: 18px;
+  padding: 28px;
+  margin: 32px 0;
+  position: relative;
+  overflow: hidden;
+}
+
+.team-message::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  background: linear-gradient(135deg, var(--aossa-accent), #f59e0b);
+}
+
+.message-content p {
+  color: rgba(248, 250, 252, 0.85);
+  line-height: 1.6;
+  margin: 0 0 12px 0;
+  font-size: 1rem;
+}
+
+.message-content p:last-child {
+  margin: 0;
+}
+
+.team-note {
+  font-style: italic;
+  color: rgba(249, 115, 22, 0.9);
+  font-weight: 500;
+}
+
+/* Botones de acción - Consistentes con el resto de AOSSA */
+.action-buttons {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-bottom: 32px;
+}
+
+.primary-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 16px 28px;
+  background: linear-gradient(135deg, var(--aossa-primary) 0%, var(--aossa-secondary) 100%);
+  border: none;
+  border-radius: 16px;
+  color: white;
+  font-weight: 700;
+  font-size: 1rem;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+  letter-spacing: 0.025em;
+  box-shadow: 
+    0 4px 16px rgba(37, 99, 235, 0.25),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.primary-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.25), transparent);
+  transition: left 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.primary-button:hover::before {
+  left: 100%;
+}
+
+.primary-button:hover {
+  transform: translateY(-3px);
+  box-shadow: 
+    0 8px 28px rgba(37, 99, 235, 0.35),
+    0 4px 12px rgba(5, 150, 105, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  text-decoration: none;
+  color: white;
+}
+
+.primary-button:active {
+  transform: translateY(-1px);
+  transition-duration: 0.1s;
+}
+
+.secondary-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 16px 24px;
+  background: rgba(248, 250, 252, 0.12);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(248, 250, 252, 0.25);
+  border-radius: 16px;
+  color: rgba(248, 250, 252, 0.9);
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  letter-spacing: 0.025em;
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.08);
+}
+
+.secondary-button:hover {
+  background: rgba(248, 250, 252, 0.18);
+  border-color: rgba(248, 250, 252, 0.35);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(37, 99, 235, 0.12);
+}
+
+.secondary-button:active {
+  transform: translateY(0px);
+  transition-duration: 0.1s;
+}
+
+.button-icon {
+  width: 20px;
+  height: 20px;
+  transition: transform 0.3s ease;
+  position: relative;
+  z-index: 1;
+}
+
+.button-text {
+  position: relative;
+  z-index: 1;
+}
+
+.primary-button:hover .button-icon,
+.secondary-button:hover .button-icon {
+  transform: translateX(2px);
+}
+
+/* Footer */
+.footer-section {
+  text-align: center;
+  padding-top: 24px;
+  border-top: 1px solid rgba(248, 250, 252, 0.15);
+}
+
+.footer-text {
+  font-size: 0.95rem;
+  color: rgba(248, 250, 252, 0.6);
+  margin: 0;
+  font-weight: 500;
+  letter-spacing: 0.025em;
+}
+
+/* Responsive Design - Consistente con AOSSA */
+@media (max-width: 768px) {
+  .auth2fa-wrapper {
+    padding: 40px 32px;
+    margin: 16px;
+    max-width: none;
+  }
+
+  .maintenance-title {
+    font-size: 1.875rem;
+  }
+
+  .feature-showcase {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .action-buttons {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .primary-button,
+  .secondary-button {
+    width: 100%;
+    max-width: 280px;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .auth2fa-wrapper {
+    padding: 32px 24px;
+    margin: 12px;
+    border-radius: 20px;
+  }
+
+  .main-logo {
+    font-size: 28px;
+  }
+
+  .maintenance-title {
+    font-size: 1.625rem;
+  }
+
+  .maintenance-description {
+    font-size: 1rem;
+  }
+
+  .security-icon svg {
+    width: 60px;
+    height: 60px;
+    padding: 16px;
+  }
+
+  .feature-item {
+    padding: 20px 12px;
+  }
+
+  .progress-container,
+  .team-message {
+    padding: 20px;
+  }
+
+  .primary-button,
+  .secondary-button {
+    padding: 14px 20px;
+    font-size: 0.95rem;
+  }
+}
+
+@media (max-width: 360px) {
+  .auth2fa-wrapper {
+    padding: 24px 20px;
+    margin: 8px;
+  }
+
+  .main-logo {
+    font-size: 24px;
+  }
+
+  .maintenance-title {
+    font-size: 1.5rem;
+  }
+}
+
+/* Mejoras de accesibilidad - Consistentes con AOSSA */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  .auth2fa-wrapper {
+    animation: none;
+  }
+
+  .dynamic-bg {
+    animation: none;
+  }
+
+  .progress-fill::after {
+    animation: none;
+  }
+}
+
+/* Tema de alto contraste */
+@media (prefers-contrast: high) {
+  :root {
+    --aossa-primary: #1e40af;
+    --aossa-secondary: #047857;
+    --aossa-accent: #ea580c;
+  }
+
+  .auth2fa-wrapper {
+    background: rgba(248, 250, 252, 0.25);
+    border: 2px solid rgba(248, 250, 252, 0.6);
+  }
+
+  .feature-item,
+  .progress-container,
+  .team-message,
+  .secondary-button {
+    background: rgba(248, 250, 252, 0.2);
+    border: 2px solid rgba(248, 250, 252, 0.5);
+  }
+
+  .maintenance-title,
+  .maintenance-description,
+  .feature-item span {
+    color: white;
+  }
+}
+
+/* Modo oscuro nativo */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --aossa-light: #0f172a;
+  }
+
+  .auth2fa-container {
+    background: linear-gradient(135deg, 
+      rgba(37, 99, 235, 0.3) 0%, 
+      rgba(5, 150, 105, 0.25) 50%, 
+      rgba(249, 115, 22, 0.25) 100%
+    );
+  }
+}
