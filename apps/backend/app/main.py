@@ -3,7 +3,7 @@ from app.instance.config import Config
 from flask_migrate import Migrate
 from datetime import timedelta
 from flask_bcrypt import Bcrypt
-from app.extensions import db,ma,jwt,bcrypt,migrate
+from app.extensions import db,ma,jwt,bcrypt,migrate,mail
 # from flask_cors import CORS
 from app.exceptions import AppError
 from marshmallow import ValidationError as MarshmallowError 
@@ -25,20 +25,13 @@ def create_app():
     db.init_app(app)
     migrate.init_app(app, db)
     jwt.init_app(app)
+    mail.init_app(app)
     # ma.init_app(app)
     # migrate= Migrate(app,db,render_as_batch=False)
     bcrypt.init_app(app)
     # jwt = JWTManager(app)
     # app.config["SQLALCHEMY_DATABASE_URI"]= "postgresql://postgres:26964663@localhost:5432/proyecto_Sentya"
     # app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-    @app.route("/testdb")
-    def test_db():
-        try:
-            test=db.session.execute(text("show tables"))
-            return "ok"
-        except Exception as e :
-            print(e)
-            return f"{str(e)}"
 
     #BLUEPRINTS 
     from app.routes.auth.auth import auth_bp

@@ -123,8 +123,6 @@ def login():
     user = SystemUser.query.filter_by(email=email).first()
     if not user:
         raise UnauthorizedError("Invalid credentials")
-    print(user)
-    print(repr(user.password))
 
     if not bcrypt.check_password_hash(user.password, password):
         raise UnauthorizedError("Invalid credentials")

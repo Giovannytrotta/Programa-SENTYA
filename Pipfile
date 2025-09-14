@@ -23,6 +23,8 @@ pyotp = "*"
 pillow = "*"
 qrcode = "*"
 psycopg2-binary = "*"
+flask-mail = "*"
+jinja2 = "*"
 
 [scripts]
 start="flask run -p 3001 -h 0.0.0.0"
