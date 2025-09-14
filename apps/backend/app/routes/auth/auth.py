@@ -114,6 +114,7 @@ def login():
     email = data.get("email", "").strip()
     password = data.get("password", "")
     token_2fa = (data.get('token_2fa') or '').strip()
+    
     #campos requeridos
     if not email or not password:
         raise UnauthorizedError("Email and password are required.")
@@ -132,8 +133,8 @@ def login():
     
     #lógica de activación y last_login
     if not user.is_active:
-     # Si es el primer login, activar automáticamente
         if user.last_login is None:
+     # Si es el primer login, activar automáticamente
             user.is_active = True 
         else:
             raise UnauthorizedError("Inactive user")
