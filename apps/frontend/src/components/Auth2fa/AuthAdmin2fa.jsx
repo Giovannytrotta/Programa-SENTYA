@@ -1,8 +1,167 @@
-import React from "react"
-import { Link } from "react-router-dom"
-import "./AuthAdmin2fa.css"
+// pages/Auth2faPage.jsx
+import React, { useState, useEffect } from 'react';
+import { useLocation, useNavigate, Link } from 'react-router-dom';
+import { useAuth } from '../../hooks/useAuth';
+import "./AuthAdmin2fa.css";
 
-const Auth2fa = () => {
+const Auth2faPage = () => {
+    const [token, setToken] = useState('');
+    const [error, setError] = useState('');
+    const [qrData, setQrData] = useState(null);
+    const [showSetup, setShowSetup] = useState(false);
+    const [isSettingUp, setIsSettingUp] = useState(false);
+    
+    const location = useLocation();
+    const navigate = useNavigate();
+    
+    // Datos del login anterior (enviados desde LoginAdmin)
+    const { email, password, isFirstTimeSetup } = location.state || {};
+    
+    // Hook de autenticación
+    const { 
+        loginWith2FA, 
+        setup2FA, 
+        verify2FASetup, 
+        isLoading, 
+        clearErrors 
+    } = useAuth();
+
+    useEffect(() => {
+        // Si no hay credenciales del login anterior, redirigir al login
+        if (!email || !password) {
+            navigate('/aossadmin');
+            return;
+        }
+        
+        // Si es primera vez (setup inicial), mostrar QR automáticamente
+        if (isFirstTimeSetup) {
+            handleSetup2FA();
+        }
+    }, [email, password, navigate, isFirstTimeSetup]);
+
+    // Configurar 2FA por primera vez
+    const handleSetup2FA = async () => {
+        setIsSettingUp(true);
+        try {
+            const response = await setup2FA();
+            setQrData(response);
+            setShowSetup(true);
+        } catch (error) {
+            setError(error.message);
+        } finally {
+            setIsSettingUp(false);
+        }
+    };
+
+    // Verificar código durante setup inicial
+    const handleVerifySetup = async (e) => {
+        e.preventDefault();
+        if (!/^\d{6}$/.test(token)) {
+            setError('El código debe tener 6 dígitos');
+            return;
+        }
+
+        try {
+            await verify2FASetup(token);
+            // Después de configurar 2FA, hacer login con el token
+            const result = await loginWith2FA({ email, password, token_2fa: token });
+            if (!result.success) {
+                setError(result.error || 'Error en la verificación');
+            }
+        } catch (error) {
+            setError(error.message);
+        }
+    };
+
+    // Login con código 2FA (usuario ya tiene 2FA configurado)
+    const handleLogin2FA = async (e) => {
+        e.preventDefault();
+        if (!/^\d{6}$/.test(token)) {
+            setError('El código debe tener 6 dígitos');
+            return;
+        }
+
+        const result = await loginWith2FA({ email, password, token_2fa: token });
+        if (!result.success) {
+            setError(result.error || 'Código incorrecto');
+        }
+    };
+
+    const handleTokenChange = (e) => {
+        const value = e.target.value.replace(/\D/g, '').slice(0, 6);
+        setToken(value);
+        if (error) setError('');
+    };
+
+    // Si estamos en modo setup
+    if (showSetup) {
+        return (
+            <div className="auth2fa-container">
+                <div className="dynamic-bg"></div>
+                
+                <div className="auth2fa-wrapper">
+                    <div className="maintenance-header">
+                        <div className="logo-container">
+                            <div className="main-logo">AOSSA</div>
+                            <div className="logo-accent"></div>
+                        </div>
+                        <h1 className="maintenance-title">Configurar Autenticación 2FA</h1>
+                    </div>
+
+                    <div className="setup-content">
+                        <div className="qr-container">
+                            {qrData?.qr_data_uri && (
+                                <img 
+                                    src={qrData.qr_data_uri} 
+                                    alt="QR Code para 2FA" 
+                                    className="qr-code"
+                                />
+                            )}
+                        </div>
+                        
+                        <div className="setup-instructions">
+                            <h3>Pasos para configurar:</h3>
+                            <ol>
+                                <li>Descarga Google Authenticator o similar</li>
+                                <li>Escanea el código QR</li>
+                                <li>Ingresa el código de 6 dígitos</li>
+                            </ol>
+                        </div>
+
+                        <form onSubmit={handleVerifySetup} className="token-form">
+                            <div className="input-group">
+                                <input
+                                    type="text"
+                                    placeholder="Código de 6 dígitos"
+                                    value={token}
+                                    onChange={handleTokenChange}
+                                    className={`token-input ${error ? 'error' : ''}`}
+                                    maxLength="6"
+                                    disabled={isLoading}
+                                    autoFocus
+                                />
+                            </div>
+                            
+                            {error && (
+                                <div className="error-message">
+                                    {error}
+                                </div>
+                            )}
+                            
+                            <button 
+                                type="submit"
+                                className={`verify-button ${isLoading ? 'loading' : ''}`}
+                                disabled={isLoading || token.length !== 6}
+                            >
+                                {isLoading ? 'Verificando...' : 'Verificar y Continuar'}
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        );
+    }
+
     return (
         <div className="auth2fa-container">
             <div className="dynamic-bg"></div>
@@ -14,7 +173,6 @@ const Auth2fa = () => {
                         <div className="logo-accent"></div>
                     </div>
                     <h1 className="maintenance-title">Autenticación de Dos Factores</h1>
-                    <div className="development-badge">En Desarrollo</div>
                 </div>
 
                 <div className="maintenance-content">
@@ -26,62 +184,57 @@ const Auth2fa = () => {
                     </div>
 
                     <p className="maintenance-description">
-                        Estamos implementando una capa adicional de seguridad para proteger tu cuenta.
-                        Esta funcionalidad incluirá códigos QR para la autenticación de dos factores.
+                        Ingresa el código de 6 dígitos de tu aplicación autenticadora.
                     </p>
 
-                    <div className="feature-showcase">
-                        <div className="feature-item">
-                            <div className="feature-icon">📱</div>
-                            <span>Códigos QR seguros</span>
+                    <form onSubmit={handleLogin2FA} className="token-form">
+                        <div className="input-group">
+                            <input
+                                type="text"
+                                placeholder="000000"
+                                value={token}
+                                onChange={handleTokenChange}
+                                className={`token-input ${error ? 'error' : ''}`}
+                                maxLength="6"
+                                disabled={isLoading}
+                                autoFocus
+                            />
                         </div>
-                        <div className="feature-item">
-                            <div className="feature-icon">🔐</div>
-                            <span>Protección avanzada</span>
-                        </div>
-                        <div className="feature-item">
-                            <div className="feature-icon">⚡</div>
-                            <span>Configuración rápida</span>
-                        </div>
-                    </div>
+                        
+                        {error && (
+                            <div className="error-message">
+                                {error}
+                            </div>
+                        )}
+                        
+                        <button 
+                            type="submit"
+                            className={`verify-button ${isLoading ? 'loading' : ''}`}
+                            disabled={isLoading || token.length !== 6}
+                        >
+                            {isLoading ? 'Verificando...' : 'Verificar Código'}
+                        </button>
+                    </form>
 
-                    <div className="progress-container">
-                        <div className="progress-header">
-                            <span className="progress-label">Progreso de desarrollo</span>
-                            <span className="progress-value">75%</span>
-                        </div>
-                        <div className="progress-track">
-                            <div className="progress-fill"></div>
-                        </div>
-                    </div>
-
-                    <div className="team-message">
-                        <div className="message-content">
-                            <p>
-                                Nuestro equipo de backend está trabajando intensamente en esta funcionalidad.
-                            </p>
-                            <p className="team-note">
-                                Los backenders son así... pero créenos, ¡vale la pena la espera! 🫀🩹🥀❤️‍🩹
-                            </p>
-                        </div>
+                    <div className="setup-option">
+                        <p>¿Primera vez usando 2FA?</p>
+                        <button 
+                            onClick={handleSetup2FA}
+                            className="setup-button"
+                            disabled={isSettingUp}
+                        >
+                            {isSettingUp ? 'Configurando...' : 'Configurar 2FA'}
+                        </button>
                     </div>
                 </div>
 
                 <div className="action-buttons">
-                    <Link to="/aossadmin/dashboard" className="primary-button">
+                    <Link to="/aossadmin" className="back-button">
                         <svg className="button-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M3 12L5 10M5 10L12 3L19 10M5 10V20C5 20.5523 5.44772 21 6 21H9M19 10L21 12M19 10V20C19 20.5523 18.5523 21 18 21H15M9 21C9.55228 21 10 20.5523 10 20V16C10 15.4477 10.4477 15 11 15H13C13.5523 15 14 15.4477 14 16V20C14 20.5523 14.4477 21 15 21M9 21H15" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                            <path d="M19 12H5M12 19L5 12L12 5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                         </svg>
-                        <span className="button-text">Ir al Dashboard</span>
+                        <span className="button-text">Volver al Login</span>
                     </Link>
-
-                    <button className="secondary-button">
-                        <svg className="button-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M18 8C18 6.4087 17.3679 4.88258 16.2426 3.75736C15.1174 2.63214 13.5913 2 12 2C10.4087 2 8.88258 2.63214 7.75736 3.75736C6.63214 4.88258 6 6.4087 6 8C6 15 3 17 3 17H21C21 17 18 15 18 8Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                            <path d="M13.73 21C13.5542 21.3031 13.3018 21.5547 12.9982 21.7295C12.6946 21.9044 12.3504 21.9965 12 21.9965C11.6496 21.9965 11.3054 21.9044 11.0018 21.7295C10.6982 21.5547 10.4458 21.3031 10.27 21" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                        </svg>
-                        <span className="button-text">Notificarme</span>
-                    </button>
                 </div>
 
                 <div className="footer-section">
@@ -89,7 +242,7 @@ const Auth2fa = () => {
                 </div>
             </div>
         </div>
-    )
-}
+    );
+};
 
-export default Auth2fa;
+export default Auth2faPage;

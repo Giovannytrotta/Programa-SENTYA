@@ -1,23 +1,27 @@
+// components/ExitToggle.jsx
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../../hooks/useAuth';
 import './ExitToggle.css';
 
 const ExitToggle = () => {
   const [isOpening, setIsOpening] = useState(false);
-  const navigate = useNavigate();
+  const { logout, isLoading } = useAuth();
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    if (isOpening || isLoading) return; // Prevenir doble click
+    
     setIsOpening(true);
     
-    // Simular logout delay para mostrar la animación
-    setTimeout(() => {
-      // Aquí irían las acciones de logout (limpiar tokens, etc.)
-      localStorage.removeItem('authToken'); // Ejemplo
-      sessionStorage.clear(); // Ejemplo
-      
-      // Redirigir a /aossadmin
-      navigate('/aossadmin');
-    }, 1200); // 800ms para mostrar la animación completa
+    try {
+      // Mostrar animación primero
+      setTimeout(async () => {
+        await logout(); // Usa el hook que maneja todo automáticamente
+        setIsOpening(false);
+      }, 800);
+    } catch (error) {
+      console.error('Error en logout:', error);
+      setIsOpening(false);
+    }
   };
 
   return (
@@ -25,8 +29,9 @@ const ExitToggle = () => {
       <button 
         className={`exit-toggle ${isOpening ? 'opening' : ''}`}
         onClick={handleLogout}
-        disabled={isOpening}
+        disabled={isOpening || isLoading}
         aria-label="Cerrar sesión"
+        title="Cerrar sesión"
       >
         {/* Marco de la puerta */}
         <div className="door-frame">
@@ -53,7 +58,7 @@ const ExitToggle = () => {
         
         {/* Texto de estado */}
         <span className="exit-text">
-          {isOpening ? 'Saliendo...' : 'Salir'}
+          {isOpening || isLoading ? 'Saliendo...' : 'Salir'}
         </span>
         
         {/* Efecto de luz cuando se abre */}
