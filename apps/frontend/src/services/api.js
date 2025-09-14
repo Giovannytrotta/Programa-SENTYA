@@ -41,9 +41,21 @@ class ApiService {
 
       const data = await response.json().catch(() => null);
       
+      // NO lanzar error si es 401 con datos de 2FA
+      if (response.status === 401 && data) {
+        if (data.requires_2fa_setup || data.requires_2fa) {
+          // Lanzar error especial con los datos
+          throw new ApiError(
+            data.message || 'Autenticación requerida',
+            401,
+            data // Pasar todos los datos
+          );
+        }
+      }
+      
       if (!response.ok) {
         throw new ApiError(
-          data?.message || `HTTP Error: ${response.status}`,
+          data?.message || data?.msg || `Error HTTP: ${response.status}`,
           response.status,
           data
         );
@@ -91,7 +103,7 @@ class ApiService {
   }
 
   async verify2FASetup(token) {
-    return this.request('/auth/verify-2fa-setup', {
+    return this.request('/auth/2fa/verify-setup', {
       method: 'POST',
       body: { token }
     });
