@@ -2,7 +2,7 @@ from flask import Blueprint, jsonify, request, session
 from app.extensions import db, jwt, bcrypt
 from app.models.user import SystemUser, UserRole
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity, unset_jwt_cookies, set_access_cookies
-from app.exceptions import ValidationError, UnauthorizedError, ForbiddenError, AppError, BadRequestError
+from app.exceptions import ValidationError, UnauthorizedError, ForbiddenError, AppError, BadRequestError,NotFoundError
 from app.utils.helper import build_qr_data_uri, issue_tokens_for_user
 from datetime import datetime, timezone, timedelta
 import re

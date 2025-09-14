@@ -219,14 +219,6 @@ const LoginAdminPage = () => {
 
             {/* Opciones adicionales */}
             <div className="form-options">
-              <label className="checkbox-container">
-                <input 
-                  type="checkbox" 
-                  disabled={isLoading}
-                />
-                <span className="checkmark"></span>
-                <span className="checkbox-text">Recordar sesión</span>
-              </label>
 
               <a href="#" className="forgot-password">
                 ¿Olvidaste tu contraseña?
