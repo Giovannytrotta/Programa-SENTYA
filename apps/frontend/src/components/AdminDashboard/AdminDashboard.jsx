@@ -2,31 +2,47 @@ import React, { useState, useEffect, useCallback } from "react"
 import { Link } from "react-router-dom"
 import "./AdminDashboard.css"
 import ExitToggle from "./ExitToggle"
+import EditUserModal from "./EditUserModal"
+import { useAdminUsers } from "../../hooks/useAdminUsers"
 
 const AdminDashboard = () => {
     const [activeSection, setActiveSection] = useState('overview')
     const [showRegisterModal, setShowRegisterModal] = useState(false)
-    const [users, setUsers] = useState([])
-    const [filteredUsers, setFilteredUsers] = useState([])
+    const [showEditModal, setShowEditModal] = useState(false)
+    const [showDeleteModal, setShowDeleteModal] = useState(false)
+    const [selectedUser, setSelectedUser] = useState(null)
     const [searchQuery, setSearchQuery] = useState('')
     const [roleFilter, setRoleFilter] = useState('all')
     const [statusFilter, setStatusFilter] = useState('all')
     const [currentPage, setCurrentPage] = useState(1)
-    const [loading, setLoading] = useState(false)
     const [currentStep, setCurrentStep] = useState(1)
     
     // Estado para responsive
     const [isMobile, setIsMobile] = useState(false)
     
+    // Hook para manejo de usuarios
+    const {
+        users,
+        filteredUsers,
+        roles,
+        loading,
+        stats,
+        createUser,
+        updateUserRole,
+        updateUserStatus,
+        deleteUser,
+        filterUsers
+    } = useAdminUsers();
+    
     const [newUser, setNewUser] = useState({
-        nombre: '',
-        apellidos: '',
+        name: '',
+        last_name: '',
         email: '',
         dni: '',
-        fechaNacimiento: '',
-        edad: '',
-        telefono: '',
-        role: 'usuario',
+        birth_date: '',
+        age: '',
+        phone: '',
+        rol: 'client',
         password: ''
     })
 
@@ -57,7 +73,7 @@ const AdminDashboard = () => {
             age--
         }
         
-        return age
+        return age.toString()
     }, [])
 
     // Función para generar contraseña aleatoria
@@ -87,11 +103,11 @@ const AdminDashboard = () => {
     const validateStep = useCallback((step) => {
         switch (step) {
             case 1:
-                return newUser.nombre && newUser.apellidos && newUser.dni && newUser.fechaNacimiento
+                return newUser.name && newUser.last_name && newUser.dni && newUser.birth_date
             case 2:
-                return newUser.email && newUser.telefono
+                return newUser.email && newUser.phone
             case 3:
-                return newUser.role && newUser.password
+                return newUser.rol && newUser.password
             default:
                 return false
         }
@@ -100,144 +116,36 @@ const AdminDashboard = () => {
     // Reiniciar formulario
     const resetForm = useCallback(() => {
         setNewUser({ 
-            nombre: '', 
-            apellidos: '', 
+            name: '', 
+            last_name: '', 
             email: '', 
             dni: '', 
-            fechaNacimiento: '', 
-            edad: '', 
-            telefono: '', 
-            role: 'usuario',
-            password: '' 
+            birth_date: '', 
+            age: '', 
+            phone: '', 
+            rol: 'client',
+            password: ''
         })
         setCurrentStep(1)
     }, [])
 
-    // Mock data actualizado con la nueva estructura
-    const mockUsers = [
-        { 
-            id: 1, 
-            nombre: 'Carlos', 
-            apellidos: 'Mendoza García', 
-            email: 'carlos@example.com', 
-            dni: '12345678A',
-            fechaNacimiento: '1985-03-15',
-            edad: 39,
-            telefono: '666123456',
-            role: 'admin', 
-            isOnline: true, 
-            joinDate: '2024-01-15' 
-        },
-        { 
-            id: 2, 
-            nombre: 'Ana', 
-            apellidos: 'García López', 
-            email: 'ana@example.com', 
-            dni: '87654321B',
-            fechaNacimiento: '1990-07-22',
-            edad: 34,
-            telefono: '666789123',
-            role: 'usuario', 
-            isOnline: false, 
-            joinDate: '2024-01-20' 
-        },
-        { 
-            id: 3, 
-            nombre: 'Miguel', 
-            apellidos: 'Torres Ruiz', 
-            email: 'miguel@example.com', 
-            dni: '11223344C',
-            fechaNacimiento: '1988-11-10',
-            edad: 35,
-            telefono: '666456789',
-            role: 'coordinador', 
-            isOnline: true, 
-            joinDate: '2024-02-01' 
-        },
-        { 
-            id: 4, 
-            nombre: 'Laura', 
-            apellidos: 'Ruiz Martínez', 
-            email: 'laura@example.com', 
-            dni: '44332211D',
-            fechaNacimiento: '1992-05-18',
-            edad: 32,
-            telefono: '666321654',
-            role: 'profesor', 
-            isOnline: true, 
-            joinDate: '2024-02-05' 
-        },
-        { 
-            id: 5, 
-            nombre: 'David', 
-            apellidos: 'López Fernández', 
-            email: 'david@example.com', 
-            dni: '55667788E',
-            fechaNacimiento: '1987-12-03',
-            edad: 36,
-            telefono: '666987654',
-            role: 'trabajador_css', 
-            isOnline: false, 
-            joinDate: '2024-02-10' 
-        },
-        { 
-            id: 6, 
-            nombre: 'Sofia', 
-            apellidos: 'Martinez González', 
-            email: 'sofia@example.com', 
-            dni: '99887766F',
-            fechaNacimiento: '1991-09-25',
-            edad: 32,
-            telefono: '666147258',
-            role: 'admin', 
-            isOnline: true, 
-            joinDate: '2024-02-15' 
-        }
-    ]
-
     // Función para obtener el nombre del rol en español
     const getRoleName = useCallback((role) => {
-        const roles = {
-            'admin': 'Administrador',
-            'coordinador': 'Coordinador',
-            'profesor': 'Profesor',
-            'trabajador_css': 'Trabajador CSS',
-            'usuario': 'Usuario'
+        const roleNames = {
+            'administrator': 'Administrador',
+            'coordinator': 'Coordinador', 
+            'professional': 'Profesor',
+            'css_technician': 'Trabajador CSS',
+            'client': 'Usuario'
         }
-        return roles[role] || role
+        return roleNames[role] || role
     }, [])
 
-    // Cargar datos iniciales
+    // Filtrar usuarios cuando cambian los filtros
     useEffect(() => {
-        setLoading(true)
-        setTimeout(() => {
-            setUsers(mockUsers)
-            setFilteredUsers(mockUsers)
-            setLoading(false)
-        }, 1000)
-    }, [])
-
-    // Filtrar usuarios
-    useEffect(() => {
-        let filtered = users.filter(user => {
-            const matchesSearch = 
-                user.nombre.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                user.apellidos.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                user.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                user.telefono.includes(searchQuery) ||
-                getRoleName(user.role).toLowerCase().includes(searchQuery.toLowerCase())
-            
-            const matchesRole = roleFilter === 'all' || user.role === roleFilter
-            const matchesStatus = statusFilter === 'all' || 
-                (statusFilter === 'online' && user.isOnline) ||
-                (statusFilter === 'offline' && !user.isOnline)
-            
-            return matchesSearch && matchesRole && matchesStatus
-        })
-        
-        setFilteredUsers(filtered)
+        filterUsers(searchQuery, roleFilter, statusFilter)
         setCurrentPage(1)
-    }, [searchQuery, roleFilter, statusFilter, users, getRoleName])
+    }, [searchQuery, roleFilter, statusFilter, filterUsers])
 
     // Limpiar búsqueda
     const clearSearch = useCallback(() => {
@@ -257,8 +165,8 @@ const AdminDashboard = () => {
         const age = calculateAge(birthDate)
         setNewUser(prev => ({
             ...prev,
-            fechaNacimiento: birthDate,
-            edad: age
+            birth_date: birthDate,
+            age: age
         }))
     }, [calculateAge])
 
@@ -268,8 +176,8 @@ const AdminDashboard = () => {
         setNewUser(prev => ({...prev, password}))
     }, [generateRandomPassword])
 
-    // Manejar envío del formulario
-    const handleRegisterSubmit = useCallback((e) => {
+    // Manejar envío del formulario de registro
+    const handleRegisterSubmit = useCallback(async (e) => {
         e.preventDefault()
         
         if (currentStep < totalSteps) {
@@ -279,50 +187,98 @@ const AdminDashboard = () => {
             return
         }
 
-        setLoading(true)
-        
-        setTimeout(() => {
-            const newUserData = {
-                id: users.length + 1,
-                ...newUser,
-                isOnline: false,
-                joinDate: new Date().toISOString().split('T')[0]
-            }
-            
-            setUsers(prev => [...prev, newUserData])
+        try {
+            await createUser(newUser)
             resetForm()
             setShowRegisterModal(false)
-            setLoading(false)
-        }, 1500)
-    }, [currentStep, totalSteps, validateStep, nextStep, newUser, users.length, resetForm])
+        } catch (error) {
+            // Los errores ya son manejados por el hook useAdminUsers
+            console.error('Error creating user:', error)
+        }
+    }, [currentStep, totalSteps, validateStep, nextStep, newUser, createUser, resetForm])
+
+    // Función para manejar la edición de usuarios
+    const handleSaveUser = useCallback(async (userId, userData) => {
+        try {
+            // Por ahora, solo actualizamos el rol ya que es lo que funciona
+            if (userData.rol !== filteredUsers.find(u => u.id === userId)?.rol) {
+                await updateUserRole(userId, userData.rol)
+            }
+            
+            if (userData.is_active !== filteredUsers.find(u => u.id === userId)?.is_active) {
+                await updateUserStatus(userId, userData.is_active)
+            }
+            
+            setShowEditModal(false)
+            setSelectedUser(null)
+        } catch (error) {
+            console.error('Error saving user:', error)
+            throw error // Re-lanzar para que el modal lo maneje
+        }
+    }, [filteredUsers, updateUserRole, updateUserStatus])
+
+    // Funciones para modales de edición
+    const handleEditUser = useCallback((user) => {
+        setSelectedUser(user)
+        setShowEditModal(true)
+    }, [])
+
+    const handleDeleteUser = useCallback((user) => {
+        setSelectedUser(user)
+        setShowDeleteModal(true)
+    }, [])
+
+    // Confirmar eliminación
+    const confirmDelete = useCallback(async (force = false) => {
+        if (!selectedUser) return
+        
+        try {
+            await deleteUser(selectedUser.id, force)
+            setShowDeleteModal(false)
+            setSelectedUser(null)
+        } catch (error) {
+            console.error('Error deleting user:', error)
+        }
+    }, [selectedUser, deleteUser])
+
+    // Cambiar rol de usuario
+    const handleRoleChange = useCallback(async (userId, newRole) => {
+        try {
+            await updateUserRole(userId, newRole)
+        } catch (error) {
+            console.error('Error updating role:', error)
+        }
+    }, [updateUserRole])
+
+    // Cambiar estado de usuario
+    const handleStatusChange = useCallback(async (userId, isActive) => {
+        try {
+            await updateUserStatus(userId, isActive)
+        } catch (error) {
+            console.error('Error updating status:', error)
+        }
+    }, [updateUserStatus])
 
     // Calcular paginación
     const totalPages = Math.ceil(filteredUsers.length / usersPerPage)
     const startIndex = (currentPage - 1) * usersPerPage
     const currentUsers = filteredUsers.slice(startIndex, startIndex + usersPerPage)
 
-    // Estadísticas
-    const stats = {
-        totalUsers: users.length,
-        onlineUsers: users.filter(u => u.isOnline).length,
-        admins: users.filter(u => u.role === 'admin').length,
-        coordinadores: users.filter(u => u.role === 'coordinador').length,
-        profesores: users.filter(u => u.role === 'profesor').length,
-        trabajadoresCSS: users.filter(u => u.role === 'trabajador_css').length
-    }
-
     // Manejo de teclado para modal
     useEffect(() => {
         const handleKeyDown = (e) => {
-            if (showRegisterModal && e.key === 'Escape') {
+            if ((showRegisterModal || showEditModal || showDeleteModal) && e.key === 'Escape') {
                 setShowRegisterModal(false)
+                setShowEditModal(false)
+                setShowDeleteModal(false)
                 resetForm()
+                setSelectedUser(null)
             }
         }
 
         document.addEventListener('keydown', handleKeyDown)
         return () => document.removeEventListener('keydown', handleKeyDown)
-    }, [showRegisterModal, resetForm])
+    }, [showRegisterModal, showEditModal, showDeleteModal, resetForm])
 
     return (
         <div className="dashboard-container">
@@ -364,7 +320,7 @@ const AdminDashboard = () => {
                     </nav>
 
                     <div className="header-actions">
-                         <ExitToggle />
+                        <ExitToggle />
                     </div>
                 </div>
             </header>
@@ -467,6 +423,7 @@ const AdminDashboard = () => {
                                     <button 
                                         className="action-button"
                                         onClick={() => setShowRegisterModal(true)}
+                                        disabled={loading}
                                     >
                                         Nuevo Usuario
                                     </button>
@@ -508,6 +465,7 @@ const AdminDashboard = () => {
                                 <button 
                                     className="add-user-button"
                                     onClick={() => setShowRegisterModal(true)}
+                                    disabled={loading}
                                 >
                                     <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                         <line x1="12" y1="5" x2="12" y2="19" stroke="currentColor" strokeWidth="2"/>
@@ -525,15 +483,17 @@ const AdminDashboard = () => {
                                     </svg>
                                     <input
                                         type="text"
-                                        placeholder="Buscar por nombre, apellidos, email, teléfono o rol..."
+                                        placeholder="Buscar por nombre, apellidos, email, teléfono o DNI..."
                                         value={searchQuery}
                                         onChange={(e) => setSearchQuery(e.target.value)}
                                         className="search-input"
+                                        disabled={loading}
                                     />
                                     {searchQuery && (
                                         <button 
                                             className="clear-search"
                                             onClick={clearSearch}
+                                            disabled={loading}
                                         >
                                             <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                                 <line x1="18" y1="6" x2="6" y2="18" stroke="currentColor" strokeWidth="2"/>
@@ -551,13 +511,14 @@ const AdminDashboard = () => {
                                             value={roleFilter}
                                             onChange={(e) => setRoleFilter(e.target.value)}
                                             className="filter-select"
+                                            disabled={loading}
                                         >
                                             <option value="all">Todos los roles</option>
-                                            <option value="admin">Administrador</option>
-                                            <option value="coordinador">Coordinador</option>
-                                            <option value="profesor">Profesor</option>
-                                            <option value="trabajador_css">Trabajador CSS</option>
-                                            <option value="usuario">Usuario</option>
+                                            <option value="administrator">Administrador</option>
+                                            <option value="coordinator">Coordinador</option>
+                                            <option value="professional">Profesor</option>
+                                            <option value="css_technician">Trabajador CSS</option>
+                                            <option value="client">Usuario</option>
                                         </select>
                                     </div>
 
@@ -568,10 +529,11 @@ const AdminDashboard = () => {
                                             value={statusFilter}
                                             onChange={(e) => setStatusFilter(e.target.value)}
                                             className="filter-select"
+                                            disabled={loading}
                                         >
                                             <option value="all">Todos</option>
-                                            <option value="online">En línea</option>
-                                            <option value="offline">Desconectado</option>
+                                            <option value="active">Activos</option>
+                                            <option value="inactive">Inactivos</option>
                                         </select>
                                     </div>
 
@@ -579,12 +541,12 @@ const AdminDashboard = () => {
                                         <button 
                                             className="clear-filters"
                                             onClick={clearFilters}
+                                            disabled={loading}
                                         >
                                             Limpiar filtros
                                         </button>
                                     )}
                                 </div>
-
                             </div>
 
                             {loading ? (
@@ -601,8 +563,8 @@ const AdminDashboard = () => {
                                                     <th>Usuario</th>
                                                     <th>Email</th>
                                                     <th>Teléfono</th>
+                                                    <th>DNI/NIE</th>
                                                     <th>Edad</th>
-                                                    <th>Fecha Nac.</th>
                                                     <th>Rol</th>
                                                     <th>Estado</th>
                                                     <th>Registro</th>
@@ -614,38 +576,74 @@ const AdminDashboard = () => {
                                                     <tr key={user.id} className="user-row">
                                                         <td className="user-info">
                                                             <div className="user-avatar">
-                                                                {user.nombre.charAt(0)}{user.apellidos.charAt(0)}
+                                                                {user.name?.charAt(0)?.toUpperCase()}{user.last_name?.charAt(0)?.toUpperCase()}
                                                             </div>
                                                             <div className="user-details">
-                                                                <span className="user-name">{user.nombre} {user.apellidos}</span>
+                                                                <span className="user-name">{user.name} {user.last_name}</span>
                                                             </div>
                                                         </td>
                                                         <td className="user-email">{user.email}</td>
-                                                        <td className="user-phone">{user.telefono}</td>
-                                                        <td className="user-age">{user.edad}</td>
-                                                        <td className="user-birth">{user.fechaNacimiento}</td>
-                                                        <td className="user-role"> 
-                                                            <span className={`role-badge ${user.role}`}>
-                                                                {getRoleName(user.role)}
-                                                            </span>
+                                                        <td className="user-phone">{user.phone}</td>
+                                                        <td className="user-dni">{user.dni}</td>
+                                                        <td className="user-age">{user.age}</td>
+                                                        <td className="user-role">
+                                                            <div className={`role-badge ${user.rol}`}>
+                                                                <select
+                                                                    value={user.rol}
+                                                                    onChange={(e) => handleRoleChange(user.id, e.target.value)}
+                                                                    disabled={loading}
+                                                                    className="role-select"
+                                                                >
+                                                                    <option value="administrator">Administrador</option>
+                                                                    <option value="coordinator">Coordinador</option>
+                                                                    <option value="professional">Profesor</option>
+                                                                    <option value="css_technician">Trabajador CSS</option>
+                                                                    <option value="client">Usuario</option>
+                                                                </select>
+                                                            </div>
                                                         </td>
                                                         <td>
                                                             <div className="status-indicator">
-                                                                <div className={`status-dot ${user.isOnline ? 'online' : 'offline'}`}></div>
-                                                                <span className="status-text">
-                                                                    {user.isOnline ? 'En línea' : 'Desconectado'}
-                                                                </span>
+                                                                <button
+                                                                    onClick={() => handleStatusChange(user.id, !user.is_active)}
+                                                                    disabled={loading}
+                                                                    style={{
+                                                                        background: 'none',
+                                                                        border: 'none',
+                                                                        cursor: 'pointer',
+                                                                        display: 'flex',
+                                                                        alignItems: 'center',
+                                                                        gap: '8px'
+                                                                    }}
+                                                                >
+                                                                    <div className={`status-dot ${user.is_active ? 'online' : 'offline'}`}></div>
+                                                                    <span className="status-text">
+                                                                        {user.is_active ? 'Activo' : 'Inactivo'}
+                                                                    </span>
+                                                                </button>
                                                             </div>
                                                         </td>
-                                                        <td className="join-date">{user.joinDate}</td>
+                                                        <td className="join-date">
+                                                            {user.created_at ? new Date(user.created_at).toLocaleDateString() : '-'}
+                                                        </td>
                                                         <td className="user-actions">
-                                                            <button className="action-btn edit">
+                                                            <button 
+                                                                className="action-btn edit"
+                                                                onClick={() => handleEditUser(user)}
+                                                                disabled={loading}
+                                                                title="Editar usuario"
+                                                            >
                                                                 <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                                                     <path d="M11 4H4C3.46957 4 2.96086 4.21071 2.58579 4.58579C2.21071 4.96086 2 5.46957 2 6V20C2 20.5304 2.21071 21.0391 2.58579 21.4142C2.96086 21.7893 3.46957 22 4 22H18C18.5304 22 19.0391 21.7893 19.4142 21.4142C19.7893 21.0391 20 20.5304 20 20V13" stroke="currentColor" strokeWidth="2"/>
                                                                     <path d="M18.5 2.49998C18.8978 2.10216 19.4374 1.87866 20 1.87866C20.5626 1.87866 21.1022 2.10216 21.5 2.49998C21.8978 2.89781 22.1213 3.43737 22.1213 3.99998C22.1213 4.56259 21.8978 5.10216 21.5 5.49998L12 15L8 16L9 12L18.5 2.49998Z" stroke="currentColor" strokeWidth="2"/>
                                                                 </svg>
                                                             </button>
-                                                            <button className="action-btn delete">
+                                                            <button 
+                                                                className="action-btn delete"
+                                                                onClick={() => handleDeleteUser(user)}
+                                                                disabled={loading}
+                                                                title="Eliminar usuario"
+                                                            >
                                                                 <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                                                     <polyline points="3,6 5,6 21,6" stroke="currentColor" strokeWidth="2"/>
                                                                     <path d="M19 6V20C19 20.5304 18.7893 21.0391 18.4142 21.4142C18.0391 21.7893 17.5304 22 17 22H7C6.46957 22 5.96086 21.7893 5.58579 21.4142C5.21071 21.0391 5 20.5304 5 20V6M8 6V4C8 3.46957 8.21071 2.96086 8.58579 2.58579C8.96086 2.21071 9.46957 2 10 2H14C14.5304 2 15.0391 2.21071 15.4142 2.58579C15.7893 2.96086 16 3.46957 16 4V6" stroke="currentColor" strokeWidth="2"/>
@@ -663,7 +661,7 @@ const AdminDashboard = () => {
                                             <button 
                                                 className="pagination-btn"
                                                 onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
-                                                disabled={currentPage === 1}
+                                                disabled={currentPage === 1 || loading}
                                             >
                                                 <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                                     <polyline points="15,18 9,12 15,6" stroke="currentColor" strokeWidth="2"/>
@@ -687,6 +685,7 @@ const AdminDashboard = () => {
                                                         key={pageNum}
                                                         className={`pagination-btn ${currentPage === pageNum ? 'active' : ''}`}
                                                         onClick={() => setCurrentPage(pageNum)}
+                                                        disabled={loading}
                                                     >
                                                         {pageNum}
                                                     </button>
@@ -696,7 +695,7 @@ const AdminDashboard = () => {
                                             <button 
                                                 className="pagination-btn"
                                                 onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
-                                                disabled={currentPage === totalPages}
+                                                disabled={currentPage === totalPages || loading}
                                             >
                                                 <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                                     <polyline points="9,18 15,12 9,6" stroke="currentColor" strokeWidth="2"/>
@@ -711,7 +710,7 @@ const AdminDashboard = () => {
                 </div>
             </main>
 
-            {/* Modal de registro de usuario - Multi-step */}
+            {/* Modal de registro de usuario */}
             {showRegisterModal && (
                 <div className="modal-overlay">
                     <div className="modal-container">
@@ -726,6 +725,7 @@ const AdminDashboard = () => {
                                     setShowRegisterModal(false)
                                     resetForm()
                                 }}
+                                disabled={loading}
                             >
                                 <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                     <line x1="18" y1="6" x2="6" y2="18" stroke="currentColor" strokeWidth="2"/>
@@ -768,33 +768,35 @@ const AdminDashboard = () => {
                                     
                                     <div className="form-row">
                                         <div className="form-group">
-                                            <label htmlFor="nombre">Nombre *</label>
+                                            <label htmlFor="name">Nombre *</label>
                                             <input
                                                 type="text"
-                                                id="nombre"
+                                                id="name"
                                                 required
-                                                value={newUser.nombre}
-                                                onChange={(e) => setNewUser(prev => ({...prev, nombre: e.target.value}))}
+                                                value={newUser.name}
+                                                onChange={(e) => setNewUser(prev => ({...prev, name: e.target.value}))}
                                                 placeholder="Nombre"
+                                                disabled={loading}
                                             />
                                         </div>
                                         
                                         <div className="form-group">
-                                            <label htmlFor="apellidos">Apellidos *</label>
+                                            <label htmlFor="last_name">Apellidos *</label>
                                             <input
                                                 type="text"
-                                                id="apellidos"
+                                                id="last_name"
                                                 required
-                                                value={newUser.apellidos}
-                                                onChange={(e) => setNewUser(prev => ({...prev, apellidos: e.target.value}))}
+                                                value={newUser.last_name}
+                                                onChange={(e) => setNewUser(prev => ({...prev, last_name: e.target.value}))}
                                                 placeholder="Apellidos"
+                                                disabled={loading}
                                             />
                                         </div>
                                     </div>
 
                                     <div className="form-row">
                                         <div className="form-group">
-                                            <label htmlFor="dni">DNI *</label>
+                                            <label htmlFor="dni">DNI/NIE *</label>
                                             <input
                                                 type="text"
                                                 id="dni"
@@ -803,27 +805,29 @@ const AdminDashboard = () => {
                                                 onChange={(e) => setNewUser(prev => ({...prev, dni: e.target.value}))}
                                                 placeholder="12345678A"
                                                 maxLength="9"
+                                                disabled={loading}
                                             />
                                         </div>
                                         
                                         <div className="form-group">
-                                            <label htmlFor="fechaNacimiento">Fecha de Nacimiento *</label>
+                                            <label htmlFor="birth_date">Fecha de Nacimiento *</label>
                                             <input
                                                 type="date"
-                                                id="fechaNacimiento"
+                                                id="birth_date"
                                                 required
-                                                value={newUser.fechaNacimiento}
+                                                value={newUser.birth_date}
                                                 onChange={handleBirthDateChange}
+                                                disabled={loading}
                                             />
                                         </div>
                                     </div>
 
                                     <div className="form-group">
-                                        <label htmlFor="edad">Edad</label>
+                                        <label htmlFor="age">Edad</label>
                                         <input
                                             type="number"
-                                            id="edad"
-                                            value={newUser.edad}
+                                            id="age"
+                                            value={newUser.age}
                                             readOnly
                                             placeholder="Se calcula automáticamente"
                                             className="readonly-input"
@@ -850,18 +854,20 @@ const AdminDashboard = () => {
                                             value={newUser.email}
                                             onChange={(e) => setNewUser(prev => ({...prev, email: e.target.value}))}
                                             placeholder="email@ejemplo.com"
+                                            disabled={loading}
                                         />
                                     </div>
                                     
                                     <div className="form-group">
-                                        <label htmlFor="telefono">Número de Teléfono *</label>
+                                        <label htmlFor="phone">Número de Teléfono *</label>
                                         <input
                                             type="tel"
-                                            id="telefono"
+                                            id="phone"
                                             required
-                                            value={newUser.telefono}
-                                            onChange={(e) => setNewUser(prev => ({...prev, telefono: e.target.value}))}
+                                            value={newUser.phone}
+                                            onChange={(e) => setNewUser(prev => ({...prev, phone: e.target.value}))}
                                             placeholder="666123456"
+                                            disabled={loading}
                                         />
                                     </div>
                                 </div>
@@ -876,17 +882,18 @@ const AdminDashboard = () => {
                                     </div>
                                     
                                     <div className="form-group">
-                                        <label htmlFor="role">Rol del Usuario *</label>
+                                        <label htmlFor="rol">Rol del Usuario *</label>
                                         <select
-                                            id="role"
-                                            value={newUser.role}
-                                            onChange={(e) => setNewUser(prev => ({...prev, role: e.target.value}))}
+                                            id="rol"
+                                            value={newUser.rol}
+                                            onChange={(e) => setNewUser(prev => ({...prev, rol: e.target.value}))}
+                                            disabled={loading}
                                         >
-                                            <option value="usuario">Usuario</option>
-                                            <option value="trabajador_css">Trabajador CSS</option>
-                                            <option value="profesor">Profesor</option>
-                                            <option value="coordinador">Coordinador</option>
-                                            <option value="admin">Administrador</option>
+                                            <option value="client">Usuario</option>
+                                            <option value="css_technician">Trabajador CSS</option>
+                                            <option value="professional">Profesor</option>
+                                            <option value="coordinator">Coordinador</option>
+                                            <option value="administrator">Administrador</option>
                                         </select>
                                     </div>
 
@@ -900,11 +907,13 @@ const AdminDashboard = () => {
                                                 value={newUser.password}
                                                 onChange={(e) => setNewUser(prev => ({...prev, password: e.target.value}))}
                                                 placeholder="Contraseña generada automáticamente"
+                                                disabled={loading}
                                             />
                                             <button 
                                                 type="button" 
                                                 className="generate-password-btn"
                                                 onClick={handleGeneratePassword}
+                                                disabled={loading}
                                             >
                                                 <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                                     <path d="M1 4V10H7" stroke="currentColor" strokeWidth="2"/>
@@ -925,7 +934,7 @@ const AdminDashboard = () => {
                                         <div className="summary-grid">
                                             <div className="summary-item">
                                                 <span className="summary-label">Nombre:</span>
-                                                <span className="summary-value">{newUser.nombre} {newUser.apellidos}</span>
+                                                <span className="summary-value">{newUser.name} {newUser.last_name}</span>
                                             </div>
                                             <div className="summary-item">
                                                 <span className="summary-label">Email:</span>
@@ -933,15 +942,19 @@ const AdminDashboard = () => {
                                             </div>
                                             <div className="summary-item">
                                                 <span className="summary-label">Teléfono:</span>
-                                                <span className="summary-value">{newUser.telefono}</span>
+                                                <span className="summary-value">{newUser.phone}</span>
+                                            </div>
+                                            <div className="summary-item">
+                                                <span className="summary-label">DNI:</span>
+                                                <span className="summary-value">{newUser.dni}</span>
                                             </div>
                                             <div className="summary-item">
                                                 <span className="summary-label">Edad:</span>
-                                                <span className="summary-value">{newUser.edad} años</span>
+                                                <span className="summary-value">{newUser.age} años</span>
                                             </div>
                                             <div className="summary-item">
                                                 <span className="summary-label">Rol:</span>
-                                                <span className="summary-value">{getRoleName(newUser.role)}</span>
+                                                <span className="summary-value">{getRoleName(newUser.rol)}</span>
                                             </div>
                                         </div>
                                     </div>
@@ -956,6 +969,7 @@ const AdminDashboard = () => {
                                             type="button" 
                                             className="nav-button prev-button"
                                             onClick={prevStep}
+                                            disabled={loading}
                                         >
                                             <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                                 <polyline points="15,18 9,12 15,6" stroke="currentColor" strokeWidth="2"/>
@@ -973,6 +987,7 @@ const AdminDashboard = () => {
                                             setShowRegisterModal(false)
                                             resetForm()
                                         }}
+                                        disabled={loading}
                                     >
                                         Cancelar
                                     </button>
@@ -1006,6 +1021,146 @@ const AdminDashboard = () => {
                     </div>
                 </div>
             )}
+
+            {/* Modal de confirmación de eliminación */}
+            {showDeleteModal && selectedUser && (
+                <div className="modal-overlay">
+                    <div className="modal-container" style={{ maxWidth: '480px' }}>
+                        <div className="modal-header">
+                            <div className="modal-title-section">
+                                <h2>Eliminar Usuario</h2>
+                            </div>
+                            <button 
+                                className="close-button"
+                                onClick={() => {
+                                    setShowDeleteModal(false)
+                                    setSelectedUser(null)
+                                }}
+                                disabled={loading}
+                            >
+                                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <line x1="18" y1="6" x2="6" y2="18" stroke="currentColor" strokeWidth="2"/>
+                                    <line x1="6" y1="6" x2="18" y2="18" stroke="currentColor" strokeWidth="2"/>
+                                </svg>
+                            </button>
+                        </div>
+
+                        <div style={{ padding: '0 0 32px 0' }}>
+                            <div style={{
+                                background: 'rgba(239, 68, 68, 0.1)',
+                                border: '1px solid rgba(239, 68, 68, 0.2)',
+                                borderRadius: '16px',
+                                padding: '20px',
+                                marginBottom: '24px',
+                                textAlign: 'center'
+                            }}>
+                                <div style={{
+                                    width: '48px',
+                                    height: '48px',
+                                    background: 'rgba(239, 68, 68, 0.2)',
+                                    borderRadius: '50%',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    margin: '0 auto 16px',
+                                    color: '#ef4444'
+                                }}>
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                        <path d="M3 6h18m-2 0v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6m3 0V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/>
+                                        <line x1="10" y1="11" x2="10" y2="17"/>
+                                        <line x1="14" y1="11" x2="14" y2="17"/>
+                                    </svg>
+                                </div>
+                                <h3 style={{
+                                    color: 'rgba(248, 250, 252, 0.95)',
+                                    margin: '0 0 8px 0',
+                                    fontSize: '1.25rem',
+                                    fontWeight: '700'
+                                }}>
+                                    ¿Eliminar usuario?
+                                </h3>
+                                <p style={{
+                                    color: 'rgba(248, 250, 252, 0.7)',
+                                    margin: '0',
+                                    lineHeight: '1.5'
+                                }}>
+                                    Estás a punto de eliminar a <strong style={{ color: 'rgba(248, 250, 252, 0.9)' }}>
+                                    {selectedUser.name} {selectedUser.last_name}
+                                    </strong>
+                                </p>
+                            </div>
+
+                            <div style={{ display: 'flex', gap: '12px', justifyContent: 'center' }}>
+                                <button 
+                                    onClick={() => confirmDelete(false)}
+                                    disabled={loading}
+                                    style={{
+                                        padding: '12px 24px',
+                                        background: 'rgba(248, 250, 252, 0.1)',
+                                        border: '1px solid rgba(248, 250, 252, 0.2)',
+                                        borderRadius: '12px',
+                                        color: 'rgba(248, 250, 252, 0.8)',
+                                        fontWeight: '600',
+                                        cursor: 'pointer',
+                                        transition: 'all 0.3s ease'
+                                    }}
+                                >
+                                    {loading ? 'Desactivando...' : 'Solo Desactivar'}
+                                </button>
+                                
+                                <button 
+                                    onClick={() => confirmDelete(true)}
+                                    disabled={loading}
+                                    style={{
+                                        padding: '12px 24px',
+                                        background: 'linear-gradient(135deg, #ef4444, #dc2626)',
+                                        border: 'none',
+                                        borderRadius: '12px',
+                                        color: 'white',
+                                        fontWeight: '700',
+                                        cursor: 'pointer',
+                                        transition: 'all 0.3s ease'
+                                    }}
+                                >
+                                    {loading ? 'Eliminando...' : 'Eliminar Definitivamente'}
+                                </button>
+                                
+                                <button 
+                                    onClick={() => {
+                                        setShowDeleteModal(false)
+                                        setSelectedUser(null)
+                                    }}
+                                    disabled={loading}
+                                    style={{
+                                        padding: '12px 24px',
+                                        background: 'rgba(100, 116, 139, 0.1)',
+                                        border: '1px solid rgba(100, 116, 139, 0.2)',
+                                        borderRadius: '12px',
+                                        color: 'rgba(100, 116, 139, 0.8)',
+                                        fontWeight: '600',
+                                        cursor: 'pointer',
+                                        transition: 'all 0.3s ease'
+                                    }}
+                                >
+                                    Cancelar
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* Modal de edición de usuario */}
+            <EditUserModal
+                user={selectedUser}
+                isOpen={showEditModal}
+                onClose={() => {
+                    setShowEditModal(false)
+                    setSelectedUser(null)
+                }}
+                onSave={handleSaveUser}
+                loading={loading}
+            />
         </div>
     )
 }
