@@ -1,222 +1,375 @@
-from flask import Blueprint, jsonify,request
+from flask import Blueprint, jsonify, request, session
 from app.extensions import db, jwt, bcrypt
-from app.models.user import SystemUser,UserRole
-from flask_jwt_extended import create_access_token,jwt_required,get_jwt_identity,JWTManager,unset_jwt_cookies,set_access_cookies
-from app.exceptions import ValidationError,UnauthorizedError,ForbiddenError,AppError,BadRequestError
-from app.utils.helper import build_qr_data_uri,issue_tokens_for_user
-from datetime import datetime,timezone
-from datetime import datetime as dt
+from app.models.user import SystemUser, UserRole
+from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity, unset_jwt_cookies, set_access_cookies,decode_token
+from app.exceptions import ValidationError, UnauthorizedError, ForbiddenError, AppError, BadRequestError,NotFoundError
+from app.utils.helper import build_qr_data_uri, issue_tokens_for_user
+from datetime import datetime, timezone, timedelta
 import re
 from functools import wraps
+from app.services.mail_service import send_reset_password_email
 
-auth_bp = Blueprint("auth", __name__,url_prefix= '/auth')
+auth_bp = Blueprint("auth", __name__, url_prefix='/auth')
 
-#Por mejorar o refactorizar para una segunda version posible crear un modulo solo de admin.
+# Decorador para admin
 def requires_admin(f):
-    """Decorador para endpoints que solo puede usar el admin""" #NOTA POR MEJORAR...
+    """Decorador para endpoints que solo puede usar el admin"""
     @wraps(f)
     @jwt_required()
     def decorated_function(*args, **kwargs):
         user_id = int(get_jwt_identity())
         user = SystemUser.query.get(user_id)
         if not user or not user.is_active:
-            raise UnauthorizedError("User not found")
+            raise UnauthorizedError("Usuario no encontrado o inactivo")
         if user.rol != UserRole.ADMINISTRATOR:
-            raise ForbiddenError("admin access required")
-        return f(*args,**kwargs)
+            raise ForbiddenError("Se requiere acceso de administrador")
+        return f(*args, **kwargs)
     return decorated_function
 
 # =========================
-# lISTA DE ROLES
+# LISTA DE ROLES
 # =========================
-
-@auth_bp.route("/roles",methods=["GET"])
+@auth_bp.route("/roles", methods=["GET"])
 def list_roles():
     roles = [r.value for r in UserRole if r != UserRole.PENDING]
     return jsonify({"roles": roles})
 
 # =========================================================================================================
-#                                           REGISTRO
+#                                          Login con 2FA MEJORADO
 # =========================================================================================================
+@auth_bp.route("/login", methods=["POST"])
+def login():
+    data = request.get_json(silent=True) or {}
+    email = data.get("email", "").strip().lower()
+    password = data.get("password", "")
+    token_2fa = (data.get('token_2fa') or '').strip()
+    
+    # Validación de campos requeridos
+    if not email or not password:
+        raise UnauthorizedError("Email y contraseña son requeridos")
+    
+    # Verificar si el usuario existe
+    user = SystemUser.query.filter_by(email=email).first()
+    if not user:
+        raise UnauthorizedError("Credenciales inválidas")
+    
+    # Verificar contraseña
+    if not bcrypt.check_password_hash(user.password, password):
+        raise UnauthorizedError("Credenciales inválidas")
+    
+    # Verificar si el usuario está activo o es su primer login
+    if not user.is_active:
+        if user.last_login is None:
+            # Primer login - activar automáticamente
+            user.is_active = True
+        else:
+            raise UnauthorizedError("Usuario inactivo. Contacte al administrador.")
+    
+    # IMPORTANTE: Si es la primera vez (no tiene 2FA configurado), forzar configuración
+    if not user.two_factor_enabled or not user.two_factor_secret:
+        # Guardar credenciales temporalmente en sesión para después del setup 2FA
+        session['temp_email'] = email
+        session['temp_user_id'] = user.id
+        
+        # NO DAR ACCESO - Devolver 401 con flag especial
+        return jsonify({
+            "requires_2fa_setup": True,
+            "message": "Primera vez: Debe configurar autenticación de dos factores",
+            "user_id": user.id
+        }), 401  # 401 
+    
+    # Si tiene 2FA habilitado, SIEMPRE verificar el token
+    if user.two_factor_enabled:
+        if not token_2fa:
+            # No se proporcionó token 2FA - NO DAR ACCESO
+            return jsonify({
+                "requires_2fa": True,
+                "message": "Se requiere código de autenticación de dos factores"
+            }), 401  # CAMBIO CLAVE: 401 en lugar de 200
+        
+        # Verificar el token 2FA
+        if not user.verify_2fa_token(token_2fa):
+            raise UnauthorizedError("Código de autenticación inválido")
+    
+    # SOLO si pasó todas las verificaciones: Login exitoso
+    user.last_login = datetime.now(timezone.utc)
+    db.session.commit()
+    
+    # Generar token JWT
+    access_token = issue_tokens_for_user(user)
+    
+    response = jsonify({
+        "msg": "Login successful",
+        "user": {
+            "id": user.id,
+            "email": user.email,
+            "name": user.name,
+            "last_name": user.last_name,
+            "rol": user.rol.value
+        },
+        "role": user.rol.value
+    })
+    
+    set_access_cookies(response, access_token)
+    return response
 
-@auth_bp.route("/register",methods=["POST"])
+# =========================================================================================================
+#                               2FA setup 
+# =========================================================================================================
+@auth_bp.route('/2fa/setup', methods=["GET"])
+def twofa_setup():
+    """Setup inicial de 2FA o regeneración del QR"""
+    # Puede ser llamado sin JWT si es el setup inicial
+    user_id = None
+    
+    # Intentar obtener user desde JWT
+    try:
+        from flask_jwt_extended import get_jwt_identity
+        user_id = int(get_jwt_identity())
+    except:
+        # Si no hay JWT, buscar en sesión (setup inicial)
+        user_id = session.get('temp_user_id')
+    
+    if not user_id:
+        raise UnauthorizedError("No se pudo identificar al usuario")
+    
+    user = SystemUser.query.get(user_id)
+    if not user:
+        raise UnauthorizedError("Usuario no encontrado")
+    
+    # Generar secret si no existe
+    user.generate_2fa_secret()
+    uri = user.get_2fa_uri()
+    
+    if not uri:
+        raise AppError("No se pudo generar el código QR para 2FA")
+    
+    qr = build_qr_data_uri(uri)
+    
+    return jsonify({
+        "otpauth_uri": uri,
+        "qr_data_uri": qr,
+        "message": "Escanea el código QR con tu aplicación de autenticación"
+    })
+
+@auth_bp.route('/2fa/verify-setup', methods=['POST'])
+def verify_2fa_setup():
+    """Verificar y habilitar 2FA durante el setup inicial"""
+    data = request.get_json(silent=True) or {}
+    token = (data.get("token") or "").strip()
+    
+    if not token:
+        raise ValidationError("El código es requerido")
+    
+    # Obtener usuario desde sesión o JWT
+    user_id = session.get('temp_user_id')
+    
+    if not user_id:
+        try:
+            from flask_jwt_extended import get_jwt_identity
+            user_id = int(get_jwt_identity())
+        except:
+            raise UnauthorizedError("Sesión expirada. Por favor, inicie sesión nuevamente.")
+    
+    user = SystemUser.query.get(user_id)
+    if not user:
+        raise UnauthorizedError("Usuario no encontrado")
+    
+    # Verificar el token
+    if not user.verify_2fa_token(token):
+        raise UnauthorizedError("Código de verificación inválido")
+    
+    
+    
+    # Habilitar 2FA
+    user.two_factor_enabled = True
+    user.two_factor_enabled_at = datetime.now(timezone.utc)
+    
+    # Si es el setup inicial, completar el login
+    if session.get('temp_email'):
+        user.last_login = datetime.now(timezone.utc)
+        user.is_active = True
+        db.session.commit()
+        
+        # Limpiar sesión temporal
+        session.pop('temp_email', None)
+        session.pop('temp_user_id', None)
+        
+        # Generar token JWT
+        access_token = issue_tokens_for_user(user)
+        
+        response = jsonify({
+            "msg": "2FA configurado exitosamente. Inicio de sesión completo.",
+            "user": {
+                "id": user.id,
+                "email": user.email,
+                "name": user.name,
+                "last_name": user.last_name,
+                "rol": user.rol.value
+            },
+            "role": user.rol.value,
+            "setup_complete": True
+        })
+        
+        set_access_cookies(response, access_token)
+        return response
+    
+    # Si es una reconfiguración normal
+    db.session.commit()
+    return jsonify({"msg": "2FA actualizado exitosamente"}), 200
+    
+    
+#POR VERIFICAR LO DEJARE COMENTADO Y VERIFICAR EL FLUJO PARA LLEVARLO A CABO 
+    
+# @auth_bp.route('/2fa/disable', methods=['POST'])
+# def twofa_disable():
+#     # Intentar obtener user desde JWT
+#     try:
+#         user_id = get_jwt_identity()
+#     except:
+#         user_id = None
+
+#     # Si no hay JWT, buscar en sesión temporal (login pendiente 2FA)
+#     if not user_id:
+#         user_id = session.get('temp_user_id')
+
+#     if not user_id:
+#         raise UnauthorizedError("Usuario no autenticado")
+
+#     user = SystemUser.query.get(user_id)
+#     if not user:
+#         raise UnauthorizedError("Usuario no encontrado")
+
+#     # Opcional: pedir password reciente desde request.json
+#     data = request.get_json() or {}
+#     password = data.get("password")
+#     if not bcrypt.check_password_hash(user.password, password):
+#         raise UnauthorizedError("Contraseña incorrecta")
+
+#     user.two_factor_enabled = False
+#     user.two_factor_secret = None
+#     db.session.commit()
+
+#     return jsonify({"enabled": False}), 200
+    
+
+# =========================================================================================================
+#                                           REGISTRO MEJORADO
+# =========================================================================================================
+@auth_bp.route("/register", methods=["POST"])
 @requires_admin
 def register():
     data = request.get_json(silent=True) or {}
     if data is None:
-        raise BadRequestError("Invalid JSON data")
-    password = data.get("password") or ""
+        raise BadRequestError("Datos JSON inválidos")
     
-    required_fields = ['email', 'password', 'name', 'last_name', 'dni', 'rol','birth_date','age',"phone"]
-    for field in required_fields:
-        if not data.get(field):
-            raise ValidationError("f'Field {field} rol is required'}")
+    # Validaciones mejoradas
+    required_fields = ['email', 'password', 'name', 'last_name', 'dni', 'rol', 'birth_date', 'age', 'phone']
+    missing_fields = [field for field in required_fields if not data.get(field)]
+    
+    if missing_fields:
+        raise ValidationError(f"Campos requeridos faltantes: {', '.join(missing_fields)}")
+    
     # Validar email
-    pattern = r"^[\w\.-]+@[\w\.-]+\.\w+$"
+    email_pattern = r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
     email = data.get('email').strip().lower()
-    if re.match(pattern,email) is None:
-        raise BadRequestError("Invalid credentials")
+    if not re.match(email_pattern, email):
+        raise ValidationError("Formato de email inválido")
+    
+    #Validacion: añadimos al pattern dos variables para validar tanto nie como dni para evitar limitaciones
+    dni = data.get('dni').strip().upper()
+    dni_pattern = r"^[0-9]{8}[A-Z]$"
+    nie_pattern = r"^[XYZ][0-9]{7}[A-Z]$"
+    if not (re.match(dni_pattern, dni) or re.match(nie_pattern, dni)):
+        raise ValidationError("Formato inválido: se esperaba DNI o NIE")
+    
     # Verificar duplicados
     if SystemUser.query.filter_by(email=email).first():
-        raise ValidationError("Email already registered")
+        raise ValidationError("El email ya está registrado")
     
-    if SystemUser.query.filter_by(dni=data.get('dni')).first():
-        raise ValidationError('DNI already registered')
+    if SystemUser.query.filter_by(dni=dni).first():
+        raise ValidationError("El DNI ya está registrado")
     
-        # rol (enum)
+    # Validar rol
     try:
         role = UserRole(data["rol"].strip())
     except ValueError:
-        raise ValidationError("Invalid role")
+        valid_roles = [r.value for r in UserRole]
+        raise ValidationError(f"Rol inválido. Roles válidos: {', '.join(valid_roles)}")
     
+    # Validar fecha de nacimiento
     try:
-        birth_date = dt.strptime(data["birth_date"].strip(), "%Y-%m-%d").date()
+        birth_date = datetime.strptime(data["birth_date"].strip(), "%Y-%m-%d").date()
     except Exception:
-        raise ValidationError("birth_date must be YYYY-MM-DD")
+        raise ValidationError("Formato de fecha inválido (debe ser YYYY-MM-DD)")
     
-        # age
+    # Validar edad
     try:
         age = int(data["age"])
-    except Exception:
-        raise ValidationError("age must be integer")
+        if age < 18 or age > 120:
+            raise ValidationError("La edad debe estar entre 18 y 120 años")
+    except ValueError:
+        raise ValidationError("La edad debe ser un número entero")
     
+    # Validar teléfono (formato español)
     phone = data.get('phone', '').strip()
-    if not phone:
-        raise ValidationError("Phone number is required")
+    phone_pattern = r"^[6-9][0-9]{8}$"
+    if not re.match(phone_pattern, phone):
+        raise ValidationError("Formato de teléfono inválido (9 dígitos, comenzando con 6-9)")
     
-   
+    # Validar contraseña
+    password = data.get("password") or ""
+    if len(password) < 8:
+        raise ValidationError("La contraseña debe tener al menos 8 caracteres")
+    if not re.search(r"[A-Z]", password):
+        raise ValidationError("La contraseña debe contener al menos una mayúscula")
+    if not re.search(r"[a-z]", password):
+        raise ValidationError("La contraseña debe contener al menos una minúscula")
+    if not re.search(r"[0-9]", password):
+        raise ValidationError("La contraseña debe contener al menos un número")
+    
+    # Crear hash de contraseña
     password_hash = bcrypt.generate_password_hash(password).decode("utf-8")
-
-
+    
+    # Crear usuario
     user = SystemUser(
         email=email,
         password=password_hash,
         name=data["name"].strip(),
         last_name=data["last_name"].strip(),
-        dni=data["dni"].strip(),
+        dni=dni,
         rol=role,
-        phone=phone,  
+        phone=phone,
         birth_date=birth_date,
         age=age,
-        is_active=False,
+        is_active=False,  # Se activará en el primer login
+        address=data.get("address", "").strip(),
+        observations=data.get("observations", "").strip()
     )
+    
     db.session.add(user)
     db.session.commit()
-    return jsonify({"ok": True, "msg":"User created successfully","user_id": user.id}), 201
-
-# =========================================================================================================
-#                                          Login con 2fa
-# =========================================================================================================
-
-@auth_bp.route("/login",methods=["POST"])
-def login():
-    data = request.get_json(silent=True) or {}
-    email = data.get("email", "").strip()
-    password = data.get("password", "")
-    token_2fa = (data.get('token_2fa') or '').strip()
     
-    #campos requeridos
-    if not email or not password:
-        raise UnauthorizedError("Email and password are required.")
-    print(email)
-#Verificamos si el usuario existe 
-    user = SystemUser.query.filter_by(email=email).first()
-    if not user:
-        raise UnauthorizedError("Invalid credentials")
-
-    if not bcrypt.check_password_hash(user.password, password):
-        raise UnauthorizedError("Invalid credentials")
-    
-    if user.two_factor_enabled:
-        if not token_2fa or not user.verify_2fa_token(token_2fa):
-            raise UnauthorizedError("Se requiere 2FA válido")
-    
-    #lógica de activación y last_login
-    if not user.is_active:
-        if user.last_login is None:
-     # Si es el primer login, activar automáticamente
-            user.is_active = True 
-        else:
-            raise UnauthorizedError("Inactive user")
-    
-    user.last_login = datetime.now(timezone.utc)
-    db.session.commit()
-    
-    access_token= issue_tokens_for_user(user)
-    
-    response = jsonify({"msg": 'Login successful'})
-    
-    # return jsonify({"access_token":access_token,"role":user.rol.value}),200
-    set_access_cookies(response, access_token)
-    
-    return response
-
-# =========================================================================================================
-#                               2FA setup / verify-2fa-enable and setup 
-# =========================================================================================================
-
-@auth_bp.route('/2fa/setup',methods=["GET"])
-@jwt_required()
-def twofa_setup():
-    user = SystemUser.query.get(int(get_jwt_identity()))
-    user.generate_2fa_secret()
-    uri = user.get_2fa_uri()
-    if not uri:
-        raise AppError("No se pudo generar el URI de 2FA")
-    qr = build_qr_data_uri(uri)
-    return jsonify({"otpauth_uri": uri, "qr_data_uri": qr})
-
-
-@auth_bp.route('/verify-2fa-setup', methods=['POST'])
-@jwt_required()
-def verify_2fa_setup():
-    """Verificar y habilitar 2FA"""
-    user = SystemUser.query.get(int(get_jwt_identity()))
-    if not user:
-        raise UnauthorizedError("User not found")
-    data = request.get_json(silent=True) or {}
-    token = (data.get("token") or "").strip()
-    if not token:
-        raise ValidationError("Token required")
-    # Verificamos el TOTP. OJO: verify_2fa_token NO depende de two_factor_enabled,
-    # así permite la verificación durante el setup.
-    if user.verify_2fa_token(token):
-        user.two_factor_enabled = True
-        db.session.commit()
-        return jsonify({"msg": "2FA successfully enabled"}), 200
-
-    # TOTP inválido => 401 (no 400), es credencial de segunda fase incorrecta
-    raise UnauthorizedError("Invalid 2FA Token")
-
-
-
-# @auth_bp.route('/2fa/disable', methods=['POST'])
-# @jwt_required()
-# def twofa_disable():
-#     user = SystemUser.query.get(get_jwt_identity())
-#     if not user:
-#         raise UnauthorizedError("User Not Found")
-#     # En producción: pide password reciente y/o un TOTP válido
-#     user.two_factor_enabled = False
-#     # opcional: borra secret para forzar nuevo setup
-#     # user.two_factor_secret = None
-#     db.session.commit()
-#     return jsonify({"enabled": False}), 200
-
+    return jsonify({
+        "ok": True,
+        "msg": "Usuario creado exitosamente",
+        "user_id": user.id,
+        "message": "El usuario deberá configurar autenticación de dos factores en su primer inicio de sesión"
+    }), 201
 
 # ===============================================================================================
-#                               Rutas para admin (Solo Admin)
+#                               Rutas para admin
 # ===============================================================================================
-
 @auth_bp.route('/admin/users', methods=['GET'])
 @requires_admin
 def get_all_users():
-    """Obtener lista de todos los usuarios con sus roles Solo accesible para administradores"""
+    """Obtener lista de todos los usuarios con filtros mejorados"""
     try:
-        # Parámetros opcionales para filtrado
         role_filter = request.args.get('role')
         active_filter = request.args.get('active')
         search = request.args.get('search', '').strip()
+        page = request.args.get('page', 1, type=int)
+        per_page = request.args.get('per_page', 10, type=int)
         
         # Query base
         query = SystemUser.query
@@ -227,13 +380,11 @@ def get_all_users():
                 role_enum = UserRole(role_filter)
                 query = query.filter(SystemUser.rol == role_enum)
             except ValueError:
-                raise ValidationError(f"Invalid role filter: {role_filter}")
+                raise ValidationError(f"Rol inválido: {role_filter}")
         
         if active_filter is not None:
             is_active = active_filter.lower() == 'true'
             query = query.filter(SystemUser.is_active == is_active)
-        
-        #BUSQUEDA DETALLADA DEL USUARIO POR NOMBRE EMAIL LASTNAME O DNI
         
         if search:
             like = f"%{search}%"
@@ -244,12 +395,17 @@ def get_all_users():
                 (SystemUser.dni.ilike(like))
             )
         
-        # Ordenar por fecha de creación (más recientes primero)
-        users = query.order_by(SystemUser.created_at.desc()).all()
+        # Paginación
+        pagination = query.order_by(SystemUser.created_at.desc()).paginate(
+            page=page, per_page=per_page, error_out=False
+        )
         
-        # Estadísticas rápidas
+        users = pagination.items
+        
+        # Estadísticas
         total_count = SystemUser.query.count()
         active_count = SystemUser.query.filter_by(is_active=True).count()
+        with_2fa_count = SystemUser.query.filter_by(two_factor_enabled=True).count()
         
         return jsonify({
             "users": [
@@ -265,15 +421,22 @@ def get_all_users():
                     "two_factor_enabled": user.two_factor_enabled,
                     "created_at": user.created_at.isoformat() if user.created_at else None,
                     "last_login": user.last_login.isoformat() if user.last_login else None,
-                    "birth_date": user.birth_date.isoformat() if user.birth_date else None
+                    "birth_date": user.birth_date.isoformat() if user.birth_date else None,
+                    "age": user.age
                 }
-                for user in users],
-            
-            "total": len(users),
+                for user in users
+            ],
+            "pagination": {
+                "page": page,
+                "per_page": per_page,
+                "total": pagination.total,
+                "pages": pagination.pages
+            },
             "stats": {
                 "total_users": total_count,
                 "active_users": active_count,
-                "inactive_users": total_count - active_count
+                "inactive_users": total_count - active_count,
+                "with_2fa": with_2fa_count
             },
             "filters_applied": {
                 "role": role_filter,
@@ -283,110 +446,86 @@ def get_all_users():
         }), 200
         
     except Exception as e:
-        raise AppError(f"Error fetching users: {str(e)}")
-    
-    
-# @auth_bp.route("/admin/users/<int:user_id>", methods=['GET'])
-# @requires_admin
-# def admin_get_user(user_id: int):
-#     user = SystemUser.query.get(user_id)
-#     if not user:
-#         raise ValidationError("User not found")
-#     return jsonify({
-#         "id": user.id,
-#         "email": user.email,
-#         "name": getattr(user, "name", None),
-#         "last_name": getattr(user, "last_name", None),
-#         "dni": getattr(user, "dni", None),
-#         "role": user.rol.value,
-#         "is_active": user.is_active,
-#         "two_factor_enabled": user.two_factor_enabled,
-#         "created_at": user.created_at.isoformat() if user.created_at else None,
-#         "last_login": user.last_login.isoformat() if user.last_login else None,
-#         "birth_date": user.birth_date.isoformat() if getattr(user, "birth_date", None) else None,
-#     }), 200
+        raise AppError(f"Error obteniendo usuarios: {str(e)}")
 
 @auth_bp.route("/admin/users/<int:user_id>/role", methods=['PUT'])
 @requires_admin
 def admin_change_role(user_id: int):
     admin_id = get_jwt_identity()
-    if user_id == admin_id:
-        raise ValidationError("Cannot change your own role")#POR HABLAR CON SERGIO PARA MOSTRARLO MENSAJES PARA MOSTRAR AL USUARIO EN ESPAÑOL
+    if int(user_id) == int(admin_id):
+        raise ValidationError("No puedes cambiar tu propio rol")
 
-    u = SystemUser.query.get(user_id)
-    if not u:
-        raise ValidationError("User not found")
+    user = SystemUser.query.get(user_id)
+    if not user:
+        raise NotFoundError("Usuario no encontrado")
 
     data = request.get_json(silent=True) or {}
     new_role_val = (data.get("role") or "").strip()
     if not new_role_val:
-        raise ValidationError("Field 'role' is required")
+        raise ValidationError("El campo 'role' es requerido")
 
     try:
         new_role = UserRole(new_role_val)
     except ValueError:
-        raise ValidationError(f"Invalid role: {new_role_val}")
+        valid_roles = [r.value for r in UserRole]
+        raise ValidationError(f"Rol inválido. Roles válidos: {', '.join(valid_roles)}")
 
-    old_role = u.rol.value
-    u.rol = new_role
-    u.updated_at = datetime.now(timezone.utc)
+    old_role = user.rol.value
+    user.rol = new_role
+    user.updated_at = datetime.now(timezone.utc)
     db.session.commit()
 
     return jsonify({
-        "message": "Role updated successfully",
-        "user_id": u.id,
+        "message": "Rol actualizado exitosamente",
+        "user_id": user.id,
         "old_role": old_role,
         "new_role": new_role.value,
         "changed_by": admin_id
     }), 200
-    
 
 @auth_bp.route("/admin/users/<int:user_id>/status", methods=['PUT'])
 @requires_admin
 def admin_change_status(user_id: int):
     admin_id = get_jwt_identity()
-    if user_id == admin_id:
-        raise ValidationError("Cannot change your own status")
+    if int(user_id) == int(admin_id):
+        raise ValidationError("No puedes cambiar tu propio estado")
 
-    u = SystemUser.query.get(user_id)
-    if not u:
-        raise ValidationError("User not found")
+    user = SystemUser.query.get(user_id)
+    if not user:
+        raise NotFoundError("Usuario no encontrado")
 
     body = request.get_json(silent=True) or {}
     if "is_active" not in body:
-        raise ValidationError("Field 'is_active' is required")
+        raise ValidationError("El campo 'is_active' es requerido")
 
     new_status = bool(body["is_active"])
-    old_status = u.is_active
-    u.is_active = new_status
-    u.updated_at = datetime.now(timezone.utc)
+    old_status = user.is_active
+    user.is_active = new_status
+    user.updated_at = datetime.now(timezone.utc)
     db.session.commit()
 
     return jsonify({
-        "message": ("User activated" if new_status else "User deactivated"),
-        "user_id": u.id,
+        "message": "Estado de usuario actualizado" if new_status else "Usuario desactivado",
+        "user_id": user.id,
         "old_status": old_status,
         "new_status": new_status,
         "changed_by": admin_id
     }), 200
 
-
 @auth_bp.route("/admin/users/<int:user_id>", methods=['DELETE'])
 @requires_admin
 def admin_delete_user(user_id: int):
-    """Borrar usuario.- Soft delete (default): /auth/admin/users/<id>- MOSTRAR INFORMACION QUE SE DESACTIVO
-    Hard delete (peligroso): /auth/admin/users/<id>?force=true"""
+    """Eliminar usuario - soft delete por defecto, hard delete con ?force=true"""
     admin_id = get_jwt_identity()
-    # 1) NO SE PUEDE BORRAR A SI MISMO
-    if user_id == admin_id:
-        raise ValidationError("Cannot delete your own account")
-#MOSTRAR A SERGIO PARA ESTA IMPLEMENTACION DE DELETE 
-    # 2) Buscar usuario
+    
+    if int(user_id) == int(admin_id):
+        raise ValidationError("No puedes eliminar tu propia cuenta")
+
     user = SystemUser.query.get(user_id)
     if not user:
-        raise ValidationError("User not found")
+        raise NotFoundError("Usuario no encontrado")
 
-    # 3) No borres al último admin activo
+    # No eliminar el último admin
     if user.rol == UserRole.ADMINISTRATOR:
         remaining_admins = SystemUser.query.filter(
             SystemUser.rol == UserRole.ADMINISTRATOR,
@@ -394,52 +533,107 @@ def admin_delete_user(user_id: int):
             SystemUser.is_active == True
         ).count()
         if remaining_admins == 0:
-            raise ValidationError("Cannot delete the last administrator")
+            raise ValidationError("No se puede eliminar el último administrador")
 
-    # 4) Soft vs Hard
     force = (request.args.get("force") or "").lower() == "true"
 
     if not force:
-        # --- Soft delete ---
+        # Soft delete
         user.is_active = False
         user.updated_at = datetime.now(timezone.utc)
-        # Opcional: limpiar 2FA si quieres evitar confusiones
         user.two_factor_enabled = False
         user.two_factor_secret = None
         db.session.commit()
         return jsonify({
-            "message": "User deactivated (soft delete)",
+            "message": "Usuario desactivado correctamente",
             "user_id": user_id,
             "is_active": user.is_active
         }), 200
 
-    # --- Hard delete ---
+    # Hard delete
     try:
         db.session.delete(user)
         db.session.commit()
         return jsonify({
-            "message": "User deleted",
+            "message": "Usuario eliminado permanentemente",
             "user_id": user_id
         }), 200
     except Exception as e:
         db.session.rollback()
-        # Muy probable: error de integridad por FKs si no hay cascadas por verificar
-        raise AppError(f"Delete failed: {str(e)}")
-
-
+        raise AppError(f"Error al eliminar: {str(e)}")
 
 # =======================================================================================================
 #                                        LOGOUT
 # =======================================================================================================
-
-
-@auth_bp.route("/logout", methods = ["POST"])
+@auth_bp.route("/logout", methods=["POST"])
 def logout():
-    user_id = int(get_jwt_identity())
-    user = SystemUser.query.get(user_id)
-    if user:
-        user.last_login_at = datetime.now(timezone.utc)
-        db.session.commit()
-    response = jsonify({'msg': 'Logout OK'})
+    try:
+        # Intentar obtener el user_id si hay JWT válido
+        from flask_jwt_extended import get_jwt_identity
+        user_id = get_jwt_identity()
+        if user_id:
+            user = SystemUser.query.get(int(user_id))
+            if user:
+                user.last_login = datetime.now(timezone.utc)
+                db.session.commit()
+    except:
+        pass  # Si no hay JWT válido, simplemente continuar con el logout
+    
+    response = jsonify({'msg': 'Sesión cerrada correctamente'})
     unset_jwt_cookies(response)
-    return response 
+    
+    # Limpiar cualquier sesión temporal
+    session.clear()
+    
+    return response
+
+# =======================================================================================================
+#                                        Olvide Contraseña
+# =======================================================================================================
+
+@auth_bp.route('/forgot-password', methods=['POST'])
+def forgot_password():
+    email = (request.get_json() or {}).get("email", "").strip()
+    if not email:
+        raise BadRequestError("Email is required")
+
+    user = SystemUser.query.filter_by(email=email).first()
+    if not user:
+        raise NotFoundError("User not found")
+
+#Si hay un fallo, mail_service hará raise AppError(...) o ValidationError(...).
+#El @app.errorhandler(AppError) global lo capturará y devolverá,
+    
+    send_reset_password_email(user.email)
+    
+    return jsonify({"msg":"Reset email sent"}), 200
+
+
+# =======================================================================================================
+#                                        Restablecimiento de Contraseña 
+# =======================================================================================================
+
+@auth_bp.route("/reset-password", methods=["POST"])
+def reset_password():
+    data = request.get_json()
+    token = data.get('token')
+    new_password = data.get('password')
+    
+    if not token or not new_password:
+        raise BadRequestError('Token and new password are required.')
+    try:
+        payload = decode_token(token)
+    except Exception:
+        raise BadRequestError("Invalid or expired token")
+    if payload.get("purpose")!= "reset_password":
+        raise BadRequestError('Invalid or expired token.')
+    email = payload["sub"]
+    user = SystemUser.query.filter_by(email=email).first_or_404()
+    
+    # Hasheamos y guardamos la nueva contraseña
+    hashed = bcrypt.generate_password_hash(new_password).decode("utf-8")
+    user.password = hashed
+    db.session.commit()
+    
+    return jsonify(msg="Password updated successfully"), 200
+

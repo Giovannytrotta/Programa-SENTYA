@@ -7,7 +7,8 @@ export const initialStore = () => {
       role: null,
       isLoading: false,
       error: null,
-      requires2FA: false
+      requires2FA: false,
+      requires2FASetup: false
     },
     ui: {
       notifications: []
@@ -21,6 +22,7 @@ export const ACTION_TYPES = {
   LOGIN_SUCCESS: 'LOGIN_SUCCESS',
   LOGIN_ERROR: 'LOGIN_ERROR',
   LOGIN_REQUIRES_2FA: 'LOGIN_REQUIRES_2FA',
+  LOGIN_REQUIRES_2FA_SETUP: 'LOGIN_REQUIRES_2FA_SETUP',
   LOGOUT: 'LOGOUT',
   SET_USER: 'SET_USER',
   
@@ -39,7 +41,8 @@ export default function storeReducer(store, action = {}) {
           ...store.auth,
           isLoading: true,
           error: null,
-          requires2FA: false
+          requires2FA: false,
+          requires2FASetup: false
         }
       }
 
@@ -53,7 +56,8 @@ export default function storeReducer(store, action = {}) {
           role: action.payload.role,
           isLoading: false,
           error: null,
-          requires2FA: false
+          requires2FA: false,
+          requires2FASetup: false
         }
       }
 
@@ -64,7 +68,20 @@ export default function storeReducer(store, action = {}) {
           ...store.auth,
           isLoading: false,
           error: null,
-          requires2FA: true
+          requires2FA: true,
+          requires2FASetup: false
+        }
+      }
+
+    case ACTION_TYPES.LOGIN_REQUIRES_2FA_SETUP:
+      return {
+        ...store,
+        auth: {
+          ...store.auth,
+          isLoading: false,
+          error: null,
+          requires2FA: false,
+          requires2FASetup: true
         }
       }
 
@@ -78,7 +95,8 @@ export default function storeReducer(store, action = {}) {
           role: null,
           isLoading: false,
           error: action.payload,
-          requires2FA: false
+          requires2FA: false,
+          requires2FASetup: false
         }
       }
 
@@ -91,7 +109,8 @@ export default function storeReducer(store, action = {}) {
           role: null,
           isLoading: false,
           error: null,
-          requires2FA: false
+          requires2FA: false,
+          requires2FASetup: false
         }
       }
 
