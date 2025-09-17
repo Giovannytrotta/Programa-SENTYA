@@ -152,47 +152,47 @@ export const useAdminUsers = () => {
     }
   }, [showNotification, fetchUsers]);
 
-  // Actualizar rol de usuario
-  const updateUserRole = useCallback(async (userId, newRole) => {
+  // Actualizar usuario
+  const updateUser = useCallback(async (userId, userData) => {
     try {
-      const response = await apiService.updateUserRole(userId, newRole);
+      const response = await apiService.updateUser(userId, userData);
       
       if (response && response.message) {
-        showNotification(MESSAGES.SUCCESS.ROLE_UPDATED, 'success');
+        showNotification(MESSAGES.SUCCESS.USER_UPDATED, 'success');
         
-        // Actualizar usuario en el estado local
+    // Actualizar usuario en el estado local con TODOS los campos
         setUsers(prevUsers => 
           prevUsers.map(user => 
-            user.id === userId ? { ...user, rol: newRole } : user
+            user.id === userId ? { ...user, ...userData } : user
           )
         );
         
         setFilteredUsers(prevUsers => 
           prevUsers.map(user => 
-            user.id === userId ? { ...user, rol: newRole } : user
+            user.id === userId ? { ...user, ...userData } : user
           )
         );
         
-        // Recalcular stats
+        // Recalcular stats 
         const updatedUsers = users.map(user => 
-          user.id === userId ? { ...user, rol: newRole } : user
+          user.id === userId ? { ...user, ...userData } : user
         );
         calculateStats(updatedUsers);
         
         return { success: true, data: response };
       }
       
-      throw new Error('Error al actualizar rol');
+      throw new Error('Error al actualizar usuario');
     } catch (err) {
       let errorMessage = MESSAGES.ERROR.UPDATE_USER;
       
       if (err instanceof ApiError) {
         if (err.status === 403) {
-          errorMessage = '🚫 No tienes permisos para cambiar roles';
+          errorMessage = '🚫 No tienes permisos para realizar esta acción';
         } else if (err.status === 404) {
           errorMessage = '❌ Usuario no encontrado';
         } else if (err.status === 422) {
-          errorMessage = '❌ Rol inválido seleccionado';
+          errorMessage = '❌ Datos inválidos';
         } else {
           errorMessage = `❌ ${err.message}`;
         }
@@ -372,7 +372,7 @@ export const useAdminUsers = () => {
     // Funciones
     fetchUsers,
     createUser,
-    updateUserRole,
+    updateUser,
     updateUserStatus,
     deleteUser,
     filterUsers,

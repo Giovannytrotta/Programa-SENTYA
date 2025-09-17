@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useCallback } from 'react';
 
-const EditDrawer = ({ 
-  user, 
-  isOpen, 
-  onClose, 
-  onSave, 
-  loading = false 
+const EditDrawer = ({
+  user,
+  isOpen,
+  onClose,
+  onSave,
+  loading = false
 }) => {
   const [formData, setFormData] = useState({
     name: '',
@@ -32,11 +32,11 @@ const EditDrawer = ({
     const birth = new Date(birthDate);
     let age = today.getFullYear() - birth.getFullYear();
     const monthDiff = today.getMonth() - birth.getMonth();
-    
+
     if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birth.getDate())) {
       age--;
     }
-    
+
     return age.toString();
   }, []);
 
@@ -66,17 +66,17 @@ const EditDrawer = ({
   const handleChange = (field, value) => {
     setFormData(prev => {
       const newData = { ...prev, [field]: value };
-      
+
       // Calcular edad si cambia la fecha de nacimiento
       if (field === 'birth_date') {
         newData.age = calculateAge(value);
       }
-      
+
       return newData;
     });
-    
+
     setHasChanges(true);
-    
+
     // Limpiar error del campo
     if (errors[field]) {
       setErrors(prev => ({ ...prev, [field]: '' }));
@@ -134,9 +134,9 @@ const EditDrawer = ({
   // Manejar envío
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (!hasChanges || !validateForm()) return;
-    
+
     setIsSaving(true);
     try {
       // Solo enviar campos que realmente cambiaron
@@ -181,7 +181,7 @@ const EditDrawer = ({
   const getRoleName = (role) => {
     const roleNames = {
       'administrator': 'Administrador',
-      'coordinator': 'Coordinador', 
+      'coordinator': 'Coordinador',
       'professional': 'Profesor',
       'css_technician': 'Trabajador CSS',
       'client': 'Usuario'
@@ -199,7 +199,7 @@ const EditDrawer = ({
   return (
     <>
       {/* Overlay */}
-      <div 
+      <div
         style={{
           position: 'fixed',
           top: 0,
@@ -252,7 +252,7 @@ const EditDrawer = ({
             backgroundSize: '300% 100%',
             animation: 'shimmer 3s ease-in-out infinite'
           }} />
-          
+
           <div style={{
             display: 'flex',
             alignItems: 'flex-start',
@@ -277,7 +277,7 @@ const EditDrawer = ({
                 Modifica los datos del usuario
               </p>
             </div>
-            <button 
+            <button
               onClick={onClose}
               disabled={isSaving}
               style={{
@@ -295,8 +295,8 @@ const EditDrawer = ({
               }}
             >
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                <line x1="18" y1="6" x2="6" y2="18"/>
-                <line x1="6" y1="6" x2="18" y2="18"/>
+                <line x1="18" y1="6" x2="6" y2="18" />
+                <line x1="6" y1="6" x2="18" y2="18" />
               </svg>
             </button>
           </div>
@@ -377,16 +377,18 @@ const EditDrawer = ({
         <form onSubmit={handleSubmit} style={{
           flex: 1,
           display: 'flex',
-          flexDirection: 'column'
+          flexDirection: 'column',
+          minHeight: 0
         }}>
           <div style={{
             flex: 1,
             overflowY: 'auto',
             padding: '20px 24px',
-            scrollbarWidth: 'thin'
+            scrollbarWidth: 'thin',
+            minHeight: 0 //flex 1 estaba tomando todo el espacio agregue minHighth y solucionado el bug ya funciona el scroll
           }}>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-              
+
               {/* Información personal */}
               <div>
                 <h3 style={{
@@ -399,12 +401,12 @@ const EditDrawer = ({
                   gap: '8px'
                 }}>
                   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
-                    <circle cx="12" cy="7" r="4"/>
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                    <circle cx="12" cy="7" r="4" />
                   </svg>
                   Información Personal
                 </h3>
-                
+
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
                     <div>
@@ -642,12 +644,12 @@ const EditDrawer = ({
                   gap: '8px'
                 }}>
                   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
-                    <polyline points="22,6 12,13 2,6"/>
+                    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
+                    <polyline points="22,6 12,13 2,6" />
                   </svg>
                   Contacto
                 </h3>
-                
+
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
                   <div>
                     <label style={{
@@ -705,26 +707,69 @@ const EditDrawer = ({
                     }}>
                       Teléfono *
                     </label>
-                    <input
-                      type="tel"
-                      value={formData.phone}
-                      onChange={(e) => handleChange('phone', e.target.value)}
-                      disabled={isSaving}
-                      style={{
-                        width: '100%',
-                        padding: '12px 14px',
-                        background: 'rgba(248, 250, 252, 0.08)',
-                        border: `1.5px solid ${errors.phone ? '#ef4444' : 'rgba(248, 250, 252, 0.2)'}`,
-                        borderRadius: '10px',
-                        color: 'rgba(248, 250, 252, 0.95)',
-                        fontSize: '0.9rem',
-                        fontWeight: '500',
-                        outline: 'none',
-                        transition: 'all 0.3s ease',
-                        backdropFilter: 'blur(12px)',
-                        boxSizing: 'border-box'
-                      }}
-                    />
+
+                    <div style={{ display: 'flex', gap: '8px' }}>
+                      {/* Selector código país */}
+                      <select
+                        value={
+                          formData.phone.startsWith('+34') ? '+34' :
+                          formData.phone.startsWith('+39') ? '+39' :
+                          formData.phone.startsWith('+33') ? '+33' :
+                          formData.phone.startsWith('+49') ? '+49' :
+                          formData.phone.startsWith('+351') ? '+351' :
+                          '+34' // Por defecto España
+                        }
+                        onChange={(e) => {
+                          const newCode = e.target.value;
+                          const oldNumber = formData.phone.replace(/^\+\d+/, '');
+                          handleChange('phone', newCode + oldNumber);
+                        }}
+                        disabled={isSaving}
+                        style={{
+                          width: '110px',
+                          padding: '12px 8px',
+                          background: 'rgba(248, 250, 252, 0.08)',
+                          border: `1.5px solid ${errors.phone ? '#ef4444' : 'rgba(248, 250, 252, 0.2)'}`,
+                          borderRadius: '10px',
+                          color: 'rgba(248, 250, 252, 0.95)',
+                          fontSize: '0.85rem',
+                          outline: 'none',
+                          cursor: 'pointer',
+                          boxSizing: 'border-box'
+                        }}
+                      >
+                        <option value="+34">🇪🇸 +34</option>
+                        <option value="+39">🇮🇹 +39</option>
+                        <option value="+33">🇫🇷 +33</option>
+                        <option value="+49">🇩🇪 +49</option>
+                        <option value="+351">🇵🇹 +351</option>
+                      </select>
+
+                      {/* Input número - sin cambios */}
+                      <input
+                        type="tel"
+                        value={formData.phone.replace(/^\+\d+/, '')}
+                        onChange={(e) => {
+                          const code = formData.phone.match(/^\+\d+/) || ['+34'];
+                          handleChange('phone', code[0] + e.target.value);
+                        }}
+                        disabled={isSaving}
+                        placeholder="612345678"
+                        style={{
+                          flex: 1,
+                          padding: '12px 14px',
+                          background: 'rgba(248, 250, 252, 0.08)',
+                          border: `1.5px solid ${errors.phone ? '#ef4444' : 'rgba(248, 250, 252, 0.2)'}`,
+                          borderRadius: '10px',
+                          color: 'rgba(248, 250, 252, 0.95)',
+                          fontSize: '0.9rem',
+                          fontWeight: '500',
+                          outline: 'none',
+                          boxSizing: 'border-box'
+                        }}
+                      />
+                    </div>
+
                     {errors.phone && (
                       <span style={{
                         color: '#ef4444',
@@ -751,302 +796,302 @@ const EditDrawer = ({
                   gap: '8px'
                 }}>
                   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                    <circle cx="12" cy="12" r="3"/>
-                    <path d="M12 1v6m0 6v6m11-7h-6m-6 0H1"/>
-                </svg>
-                Configuración
-              </h3>
-              
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
-                  <div>
-                    <label style={{
-                      display: 'block',
-                      color: 'rgba(248, 250, 252, 0.8)',
-                      fontWeight: '600',
-                      fontSize: '0.85rem',
-                      marginBottom: '6px',
-                      textTransform: 'uppercase',
-                      letterSpacing: '0.05em'
-                    }}>
-                      Rol
-                    </label>
-                    <select
-                      value={formData.rol}
-                      onChange={(e) => handleChange('rol', e.target.value)}
-                      disabled={isSaving}
-                      style={{
-                        width: '100%',
-                        padding: '12px 14px',
-                        background: 'rgba(248, 250, 252, 0.08)',
-                        border: '1.5px solid rgba(248, 250, 252, 0.2)',
-                        borderRadius: '10px',
-                        color: 'rgba(248, 250, 252, 0.95)',
-                        fontSize: '0.9rem',
-                        fontWeight: '500',
-                        outline: 'none',
-                        transition: 'all 0.3s ease',
-                        backdropFilter: 'blur(12px)',
-                        cursor: 'pointer',
-                        appearance: 'none',
-                        backgroundImage: "url(\"data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%23f8fafc' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e\")",
-                        backgroundPosition: 'right 12px center',
-                        backgroundRepeat: 'no-repeat',
-                        backgroundSize: '16px',
-                        paddingRight: '40px',
-                        boxSizing: 'border-box'
-                      }}
-                    >
-                      <option value="client">Usuario</option>
-                      <option value="css_technician">Trabajador CSS</option>
-                      <option value="professional">Profesor</option>
-                      <option value="coordinator">Coordinador</option>
-                      <option value="administrator">Administrador</option>
-                    </select>
-                  </div>
+                    <circle cx="12" cy="12" r="3" />
+                    <path d="M12 1v6m0 6v6m11-7h-6m-6 0H1" />
+                  </svg>
+                  Configuración
+                </h3>
 
-                  <div>
-                    <label style={{
-                      display: 'block',
-                      color: 'rgba(248, 250, 252, 0.8)',
-                      fontWeight: '600',
-                      fontSize: '0.85rem',
-                      marginBottom: '6px',
-                      textTransform: 'uppercase',
-                      letterSpacing: '0.05em'
-                    }}>
-                      Estado
-                    </label>
-                    <select
-                      value={formData.is_active}
-                      onChange={(e) => handleChange('is_active', e.target.value === 'true')}
-                      disabled={isSaving}
-                      style={{
-                        width: '100%',
-                        padding: '12px 14px',
-                        background: 'rgba(248, 250, 252, 0.08)',
-                        border: '1.5px solid rgba(248, 250, 252, 0.2)',
-                        borderRadius: '10px',
-                        color: 'rgba(248, 250, 252, 0.95)',
-                        fontSize: '0.9rem',
-                        fontWeight: '500',
-                        outline: 'none',
-                        transition: 'all 0.3s ease',
-                        backdropFilter: 'blur(12px)',
-                        cursor: 'pointer',
-                        appearance: 'none',
-                        backgroundImage: "url(\"data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%23f8fafc' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e\")",
-                        backgroundPosition: 'right 12px center',
-                        backgroundRepeat: 'no-repeat',
-                        backgroundSize: '16px',
-                        paddingRight: '40px',
-                        boxSizing: 'border-box'
-                      }}
-                    >
-                      <option value={true}>Activo</option>
-                      <option value={false}>Inactivo</option>
-                    </select>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                    <div>
+                      <label style={{
+                        display: 'block',
+                        color: 'rgba(248, 250, 252, 0.8)',
+                        fontWeight: '600',
+                        fontSize: '0.85rem',
+                        marginBottom: '6px',
+                        textTransform: 'uppercase',
+                        letterSpacing: '0.05em'
+                      }}>
+                        Rol
+                      </label>
+                      <select
+                        value={formData.rol}
+                        onChange={(e) => handleChange('rol', e.target.value)}
+                        disabled={isSaving}
+                        style={{
+                          width: '100%',
+                          padding: '12px 14px',
+                          background: 'rgba(248, 250, 252, 0.08)',
+                          border: '1.5px solid rgba(248, 250, 252, 0.2)',
+                          borderRadius: '10px',
+                          color: 'rgba(248, 250, 252, 0.95)',
+                          fontSize: '0.9rem',
+                          fontWeight: '500',
+                          outline: 'none',
+                          transition: 'all 0.3s ease',
+                          backdropFilter: 'blur(12px)',
+                          cursor: 'pointer',
+                          appearance: 'none',
+                          backgroundImage: "url(\"data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%23f8fafc' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e\")",
+                          backgroundPosition: 'right 12px center',
+                          backgroundRepeat: 'no-repeat',
+                          backgroundSize: '16px',
+                          paddingRight: '40px',
+                          boxSizing: 'border-box'
+                        }}
+                      >
+                        <option value="client">Usuario</option>
+                        <option value="css_technician">Trabajador CSS</option>
+                        <option value="professional">Profesor</option>
+                        <option value="coordinator">Coordinador</option>
+                        <option value="administrator">Administrador</option>
+                      </select>
+                    </div>
+
+                    <div>
+                      <label style={{
+                        display: 'block',
+                        color: 'rgba(248, 250, 252, 0.8)',
+                        fontWeight: '600',
+                        fontSize: '0.85rem',
+                        marginBottom: '6px',
+                        textTransform: 'uppercase',
+                        letterSpacing: '0.05em'
+                      }}>
+                        Estado
+                      </label>
+                      <select
+                        value={formData.is_active}
+                        onChange={(e) => handleChange('is_active', e.target.value === 'true')}
+                        disabled={isSaving}
+                        style={{
+                          width: '100%',
+                          padding: '12px 14px',
+                          background: 'rgba(248, 250, 252, 0.08)',
+                          border: '1.5px solid rgba(248, 250, 252, 0.2)',
+                          borderRadius: '10px',
+                          color: 'rgba(248, 250, 252, 0.95)',
+                          fontSize: '0.9rem',
+                          fontWeight: '500',
+                          outline: 'none',
+                          transition: 'all 0.3s ease',
+                          backdropFilter: 'blur(12px)',
+                          cursor: 'pointer',
+                          appearance: 'none',
+                          backgroundImage: "url(\"data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%23f8fafc' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e\")",
+                          backgroundPosition: 'right 12px center',
+                          backgroundRepeat: 'no-repeat',
+                          backgroundSize: '16px',
+                          paddingRight: '40px',
+                          boxSizing: 'border-box'
+                        }}
+                      >
+                        <option value={true}>Activo</option>
+                        <option value={false}>Inactivo</option>
+                      </select>
+                    </div>
                   </div>
                 </div>
               </div>
+
+              {/* Indicador de cambios */}
+              {hasChanges && (
+                <div style={{
+                  background: 'rgba(37, 99, 235, 0.1)',
+                  border: '1px solid rgba(37, 99, 235, 0.25)',
+                  borderRadius: '12px',
+                  padding: '16px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '12px'
+                }}>
+                  <div style={{
+                    width: '20px',
+                    height: '20px',
+                    background: 'rgba(37, 99, 235, 0.2)',
+                    borderRadius: '50%',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    color: '#2563eb',
+                    flexShrink: 0
+                  }}>
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                      <circle cx="12" cy="12" r="10" />
+                      <line x1="12" y1="16" x2="12" y2="12" />
+                      <line x1="12" y1="8" x2="12.01" y2="8" />
+                    </svg>
+                  </div>
+                  <div>
+                    <div style={{
+                      color: 'rgba(248, 250, 252, 0.95)',
+                      fontSize: '0.9rem',
+                      fontWeight: '600',
+                      marginBottom: '2px'
+                    }}>
+                      Cambios pendientes
+                    </div>
+                    <div style={{
+                      color: 'rgba(248, 250, 252, 0.7)',
+                      fontSize: '0.8rem',
+                      lineHeight: '1.3'
+                    }}>
+                      Guarda para aplicar las modificaciones
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Mostrar errores si los hay */}
+              {Object.keys(errors).length > 0 && (
+                <div style={{
+                  background: 'rgba(239, 68, 68, 0.1)',
+                  border: '1px solid rgba(239, 68, 68, 0.25)',
+                  borderRadius: '12px',
+                  padding: '16px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '12px'
+                }}>
+                  <div style={{
+                    width: '20px',
+                    height: '20px',
+                    background: 'rgba(239, 68, 68, 0.2)',
+                    borderRadius: '50%',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    color: '#ef4444',
+                    flexShrink: 0
+                  }}>
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                      <circle cx="12" cy="12" r="10" />
+                      <line x1="15" y1="9" x2="9" y2="15" />
+                      <line x1="9" y1="9" x2="15" y2="15" />
+                    </svg>
+                  </div>
+                  <div>
+                    <div style={{
+                      color: 'rgba(248, 250, 252, 0.95)',
+                      fontSize: '0.9rem',
+                      fontWeight: '600',
+                      marginBottom: '2px'
+                    }}>
+                      Errores de validación
+                    </div>
+                    <div style={{
+                      color: 'rgba(248, 250, 252, 0.7)',
+                      fontSize: '0.8rem',
+                      lineHeight: '1.3'
+                    }}>
+                      Corrige los campos marcados en rojo
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
-
-            {/* Indicador de cambios */}
-            {hasChanges && (
-              <div style={{
-                background: 'rgba(37, 99, 235, 0.1)',
-                border: '1px solid rgba(37, 99, 235, 0.25)',
-                borderRadius: '12px',
-                padding: '16px',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '12px'
-              }}>
-                <div style={{
-                  width: '20px',
-                  height: '20px',
-                  background: 'rgba(37, 99, 235, 0.2)',
-                  borderRadius: '50%',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  color: '#2563eb',
-                  flexShrink: 0
-                }}>
-                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                    <circle cx="12" cy="12" r="10"/>
-                    <line x1="12" y1="16" x2="12" y2="12"/>
-                    <line x1="12" y1="8" x2="12.01" y2="8"/>
-                  </svg>
-                </div>
-                <div>
-                  <div style={{
-                    color: 'rgba(248, 250, 252, 0.95)',
-                    fontSize: '0.9rem',
-                    fontWeight: '600',
-                    marginBottom: '2px'
-                  }}>
-                    Cambios pendientes
-                  </div>
-                  <div style={{
-                    color: 'rgba(248, 250, 252, 0.7)',
-                    fontSize: '0.8rem',
-                    lineHeight: '1.3'
-                  }}>
-                    Guarda para aplicar las modificaciones
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {/* Mostrar errores si los hay */}
-            {Object.keys(errors).length > 0 && (
-              <div style={{
-                background: 'rgba(239, 68, 68, 0.1)',
-                border: '1px solid rgba(239, 68, 68, 0.25)',
-                borderRadius: '12px',
-                padding: '16px',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '12px'
-              }}>
-                <div style={{
-                  width: '20px',
-                  height: '20px',
-                  background: 'rgba(239, 68, 68, 0.2)',
-                  borderRadius: '50%',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  color: '#ef4444',
-                  flexShrink: 0
-                }}>
-                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                    <circle cx="12" cy="12" r="10"/>
-                    <line x1="15" y1="9" x2="9" y2="15"/>
-                    <line x1="9" y1="9" x2="15" y2="15"/>
-                  </svg>
-                </div>
-                <div>
-                  <div style={{
-                    color: 'rgba(248, 250, 252, 0.95)',
-                    fontSize: '0.9rem',
-                    fontWeight: '600',
-                    marginBottom: '2px'
-                  }}>
-                    Errores de validación
-                  </div>
-                  <div style={{
-                    color: 'rgba(248, 250, 252, 0.7)',
-                    fontSize: '0.8rem',
-                    lineHeight: '1.3'
-                  }}>
-                    Corrige los campos marcados en rojo
-                  </div>
-                </div>
-              </div>
-            )}
           </div>
-        </div>
 
-        {/* Footer fijo con botones */}
-        <div style={{
-          padding: '20px 24px',
-          borderTop: '1px solid rgba(248, 250, 252, 0.15)',
-          background: 'rgba(248, 250, 252, 0.05)',
-          display: 'flex',
-          gap: '12px'
-        }}>
-          <button 
-            type="button"
-            onClick={handleReset}
-            disabled={isSaving || !hasChanges}
-            style={{
-              padding: '12px 16px',
-              background: 'rgba(248, 250, 252, 0.08)',
-              border: '1.5px solid rgba(248, 250, 252, 0.2)',
-              borderRadius: '10px',
-              color: 'rgba(248, 250, 252, 0.8)',
-              fontWeight: '600',
-              fontSize: '0.9rem',
-              cursor: hasChanges && !isSaving ? 'pointer' : 'not-allowed',
-              transition: 'all 0.3s ease',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '6px',
-              opacity: hasChanges && !isSaving ? 1 : 0.5
-            }}
-          >
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-              <path d="M1 4v6h6m16 6v6h-6"/>
-              <path d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 0 1 3.51 15"/>
-            </svg>
-            Resetear
-          </button>
+          {/* Footer fijo con botones */}
+          <div style={{
+            padding: '20px 24px',
+            borderTop: '1px solid rgba(248, 250, 252, 0.15)',
+            background: 'rgba(248, 250, 252, 0.05)',
+            display: 'flex',
+            gap: '12px'
+          }}>
+            <button
+              type="button"
+              onClick={handleReset}
+              disabled={isSaving || !hasChanges}
+              style={{
+                padding: '12px 16px',
+                background: 'rgba(248, 250, 252, 0.08)',
+                border: '1.5px solid rgba(248, 250, 252, 0.2)',
+                borderRadius: '10px',
+                color: 'rgba(248, 250, 252, 0.8)',
+                fontWeight: '600',
+                fontSize: '0.9rem',
+                cursor: hasChanges && !isSaving ? 'pointer' : 'not-allowed',
+                transition: 'all 0.3s ease',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '6px',
+                opacity: hasChanges && !isSaving ? 1 : 0.5
+              }}
+            >
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                <path d="M1 4v6h6m16 6v6h-6" />
+                <path d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 0 1 3.51 15" />
+              </svg>
+              Resetear
+            </button>
 
-          <button 
-            type="button"
-            onClick={onClose}
-            disabled={isSaving}
-            style={{
-              flex: 1,
-              padding: '12px 16px',
-              background: 'rgba(100, 116, 139, 0.1)',
-              border: '1.5px solid rgba(100, 116, 139, 0.2)',
-              borderRadius: '10px',
-              color: 'rgba(100, 116, 139, 0.8)',
-              fontWeight: '600',
-              fontSize: '0.9rem',
-              cursor: 'pointer',
-              transition: 'all 0.3s ease'
-            }}
-          >
-            Cancelar
-          </button>
-          
-          <button 
-            type="submit"
-            disabled={isSaving || !hasChanges || Object.keys(errors).length > 0}
-            style={{
-              flex: 2,
-              padding: '12px 16px',
-              background: hasChanges && !isSaving && Object.keys(errors).length === 0
-                ? 'linear-gradient(135deg, #2563eb, #059669)' 
-                : 'rgba(100, 116, 139, 0.6)',
-              border: 'none',
-              borderRadius: '10px',
-              color: 'white',
-              fontWeight: '700',
-              fontSize: '0.9rem',
-              cursor: hasChanges && !isSaving && Object.keys(errors).length === 0 ? 'pointer' : 'not-allowed',
-              transition: 'all 0.3s ease',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: '8px',
-              opacity: hasChanges && !isSaving && Object.keys(errors).length === 0 ? 1 : 0.6
-            }}
-          >
-            {isSaving ? (
-              <div style={{
-                width: '16px',
-                height: '16px',
-                border: '2px solid rgba(255, 255, 255, 0.3)',
-                borderTop: '2px solid white',
-                borderRadius: '50%',
-                animation: 'spin 1s linear infinite'
-              }}></div>
-            ) : (
-              <>
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                  <path d="M20 6L9 17L4 12"/>
-                </svg>
-                Guardar Cambios
-              </>
-            )}
-          </button>
-        </div>
-      </form>
+            <button
+              type="button"
+              onClick={onClose}
+              disabled={isSaving}
+              style={{
+                flex: 1,
+                padding: '12px 16px',
+                background: 'rgba(100, 116, 139, 0.1)',
+                border: '1.5px solid rgba(100, 116, 139, 0.2)',
+                borderRadius: '10px',
+                color: 'rgba(100, 116, 139, 0.8)',
+                fontWeight: '600',
+                fontSize: '0.9rem',
+                cursor: 'pointer',
+                transition: 'all 0.3s ease'
+              }}
+            >
+              Cancelar
+            </button>
+
+            <button
+              type="submit"
+              disabled={isSaving || !hasChanges || Object.keys(errors).length > 0}
+              style={{
+                flex: 2,
+                padding: '12px 16px',
+                background: hasChanges && !isSaving && Object.keys(errors).length === 0
+                  ? 'linear-gradient(135deg, #2563eb, #059669)'
+                  : 'rgba(100, 116, 139, 0.6)',
+                border: 'none',
+                borderRadius: '10px',
+                color: 'white',
+                fontWeight: '700',
+                fontSize: '0.9rem',
+                cursor: hasChanges && !isSaving && Object.keys(errors).length === 0 ? 'pointer' : 'not-allowed',
+                transition: 'all 0.3s ease',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '8px',
+                opacity: hasChanges && !isSaving && Object.keys(errors).length === 0 ? 1 : 0.6
+              }}
+            >
+              {isSaving ? (
+                <div style={{
+                  width: '16px',
+                  height: '16px',
+                  border: '2px solid rgba(255, 255, 255, 0.3)',
+                  borderTop: '2px solid white',
+                  borderRadius: '50%',
+                  animation: 'spin 1s linear infinite'
+                }}></div>
+              ) : (
+                <>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <path d="M20 6L9 17L4 12" />
+                  </svg>
+                  Guardar Cambios
+                </>
+              )}
+            </button>
+          </div>
+        </form>
       </div>
 
       <style jsx>{`

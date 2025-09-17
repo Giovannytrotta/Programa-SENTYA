@@ -133,10 +133,10 @@ class ApiService {
     });
   }
 
-  async updateUserRole(userId, role) {
-    return this.request(`/auth/admin/users/${userId}/role`, {
+  async updateUser(userId, userData) {
+    return this.request(`/auth/admin/users/${userId}`, {
       method: 'PUT',
-      body: { role }
+      body:  userData  // Cualquier campo que quieras actualizar
     });
   }
 

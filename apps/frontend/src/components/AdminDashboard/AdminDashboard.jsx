@@ -28,7 +28,7 @@ const AdminDashboard = () => {
         loading,
         stats,
         createUser,
-        updateUserRole,
+        updateUser,
         updateUserStatus,
         deleteUser,
         filterUsers
@@ -198,24 +198,18 @@ const AdminDashboard = () => {
     }, [currentStep, totalSteps, validateStep, nextStep, newUser, createUser, resetForm])
 
     // Función para manejar la edición de usuarios
-    const handleSaveUser = useCallback(async (userId, userData) => {
-        try {
-            // Por ahora, solo actualizamos el rol ya que es lo que funciona
-            if (userData.rol !== filteredUsers.find(u => u.id === userId)?.rol) {
-                await updateUserRole(userId, userData.rol)
-            }
-            
-            if (userData.is_active !== filteredUsers.find(u => u.id === userId)?.is_active) {
-                await updateUserStatus(userId, userData.is_active)
-            }
-            
-            setShowEditModal(false)
-            setSelectedUser(null)
-        } catch (error) {
-            console.error('Error saving user:', error)
-            throw error // Re-lanzar para que el modal lo maneje
-        }
-    }, [filteredUsers, updateUserRole, updateUserStatus])
+   const handleSaveUser = useCallback(async (userId, userData) => {
+    try {
+        // Una sola llamada - tu endpoint maneja todo
+        await updateUser(userId, userData);
+        
+        setShowEditModal(false);
+        setSelectedUser(null);
+    } catch (error) {
+        console.error('Error saving user:', error);
+        throw error;
+    }
+}, [updateUser]); // ← Solo esta dependencia
 
     // Funciones para modales de edición
     const handleEditUser = useCallback((user) => {
@@ -244,11 +238,11 @@ const AdminDashboard = () => {
     // Cambiar rol de usuario
     const handleRoleChange = useCallback(async (userId, newRole) => {
         try {
-            await updateUserRole(userId, newRole)
+            await updateUser(userId, newRole)
         } catch (error) {
             console.error('Error updating role:', error)
         }
-    }, [updateUserRole])
+    }, [updateUser])
 
     // Cambiar estado de usuario
     const handleStatusChange = useCallback(async (userId, isActive) => {
