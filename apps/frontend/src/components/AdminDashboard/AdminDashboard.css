@@ -680,10 +680,11 @@
   -webkit-backdrop-filter: blur(24px);
   border: 1px solid rgba(248, 250, 252, 0.15);
   border-radius: 20px;
-  overflow: hidden;
+  overflow-x: auto;
   box-shadow: 0 8px 32px rgba(37, 99, 235, 0.1);
   margin-bottom: 32px;
 }
+
 
 .users-table {
   width: 100%;
@@ -2456,5 +2457,88 @@
       rgba(5, 150, 105, 0.25) 50%, 
       rgba(249, 115, 22, 0.25) 100%
     );
+  }
+}
+/* Estilos para el select de roles en la tabla de usuarios */
+.role-select {
+  background: rgba(248, 250, 252, 0.05);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(248, 250, 252, 0.15);
+  border-radius: 8px;
+  color: rgba(248, 250, 252, 0.95);
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 4px 8px;
+  outline: none;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  min-width: 120px;
+  text-transform: capitalize;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%23f8fafc' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+  background-position: right 8px center;
+  background-repeat: no-repeat;
+  background-size: 12px;
+  padding-right: 28px;
+}
+
+.role-select:focus {
+  background: rgba(248, 250, 252, 0.1);
+  border-color: var(--aossa-primary);
+  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.12);
+}
+
+.role-select:hover:not(:disabled) {
+  background: rgba(248, 250, 252, 0.08);
+  border-color: rgba(248, 250, 252, 0.25);
+}
+
+.role-select:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  background: rgba(248, 250, 252, 0.02);
+}
+
+.role-select option {
+  background-color: rgba(30, 41, 59, 0.95);
+  color: rgba(248, 250, 252, 0.95);
+  padding: 8px 12px;
+  font-weight: 500;
+}
+
+/* Estilos específicos para diferentes roles */
+.role-select[value="administrator"] {
+  border-color: rgba(249, 115, 22, 0.3);
+  background-color: rgba(249, 115, 22, 0.08);
+}
+
+.role-select[value="coordinator"] {
+  border-color: rgba(168, 85, 247, 0.3);
+  background-color: rgba(168, 85, 247, 0.08);
+}
+
+.role-select[value="professional"] {
+  border-color: rgba(34, 197, 94, 0.3);
+  background-color: rgba(34, 197, 94, 0.08);
+}
+
+.role-select[value="css_technician"] {
+  border-color: rgba(251, 191, 36, 0.3);
+  background-color: rgba(251, 191, 36, 0.08);
+}
+
+.role-select[value="client"] {
+  border-color: rgba(37, 99, 235, 0.3);
+  background-color: rgba(37, 99, 235, 0.08);
+}
+
+/* Responsive para móviles */
+@media (max-width: 767px) {
+  .role-select {
+    font-size: 0.75rem;
+    min-width: 100px;
+    padding: 3px 6px;
+    padding-right: 24px;
   }
 }

@@ -23,6 +23,7 @@ flask-bcrypt = "*"
 pyotp = "*"
 pillow = "*"
 qrcode = "*"
+flask-mail = "*"
 
 [scripts]
 start="flask run -p 3001 -h 0.0.0.0"
