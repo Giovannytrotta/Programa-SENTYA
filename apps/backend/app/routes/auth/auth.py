@@ -2,9 +2,9 @@ from flask import Blueprint, jsonify, request, session
 from app.extensions import db, jwt, bcrypt
 from app.models.user import SystemUser, UserRole
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity, unset_jwt_cookies, set_access_cookies,decode_token
-from app.exceptions import ValidationError, UnauthorizedError, ForbiddenError, AppError, BadRequestError,NotFoundError
-from app.utils.helper import build_qr_data_uri, issue_tokens_for_user
-from datetime import datetime, timezone, timedelta
+from app.exceptions import ValidationError, UnauthorizedError, ForbiddenError, AppError, BadRequestError,NotFoundError,ConflictError
+from app.utils.helper import build_qr_data_uri, issue_tokens_for_user,validate_international_phone
+from datetime import datetime, timezone, timedelta,date
 import re
 from functools import wraps
 from app.services.mail_service import send_reset_password_email
@@ -311,22 +311,22 @@ def register():
     except ValueError:
         raise ValidationError("La edad debe ser un número entero")
     
-    # Validar teléfono (formato español)
+    # Validar teléfono viene con formato internacional y por default +34 que es local para españa
     phone = data.get('phone', '').strip()
-    phone_pattern = r"^[6-9][0-9]{8}$"
-    if not re.match(phone_pattern, phone):
-        raise ValidationError("Formato de teléfono inválido (9 dígitos, comenzando con 6-9)")
+    if not phone:
+        raise ValidationError("el telefono es obligatorio")
+    phone = validate_international_phone(phone)
     
     # Validar contraseña
     password = data.get("password") or ""
     if len(password) < 8:
         raise ValidationError("La contraseña debe tener al menos 8 caracteres")
-    if not re.search(r"[A-Z]", password):
-        raise ValidationError("La contraseña debe contener al menos una mayúscula")
-    if not re.search(r"[a-z]", password):
-        raise ValidationError("La contraseña debe contener al menos una minúscula")
-    if not re.search(r"[0-9]", password):
-        raise ValidationError("La contraseña debe contener al menos un número")
+    # if not re.search(r"[A-Z]", password):
+    #     raise ValidationError("La contraseña debe contener al menos una mayúscula")
+    # if not re.search(r"[a-z]", password):
+    #     raise ValidationError("La contraseña debe contener al menos una minúscula")
+    # if not re.search(r"[0-9]", password):
+    #     raise ValidationError("La contraseña debe contener al menos un número")
     
     # Crear hash de contraseña
     password_hash = bcrypt.generate_password_hash(password).decode("utf-8")
@@ -448,40 +448,46 @@ def get_all_users():
     except Exception as e:
         raise AppError(f"Error obteniendo usuarios: {str(e)}")
 
-@auth_bp.route("/admin/users/<int:user_id>/role", methods=['PUT'])
-@requires_admin
-def admin_change_role(user_id: int):
-    admin_id = get_jwt_identity()
-    if int(user_id) == int(admin_id):
-        raise ValidationError("No puedes cambiar tu propio rol")
+# 2️ PARA GESTIÓN COMPLETA (todos los demás campos incluyendo rol)
 
-    user = SystemUser.query.get(user_id)
-    if not user:
-        raise NotFoundError("Usuario no encontrado")
+#EN OBSERVACION A COMENTAR PARA QUITARLO O DEJARLO
 
-    data = request.get_json(silent=True) or {}
-    new_role_val = (data.get("role") or "").strip()
-    if not new_role_val:
-        raise ValidationError("El campo 'role' es requerido")
+# @auth_bp.route("/admin/users/<int:user_id>/role", methods=['PUT'])
+# @requires_admin
+# def admin_change_role(user_id: int):
+#     admin_id = get_jwt_identity()
+#     if int(user_id) == int(admin_id):
+#         raise ValidationError("No puedes cambiar tu propio rol")
 
-    try:
-        new_role = UserRole(new_role_val)
-    except ValueError:
-        valid_roles = [r.value for r in UserRole]
-        raise ValidationError(f"Rol inválido. Roles válidos: {', '.join(valid_roles)}")
+#     user = SystemUser.query.get(user_id)
+#     if not user:
+#         raise NotFoundError("Usuario no encontrado")
 
-    old_role = user.rol.value
-    user.rol = new_role
-    user.updated_at = datetime.now(timezone.utc)
-    db.session.commit()
+#     data = request.get_json(silent=True) or {}
+#     new_role_val = (data.get("role") or "").strip()
+#     if not new_role_val:
+#         raise ValidationError("El campo 'role' es requerido")
 
-    return jsonify({
-        "message": "Rol actualizado exitosamente",
-        "user_id": user.id,
-        "old_role": old_role,
-        "new_role": new_role.value,
-        "changed_by": admin_id
-    }), 200
+#     try:
+#         new_role = UserRole(new_role_val)
+#     except ValueError:
+#         valid_roles = [r.value for r in UserRole]
+#         raise ValidationError(f"Rol inválido. Roles válidos: {', '.join(valid_roles)}")
+
+#     old_role = user.rol.value
+#     user.rol = new_role
+#     user.updated_at = datetime.now(timezone.utc)
+#     db.session.commit()
+
+#     return jsonify({
+#         "message": "Rol actualizado exitosamente",
+#         "user_id": user.id,
+#         "old_role": old_role,
+#         "new_role": new_role.value,
+#         "changed_by": admin_id
+#     }), 200
+
+# 1️ ENDPOINT PARA CAMBIO DE ESTADO ÚNICAMENTE (activar/desactivar)
 
 @auth_bp.route("/admin/users/<int:user_id>/status", methods=['PUT'])
 @requires_admin
@@ -511,6 +517,230 @@ def admin_change_status(user_id: int):
         "new_status": new_status,
         "changed_by": admin_id
     }), 200
+
+@auth_bp.route("/admin/users/<int:user_id>", methods=['PUT'])
+@requires_admin
+def admin_update_user_complete(user_id: int):
+    """Gestión completa de usuario - TODOS los campos son opcionales
+    Campos disponibles:
+    - name, last_name, email, dni, phone, birth_date, address, observations
+    - rol (administrator, coordinator, professional, css_technician, client)
+    - is_active (también se puede cambiar aquí, pero recomendamos usar /status)
+    Solo actualiza los campos que se envían en la request """
+
+    # Validar que no se esté editando a sí mismo (opcional según reglas de negocio)
+    admin_id = get_jwt_identity()
+    if int(user_id) == int(admin_id):
+        raise ValidationError("No puedes cambiar tu propio rol")
+    
+    user = SystemUser.query.get(user_id)
+    if not user:
+        raise NotFoundError("Usuario no encontrado")
+    
+ # Obtener datos del request
+ 
+    data = request.get_json(silent=True) or {}
+    if not data:
+        raise ValidationError("No se proporcionaron datos para actualizar")
+
+# ARRAY PARA TRACKEAR CAMBIOS
+
+    changes_made = []
+    
+    # ========== CAMPOS PERSONALES (todos opcionales) ==========
+    if 'name' in data:
+        new_name = data['name'].strip() if data['name'] else ''
+        if not new_name:
+            raise ValidationError("El nombre no puede estar vacío")
+        if user.name != new_name:
+            user.name = new_name
+            changes_made.append("nombre")
+    
+    if 'last_name' in data:
+        new_last_name = data['last_name'].strip() if data['last_name'] else ''
+        if not new_last_name:
+            raise ValidationError("Los apellidos no pueden estar vacíos")
+        if user.last_name != new_last_name:
+            user.last_name = new_last_name
+            changes_made.append("apellidos")
+    
+#  ACTUALIZAR EMAIL (opcional)
+    if 'email' in data:
+        new_email = data['email'].strip().lower() if data['email'] else ''
+        if not new_email:
+            raise ValidationError("El email no puede estar vacío")
+        if not re.match(r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$", new_email):
+            raise ValidationError("Formato de email inválido")
+        
+        # Verificar que el email no esté en uso
+        existing_user = SystemUser.query.filter(
+            SystemUser.email == new_email,
+            SystemUser.id != user_id
+        ).first()
+        if existing_user:
+            raise ConflictError("Este email ya está en uso por otro usuario")
+        
+        if user.email != new_email:
+            user.email = new_email
+            changes_made.append("email")
+    
+#CAMPOS OBLIGATORIOS
+    if 'dni' in data:
+        new_dni = data['dni'].strip().upper() if data['dni'] else '' 
+        if not new_dni:
+            raise ValidationError("El DNI no puede estar vacío")
+        
+        # Validar formato DNI/NIE
+        dni_pattern = r"^[0-9]{8}[A-Z]$"
+        nie_pattern = r"^[XYZ][0-9]{7}[A-Z]$"
+        if not (re.match(dni_pattern, new_dni) or re.match(nie_pattern, new_dni)):
+            raise ValidationError("Formato de DNI/NIE inválido")
+        
+        # Verificar que el DNI no esté en uso
+        existing_user = SystemUser.query.filter(
+            SystemUser.dni == new_dni,
+            SystemUser.id != user_id
+        ).first()
+        if existing_user:
+            raise ConflictError("Este DNI ya está en uso por otro usuario")
+        
+        if user.dni != new_dni:
+            user.dni = new_dni
+            changes_made.append("DNI")
+    
+    if 'phone' in data:
+        new_phone = data['phone'].strip() if data['phone'] else None
+        
+        if not new_phone:
+            raise ValidationError("El teléfono no puede estar vacío")
+        
+        new_phone = validate_international_phone(new_phone)
+        
+        if user.phone != new_phone:
+            user.phone = new_phone
+            changes_made.append("teléfono")
+    
+    if 'birth_date' in data:
+        if data['birth_date']:
+            try:
+                new_birth_date = datetime.strptime(data['birth_date'], "%Y-%m-%d").date()
+                
+                # Validar edad razonable
+                today = date.today()
+                age = today.year - new_birth_date.year - ((today.month, today.day) < (new_birth_date.month, new_birth_date.day))
+                if age < 18 or age > 120:
+                    raise ValidationError("La edad debe estar entre 18 y 120 años")
+                
+                if user.birth_date != new_birth_date:
+                    user.birth_date = new_birth_date
+                    user.age = str(age)
+                    changes_made.append("fecha de nacimiento y edad")
+                    
+            except ValueError:
+                raise ValidationError("Formato de fecha inválido (debe ser YYYY-MM-DD)")
+        else:
+            # Permitir limpiar la fecha de nacimiento
+            if user.birth_date is not None:
+                user.birth_date = None
+                user.age = None
+                changes_made.append("fecha de nacimiento eliminada")
+    
+    if 'address' in data:
+        new_address = data['address'].strip() if data['address'] else None
+        if user.address != new_address:
+            user.address = new_address
+            changes_made.append("dirección")
+    
+    if 'observations' in data:
+        new_observations = data['observations'].strip() if data['observations'] else None
+        if user.observations != new_observations:
+            user.observations = new_observations
+            changes_made.append("observaciones")
+    
+    # ========== CAMPOS ADMINISTRATIVOS (opcionales pero con validaciones especiales) ========== POR VERIFICAR CON SERGUIHO
+    #SI NO DEJAR QUE UN ADMIN NO PUEDA CAMBIAR A OTRO O SIMPLEMENTE DEJARLO DE ESTA FORMA PARA QUE  
+    #Admin A puede cambiar el rol de Admin B (siempre que quede al menos 1 admin) Protege que no se quede el sistema sin administradores
+    #ALGO ASI COMO QUE UN Un super admin puede degradar a otros admins
+    if 'rol' in data:
+        # No permitir que un admin cambie su propio rol
+        if int(user_id) == int(admin_id):
+            raise ValidationError("No puedes cambiar tu propio rol")
+        
+        try:
+            new_role = UserRole(data['rol'])
+        except ValueError:
+            valid_roles = [r.value for r in UserRole]
+            raise ValidationError(f"Rol inválido. Roles válidos: {', '.join(valid_roles)}")
+        
+        # Verificar que no se elimine el último admin
+        if user.rol == UserRole.ADMINISTRATOR and new_role != UserRole.ADMINISTRATOR:
+            remaining_admins = SystemUser.query.filter(
+                SystemUser.rol == UserRole.ADMINISTRATOR,
+                SystemUser.id != user_id,
+                SystemUser.is_active == True
+            ).count()
+            if remaining_admins == 0:
+                raise ValidationError("No se puede cambiar el rol del último administrador")
+        
+        if user.rol != new_role:
+            old_role = user.rol.value
+            user.rol = new_role
+            changes_made.append(f"rol de '{old_role}' a '{new_role.value}'")
+    
+    # is_active también se puede cambiar aquí (aunque recomendamos usar /status para ello)
+    if 'is_active' in data:
+        # No permitir que un admin cambie su propio estado
+        if int(user_id) == int(admin_id):
+            raise ValidationError("No puedes cambiar tu propio estado")
+        
+        new_status = bool(data['is_active'])
+        
+        # Verificar que no se desactive el último admin
+        if (user.rol == UserRole.ADMINISTRATOR and 
+            user.is_active == True and 
+            new_status == False):
+            remaining_active_admins = SystemUser.query.filter(
+                SystemUser.rol == UserRole.ADMINISTRATOR,
+                SystemUser.id != user_id,
+                SystemUser.is_active == True
+            ).count()
+            if remaining_active_admins == 0:
+                raise ValidationError("No se puede desactivar el último administrador")
+        
+        if user.is_active != new_status:
+            user.is_active = new_status
+            status_text = "activado" if new_status else "desactivado"
+            changes_made.append(f"estado a '{status_text}'")
+    
+    # ========== FINALIZACIÓN ==========
+    
+    # Si no hubo cambios, informarlo
+    if not changes_made:
+        return jsonify({
+            "message": "No se realizaron cambios",
+            "user_id": user_id,
+            "changes": [],
+            "type": "no_changes"
+        }), 200
+    
+    # Actualizar timestamp y guardar
+    user.updated_at = datetime.now(timezone.utc)
+    
+    try:
+        db.session.commit()
+        
+        return jsonify({
+            "message": f"Usuario actualizado exitosamente. Cambios realizados: {', '.join(changes_made)}",
+            "user_id": user_id,
+            "changes": changes_made,
+            "updated_by": admin_id,
+            "updated_at": user.updated_at.isoformat(),
+            "type": "complete_update"
+        }), 200
+        
+    except Exception as e:
+        db.session.rollback()
+        raise AppError(f"Error al guardar cambios: {str(e)}")
 
 @auth_bp.route("/admin/users/<int:user_id>", methods=['DELETE'])
 @requires_admin
