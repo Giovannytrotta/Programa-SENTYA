@@ -1,4 +1,4 @@
-from flask import Blueprint, jsonify, request, session
+from flask import Blueprint, jsonify, request, session,current_app
 from app.extensions import db, jwt, bcrypt
 from app.models.user import SystemUser, UserRole
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity, unset_jwt_cookies, set_access_cookies,decode_token
@@ -8,6 +8,7 @@ from datetime import datetime, timezone, timedelta,date
 import re
 from functools import wraps
 from app.services.mail_service import send_reset_password_email
+from app.services.reset_2fa_service import send_reset_2fa_email
 
 auth_bp = Blueprint("auth", __name__, url_prefix='/auth')
 
@@ -252,6 +253,81 @@ def verify_2fa_setup():
 
 #     return jsonify({"enabled": False}), 200
     
+    
+@auth_bp.route('/2fa/request-reset', methods=['POST'])
+def request_2fa_reset():
+    """Solicitar reseteo de 2FA por email"""
+    email = (request.get_json() or {}).get("email", "").strip().lower()
+    
+    if not email:
+        raise ValidationError("El email es requerido")
+    
+    if not re.match(r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$", email):
+        raise ValidationError("Formato de email inválido")
+    
+    user = SystemUser.query.filter_by(email=email).first()
+    
+    # Solo enviar si usuario existe y tiene 2FA activado
+    if user and user.two_factor_enabled:
+        try:
+            from app.services.reset_2fa_service import send_reset_2fa_email
+            send_reset_2fa_email(user.email, user.name)
+        except Exception as e:
+            current_app.logger.error(f"Error sending 2FA reset email: {e}")
+            # No revelar el error específico
+    
+    # Siempre devolver éxito por seguridad (no revelar si email existe)
+    return jsonify({
+        "message": "Si el email está registrado y tiene 2FA activado, recibirás un correo para restablecerlo"
+    }), 200
+
+
+@auth_bp.route('/2fa/confirm-reset', methods=['POST'])
+def confirm_2fa_reset():
+    """Confirmar reseteo de 2FA usando token del email"""
+    data = request.get_json() or {}
+    token = data.get('token')
+    
+    if not token:
+        raise ValidationError("Token de reseteo requerido")
+    
+    try:
+        from flask_jwt_extended import decode_token
+        payload = decode_token(token)
+    except Exception:
+        raise ValidationError("Token inválido o expirado")
+    
+    # Verificar propósito del token
+    if payload.get("purpose") != "reset_2fa":
+        raise ValidationError("Token inválido para reseteo 2FA")
+    
+    email = payload.get("sub")
+    if not email:
+        raise ValidationError("Token inválido")
+    
+    user = SystemUser.query.filter_by(email=email).first()
+    if not user:
+        raise NotFoundError("Usuario no encontrado")
+    
+    # Si ya está deshabilitado, informar pero no fallar
+    if not user.two_factor_enabled:
+        return jsonify({
+            "message": "El 2FA ya está deshabilitado para este usuario"
+        }), 200
+    
+    # Deshabilitar 2FA
+    user.two_factor_enabled = False
+    user.two_factor_secret = None
+    user.updated_at = datetime.now(timezone.utc)
+    
+    db.session.commit()
+    
+    current_app.logger.info(f"2FA disabled via email reset for user {user.id} ({user.email})")
+    
+    return jsonify({
+        "message": "Autenticación 2FA deshabilitada exitosamente. Ya puedes iniciar sesión normalmente."
+    }), 200
+
 
 # =========================================================================================================
 #                                           REGISTRO MEJORADO

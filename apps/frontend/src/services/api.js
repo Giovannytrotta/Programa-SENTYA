@@ -109,6 +109,19 @@ class ApiService {
     });
   }
 
+  async request2faReset(email) {
+  return this.request('/auth/2fa/request-reset', {
+    method: 'POST',
+    body: { email }
+  });
+}
+
+async confirm2faReset(token) {
+  return this.request('/auth/2fa/confirm-reset', {
+    method: 'POST',
+    body: { token }
+  });
+}
   // Admin endpoints
   async getAllUsers(filters = {}) {
     const params = new URLSearchParams();
