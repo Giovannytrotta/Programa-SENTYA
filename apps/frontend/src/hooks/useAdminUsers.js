@@ -203,6 +203,37 @@ export const useAdminUsers = () => {
     }
   }, [users, showNotification, calculateStats]);
 
+  const updateUserRole = useCallback(async (userId, newRole) => {
+  try {
+    const response = await apiService.updateUserRole(userId, newRole);
+    if (response && response.message) {
+      showNotification('✅ Rol actualizado exitosamente', 'success');
+      
+      // Actualizar estado local solo el rol
+      setUsers(prevUsers => 
+        prevUsers.map(user => 
+          user.id === userId ? { ...user, rol: newRole } : user
+        )
+      );
+      setFilteredUsers(prevUsers => 
+        prevUsers.map(user => 
+          user.id === userId ? { ...user, rol: newRole } : user
+        )
+      );
+      
+      // Recalcular stats
+      const updatedUsers = users.map(user => 
+        user.id === userId ? { ...user, rol: newRole } : user
+      );
+      calculateStats(updatedUsers);
+      return { success: true };
+    }
+  } catch (err) {
+    showNotification('❌ Error al cambiar rol', 'error');
+    return { success: false };
+  }
+}, [showNotification, users, calculateStats]);
+
   // Actualizar estado de usuario
   const updateUserStatus = useCallback(async (userId, isActive) => {
     try {
@@ -373,6 +404,7 @@ export const useAdminUsers = () => {
     fetchUsers,
     createUser,
     updateUser,
+    updateUserRole,
     updateUserStatus,
     deleteUser,
     filterUsers,

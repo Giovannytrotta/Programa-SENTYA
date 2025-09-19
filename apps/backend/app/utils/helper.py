@@ -81,16 +81,49 @@ def validate_international_phone(phone_number):
     
     # Patrones aceptados
     patterns = [
-        # Números internacionales (OBLIGATORIO código de país para extranjeros)
-        r'^\+?34[6-9]\d{8}$',    # España: +34 6XXXXXXXX (permite sin +)
-        r'^\+39[3]\d{8,9}$',     # Italia: +39 3XXXXXXXX (OBLIGATORIO +39)
-        r'^\+33[6-7]\d{8}$',     # Francia: +33 6XXXXXXXX (OBLIGATORIO +33)  
-        r'^\+49[1]\d{9,10}$',    # Alemania: +49 1XXXXXXXXX (OBLIGATORIO +49)
-        r'^\+351[9]\d{8}$',      # Portugal: +351 9XXXXXXXX (OBLIGATORIO +351)
-        r'^\+1[2-9]\d{9}$',      # EEUU/Canadá: +1 XXXXXXXXXX (OBLIGATORIO +1)
+        # ESPAÑA (ÚNICO que puede ir sin código - local)
+        r'^[6-9]\d{8}$',              # Móvil español local (se asume +34)
+        r'^\+?34[6-9]\d{8}$',         # España: +34 6XXXXXXXX
         
-        # SOLO números españoles pueden ir sin código de país (son locales por defecto)
-        r'^[6-9]\d{8}$',         # Móvil español local (se asume +34)
+        # EUROPA OCCIDENTAL
+        r'^\+33[6-7]\d{8}$',          # Francia: +33 6/7XXXXXXXX
+        r'^\+39[3]\d{8,9}$',          # Italia: +39 3XXXXXXXX
+        r'^\+49[1]\d{9,10}$',         # Alemania: +49 1XXXXXXXXX
+        r'^\+351[9]\d{8}$',           # Portugal: +351 9XXXXXXXX
+        r'^\+44[7]\d{9}$',            # Reino Unido: +44 7XXXXXXXXX
+        r'^\+31[6]\d{8}$',            # Países Bajos: +31 6XXXXXXXX
+        r'^\+32[4]\d{8}$',            # Bélgica: +32 4XXXXXXXX
+        r'^\+41[7-8]\d{8}$',          # Suiza: +41 7X/8XXXXXXXX
+        r'^\+43[6-9]\d{8,9}$',        # Austria: +43 6XXXXXXXXX
+        
+        # EUROPA NÓRDICA
+        r'^\+45[2-9]\d{7}$',          # Dinamarca: +45 XXXXXXXX
+        r'^\+46[7]\d{8}$',            # Suecia: +46 7XXXXXXXX
+        r'^\+47[4-9]\d{7}$',          # Noruega: +47 XXXXXXXX
+        
+        # EUROPA ORIENTAL
+        r'^\+48[5-9]\d{8}$',          # Polonia: +48 5/6/7/8/9XXXXXXXX
+        r'^\+420[6-7]\d{8}$',         # República Checa: +420 6/7XXXXXXXX
+        r'^\+421[9]\d{8}$',           # Eslovaquia: +421 9XXXXXXXX
+        r'^\+36[2-7]\d{8}$',          # Hungría: +36 20/30/31/70XXXXXXX
+        r'^\+40[7]\d{8}$',            # Rumanía: +40 7XXXXXXXX
+        r'^\+359[8-9]\d{8}$',         # Bulgaria: +359 8X/9XXXXXXXX
+        r'^\+30[6-9]\d{8}$',          # Grecia: +30 69XXXXXXXX
+        r'^\+90[5]\d{9}$',            # Turquía: +90 5XXXXXXXXX
+        
+        # AMÉRICA
+        r'^\+1[2-9]\d{9}$',           # EEUU/Canadá: +1 XXXXXXXXXX
+        r'^\+52[1-9]\d{9}$',          # México: +52 1XXXXXXXXXX
+        r'^\+54[9]\d{9}$',            # Argentina: +54 9XXXXXXXXX
+        r'^\+55[1-9]\d{10}$',         # Brasil: +55 11XXXXXXXXX
+        r'^\+56[9]\d{8}$',            # Chile: +56 9XXXXXXXX
+        r'^\+57[3]\d{9}$',            # Colombia: +57 3XXXXXXXXX
+        r'^\+58[4]\d{9}$',            # Venezuela: +58 4XXXXXXXXX
+        r'^\+51[9]\d{8}$',            # Perú: +51 9XXXXXXXX
+        r'^\+593[9]\d{8}$',           # Ecuador: +593 9XXXXXXXX
+        r'^\+595[9]\d{8}$',           # Paraguay: +595 9XXXXXXXX
+        r'^\+598[9]\d{7}$',           # Uruguay: +598 9XXXXXXX
+        r'^\+591[6-7]\d{7}$',         # Bolivia: +591 6X/7XXXXXXX
     ]
     
     # Probar cada patrón

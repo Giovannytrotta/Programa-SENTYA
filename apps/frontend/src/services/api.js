@@ -160,6 +160,13 @@ async confirm2faReset(token) {
     });
   }
 
+  async updateUserRole(userId, role) {
+    return this.request(`/auth/admin/users/${userId}/role`, {
+      method: 'PUT',
+      body: { role } 
+    });
+  }
+
   async deleteUser(userId, force = false) {
     const endpoint = force ? 
       `/auth/admin/users/${userId}?force=true` : 

@@ -524,44 +524,44 @@ def get_all_users():
     except Exception as e:
         raise AppError(f"Error obteniendo usuarios: {str(e)}")
 
-# 2️ PARA GESTIÓN COMPLETA (todos los demás campos incluyendo rol)
+# PARA GESTIÓN COMPLETA (todos los demás campos incluyendo rol)
 
-#EN OBSERVACION A COMENTAR PARA QUITARLO O DEJARLO
 
-# @auth_bp.route("/admin/users/<int:user_id>/role", methods=['PUT'])
-# @requires_admin
-# def admin_change_role(user_id: int):
-#     admin_id = get_jwt_identity()
-#     if int(user_id) == int(admin_id):
-#         raise ValidationError("No puedes cambiar tu propio rol")
 
-#     user = SystemUser.query.get(user_id)
-#     if not user:
-#         raise NotFoundError("Usuario no encontrado")
+@auth_bp.route("/admin/users/<int:user_id>/role", methods=['PUT'])
+@requires_admin
+def admin_change_role(user_id: int):
+    admin_id = get_jwt_identity()
+    if int(user_id) == int(admin_id):
+        raise ValidationError("No puedes cambiar tu propio rol")
 
-#     data = request.get_json(silent=True) or {}
-#     new_role_val = (data.get("role") or "").strip()
-#     if not new_role_val:
-#         raise ValidationError("El campo 'role' es requerido")
+    user = SystemUser.query.get(user_id)
+    if not user:
+        raise NotFoundError("Usuario no encontrado")
 
-#     try:
-#         new_role = UserRole(new_role_val)
-#     except ValueError:
-#         valid_roles = [r.value for r in UserRole]
-#         raise ValidationError(f"Rol inválido. Roles válidos: {', '.join(valid_roles)}")
+    data = request.get_json(silent=True) or {}
+    new_role_val = (data.get("role") or "").strip()
+    if not new_role_val:
+        raise ValidationError("El campo 'role' es requerido")
 
-#     old_role = user.rol.value
-#     user.rol = new_role
-#     user.updated_at = datetime.now(timezone.utc)
-#     db.session.commit()
+    try:
+        new_role = UserRole(new_role_val)
+    except ValueError:
+        valid_roles = [r.value for r in UserRole]
+        raise ValidationError(f"Rol inválido. Roles válidos: {', '.join(valid_roles)}")
 
-#     return jsonify({
-#         "message": "Rol actualizado exitosamente",
-#         "user_id": user.id,
-#         "old_role": old_role,
-#         "new_role": new_role.value,
-#         "changed_by": admin_id
-#     }), 200
+    old_role = user.rol.value
+    user.rol = new_role
+    user.updated_at = datetime.now(timezone.utc)
+    db.session.commit()
+
+    return jsonify({
+        "message": "Rol actualizado exitosamente",
+        "user_id": user.id,
+        "old_role": old_role,
+        "new_role": new_role.value,
+        "changed_by": admin_id
+    }), 200
 
 # 1️ ENDPOINT PARA CAMBIO DE ESTADO ÚNICAMENTE (activar/desactivar)
 
