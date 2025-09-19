@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { Heart, Target, TrendingUp, Users, Award, Rocket, Type, Minus, Plus } from 'lucide-react';
+import { Heart, Target, TrendingUp, Users, Award, Rocket } from 'lucide-react';
 import "./SentyaLanding.css"
 
 const SentyaLanding = () => {
-  const [fontSize, setFontSize] = useState(1);
   const [scrollY, setScrollY] = useState(0);
 
   useEffect(() => {
@@ -15,51 +14,22 @@ const SentyaLanding = () => {
   const transform = `translateY(${scrollY * 0.1}px)`;
 
   return (
-    <div
-      className="sentya-landing"
-      style={{ fontSize: `${16 * fontSize}px` }}
-    >
-      {/* Barra de Accesibilidad */}
-      <div className="accessibility-bar">
-        <div className="accessibility-container">
-          <div className="accessibility-group">
-            <Type className="accessibility-icon" />
-            <span className="accessibility-label">Tamaño de texto:</span>
-            <div className="font-controls">
-              <button
-                onClick={() => setFontSize(Math.max(0.8, fontSize - 0.1))}
-                className="font-btn"
-                aria-label="Reducir tamaño de fuente"
-              >
-                <Minus size={16} />
-              </button>
-              <span className="font-display">{Math.round(fontSize * 100)}%</span>
-              <button
-                onClick={() => setFontSize(Math.min(1.8, fontSize + 0.1))}
-                className="font-btn"
-                aria-label="Aumentar tamaño de fuente"
-              >
-                <Plus size={16} />
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-
+    <div className="sentya-landing">
       {/* Header */}
       <header className="main-header">
         <div className="header-container">
           <div className="logo-section">
             <div className="logo-info">
-              {/* Ajuste del logo Sentya */}
               <img className="logo-sentya" src="/Sentya.png" alt="Sentya Logo" />
               <p className="brand-subtitle">by</p>
-              {/* Ajuste del logo Aossa */}
               <div className="aossa-logo">
                 <img className="img-aossa" src="https://aossa.es/wp-content/uploads/2021/07/logo-aossa-global.png" alt="logo Aossa" />
               </div>
             </div>
           </div>
+          <button className="sentya-login-btn">
+            Iniciar sesión
+          </button>
         </div>
       </header>
 
@@ -253,7 +223,7 @@ const SentyaLanding = () => {
             <span className="cta-highlight">empieza aquí</span>
           </h2>
           <p className="cta-description">
-            Únete a miles de personas que ya han mejorado su bienestar con SENTYA
+            Únete a el resto de personas que ya han mejorado su bienestar con SENTYA
           </p>
           <button className="cta-button">
             Comenzar mi experiencia
@@ -267,7 +237,6 @@ const SentyaLanding = () => {
       <footer className="main-footer">
         <div className="footer-container">
           <div className="footer-logo">
-            {/* Ajuste del logo Sentya y Aossa en el footer */}
             <div className="footer-logos-group">
               <img className="logo-sentya" src="/Sentya.png" alt="Sentya logo" />
               <span className="footer-by">by</span>

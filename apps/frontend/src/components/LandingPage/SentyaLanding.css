@@ -9,90 +9,37 @@
   --gray-dark: #333333;
 }
 
+/* ===== RESET CSS ===== */
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
+/* Reset específico para botones */
+button {
+  background: none;
+  background-image: none;
+  background-color: transparent;
+  border: none;
+  padding: 0;
+  margin: 0;
+  font: inherit;
+  color: inherit;
+  text-decoration: none;
+  cursor: pointer;
+  outline: none;
+  box-shadow: none;
+  border-radius: 0;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+}
+
 .sentya-landing {
   min-height: 100vh;
   background-color: var(--gray-dark);
   transition: all 0.3s ease;
-}
-
-/* ===== BARRA DE ACCESIBILIDAD ===== */
-.accessibility-bar {
-  position: sticky;
-  top: 0;
-  z-index: 50;
-  background: rgba(8, 9, 9, 0.95);
-  backdrop-filter: blur(20px);
-  border-bottom: 1px solid var(--gray-dark);
-  padding: 12px 0;
-}
-
-.accessibility-container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 24px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.accessibility-group {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-}
-
-.accessibility-icon {
-  color: var(--gray-medium);
-  width: 20px;
-  height: 20px;
-}
-
-.accessibility-label {
-  color: var(--gray-light);
-  font-weight: 600;
-  font-size: 14px;
-}
-
-.font-controls {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  background: var(--black-primary);
-  border-radius: 12px;
-  padding: 4px;
-  border: 1px solid var(--gray-dark);
-}
-
-.font-btn {
-  background: none;
-  border: none;
-  color: var(--gray-light);
-  padding: 8px;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.font-btn:hover {
-  background: var(--gray-dark);
-  color: var(--white);
-}
-
-.font-display {
-  color: var(--white);
-  font-weight: 600;
-  min-width: 45px;
-  text-align: center;
-  font-size: 14px;
 }
 
 /* ===== HEADER ===== */
@@ -107,6 +54,8 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  flex-wrap: wrap;
+  gap: 20px;
 }
 
 .logo-section {
@@ -115,61 +64,31 @@
   gap: 16px;
 }
 
-.logo-icon {
-  width: 48px;
-  height: 48px;
-  background-color: var(--orange-primary);
-  border-radius: 16px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 10px 25px rgba(233, 83, 26, 0.3);
-}
-
-.logo-text {
-  color: var(--white);
-  font-weight: 900;
-  font-size: 20px;
-}
-
-/* ESTILOS REFACTORIZADOS */
 .logo-info {
   display: flex;
   align-items: center;
-  gap: 20px; /* Espacio entre los logos y el texto 'by' */
+  gap: 20px;
+  flex-wrap: wrap;
 }
 
 /* ESTILOS ESPECÍFICOS PARA EL LOGO DE SENTYA */
 .logo-sentya {
-  height: 180px; /* Tamaño del logo Sentya */
+  height: 120px;
   width: auto;
- 
+  max-width: 200px;
 }
 
 .img-aossa {
-  height: 80px; /* Tamaño del logo Aossa, más pequeño */
+  height: 60px;
   width: auto;
-}
-/* FIN ESTILOS REFACTORIZADOS */
-
-.header-brand-container {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.main-title {
-  color: var(--white);
-  font-size: 24px;
-  font-weight: 900;
-  letter-spacing: -0.5px;
-  margin: 0;
+  max-width: 150px;
 }
 
 .brand-subtitle {
-  font-size: 60px;
+  font-size: 40px;
   font-weight: 700;
   color: #E9531A;
+  margin: 0;
 }
 
 .aossa-logo {
@@ -178,6 +97,30 @@
   font-weight: 900;
   font-size: 28px;
   letter-spacing: -1px;
+}
+
+/* BOTÓN DE LOGIN SENTYA */
+.sentya-login-btn {
+  background-color: transparent;
+  color: var(--white);
+  border: 1px solid var(--white);
+  padding: 12px 24px;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-decoration: none;
+  display: inline-block;
+  box-shadow: 0 4px 15px rgba(255, 255, 255, 0.1);
+}
+
+.sentya-login-btn:hover {
+  background-color: var(--orange-primary);
+  border-color: var(--orange-primary);
+  color: var(--white);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(233, 83, 26, 0.4);
 }
 
 /* ===== HERO SECTION ===== */
@@ -198,13 +141,6 @@
   grid-template-columns: 1fr 1fr;
   gap: 64px;
   align-items: center;
-}
-
-@media (max-width: 1024px) {
-  .hero-grid {
-    grid-template-columns: 1fr;
-    gap: 48px;
-  }
 }
 
 .hero-badge {
@@ -351,17 +287,6 @@
   direction: ltr;
 }
 
-@media (max-width: 1024px) {
-  .feature-item {
-    grid-template-columns: 1fr;
-    gap: 48px;
-  }
-  
-  .feature-reverse {
-    direction: ltr;
-  }
-}
-
 .feature-content {
   display: flex;
   flex-direction: column;
@@ -503,12 +428,6 @@
   text-align: center;
 }
 
-@media (max-width: 768px) {
-  .stats-grid {
-    grid-template-columns: 1fr;
-  }
-}
-
 .stat-item {
   display: flex;
   flex-direction: column;
@@ -631,40 +550,17 @@
   margin-bottom: 24px;
 }
 
-/* ESTILOS REFACTORIZADOS */
 .footer-logos-group {
   display: flex;
   align-items: center;
-  gap: 10px; /* Espacio entre los logos y el texto 'by' en el footer */
-}
-/* FIN ESTILOS REFACTORIZADOS */
-
-
-.footer-icon {
-  width: 40px;
-  height: 40px;
-  background-color: var(--orange-primary);
-  border-radius: 12px;
-  display: flex;
-  align-items: center;
   justify-content: center;
-}
-
-.footer-logo-text {
-  color: var(--white);
-  font-weight: 900;
-  font-size: 16px;
-}
-
-.footer-brand {
-  color: var(--white);
-  font-size: 1.5rem;
-  font-weight: 900;
+  gap: 10px;
+  flex-wrap: wrap;
 }
 
 .footer-by {
   color: var(--orange-primary);
-  font-size: 1.125rem;
+  font-size: 1.5rem;
   font-weight: 700;
 }
 
@@ -673,10 +569,42 @@
 }
 
 /* ===== RESPONSIVE ===== */
+@media (max-width: 1024px) {
+  .hero-grid {
+    grid-template-columns: 1fr;
+    gap: 48px;
+  }
+  
+  .feature-item {
+    grid-template-columns: 1fr;
+    gap: 48px;
+  }
+  
+  .feature-reverse {
+    direction: ltr;
+  }
+}
+
 @media (max-width: 768px) {
-  .accessibility-container {
+  .header-container {
     flex-direction: column;
-    gap: 16px;
+    text-align: center;
+  }
+  
+  .logo-info {
+    justify-content: center;
+  }
+  
+  .logo-sentya {
+    height: 80px !important;
+  }
+  
+  .img-aossa {
+    height: 40px !important;
+  }
+  
+  .brand-subtitle {
+    font-size: 30px !important;
   }
   
   .hero-title {
@@ -705,5 +633,9 @@
   
   .aossa-card {
     padding: 32px;
+  }
+  
+  .stats-grid {
+    grid-template-columns: 1fr;
   }
 }
