@@ -1,168 +1,284 @@
 import React, { useState, useEffect } from 'react';
-import './SentyaLanding.css';
+import { Heart, Target, TrendingUp, Users, Award, Rocket, Type, Minus, Plus } from 'lucide-react';
+import "./SentyaLanding.css"
 
 const SentyaLanding = () => {
-  const [isVisible, setIsVisible] = useState(false);
-  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  const [fontSize, setFontSize] = useState(1);
+  const [scrollY, setScrollY] = useState(0);
 
   useEffect(() => {
-    setIsVisible(true);
-    
-    const handleMouseMove = (e) => {
-      setMousePosition({ 
-        x: (e.clientX / window.innerWidth) * 100,
-        y: (e.clientY / window.innerHeight) * 100
-      });
-    };
-
-    window.addEventListener('mousemove', handleMouseMove);
-    return () => window.removeEventListener('mousemove', handleMouseMove);
+    const handleScroll = () => setScrollY(window.scrollY);
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const services = [
-    {
-      title: 'Gestión de Usuarios',
-      description: 'Administración completa de perfiles y seguimiento personalizado',
-      icon: (
-        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
-          <circle cx="12" cy="7" r="4"/>
-        </svg>
-      )
-    },
-    {
-      title: 'Talleres Terapéuticos',
-      description: 'Programación y seguimiento de actividades de bienestar',
-      icon: (
-        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-          <circle cx="12" cy="12" r="3"/>
-          <path d="M12 1v6m0 6v6m11-7h-6m-6 0H1"/>
-        </svg>
-      )
-    },
-    {
-      title: 'Control de Asistencia',
-      description: 'Registro y análisis de participación en tiempo real',
-      icon: (
-        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-          <polyline points="9,11 12,14 22,4"/>
-          <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>
-        </svg>
-      )
-    }
-  ];
+  const transform = `translateY(${scrollY * 0.1}px)`;
 
   return (
-    <div className="landing-wrapper">
-      {/* Dynamic Background */}
-      <div 
-        className="dynamic-bg"
-        style={{
-          background: `radial-gradient(circle at ${mousePosition.x}% ${mousePosition.y}%, rgba(37, 99, 235, 0.05) 0%, transparent 50%)`
-        }}
-      />
-      
-      {/* Main Container */}
-      <div className="main-container">
-        {/* Navigation */}
-        <nav className="main-nav">
-          <div className="nav-content">
-            <div className="logo-section">
-              <div className="logo-container">
-                <h1 className="main-logo">SENTYA</h1>
-                <div className="logo-pulse"></div>
-              </div>
-            </div>
-            <button className="access-button">
-              <span>Acceder al Sistema</span>
-              <div className="button-arrow">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                  <path d="M5 12h14m-7-7 7 7-7 7"/>
-                </svg>
-              </div>
-            </button>
-          </div>
-        </nav>
-
-        {/* Hero Content */}
-        <main className="hero-container">
-          <div className={`hero-content ${isVisible ? 'animate-in' : ''}`}>
-            
-            {/* Title Section */}
-            <div className="title-section">
-              <h2 className="main-title">
-                Gestión Integral
-                <span className="title-highlight">Personas Mayores</span>
-              </h2>
-              <p className="main-subtitle">
-                Plataforma completa para la administración, cuidado y seguimiento 
-                 del bienestar de personas mayores
-              </p>
-            </div>
-
-            {/* Visual Element */}
-            <div className="visual-element">
-              <div className="glass-card main-card">
-                <div className="card-glow"></div>
-                <div className="card-content">
-                  <div className="card-icon">
-                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-                      <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
-                    </svg>
-                  </div>
-                  <h3>Sistema Integral</h3>
-                  <p>Coordinación completa entre centros de salud y profesionales especializados</p>
-                </div>
-              </div>
-            </div>
-
-          </div>
-
-          {/* Services Grid */}
-          <div className={`services-container ${isVisible ? 'animate-services' : ''}`}>
-            {services.map((service, index) => (
-              <div 
-                key={service.title} 
-                className="service-card"
-                style={{ animationDelay: `${0.2 * index}s` }}
+    <div
+      className="sentya-landing"
+      style={{ fontSize: `${16 * fontSize}px` }}
+    >
+      {/* Barra de Accesibilidad */}
+      <div className="accessibility-bar">
+        <div className="accessibility-container">
+          <div className="accessibility-group">
+            <Type className="accessibility-icon" />
+            <span className="accessibility-label">Tamaño de texto:</span>
+            <div className="font-controls">
+              <button
+                onClick={() => setFontSize(Math.max(0.8, fontSize - 0.1))}
+                className="font-btn"
+                aria-label="Reducir tamaño de fuente"
               >
-                <div className="service-icon">
-                  {service.icon}
-                </div>
-                <div className="service-content">
-                  <h4 className="service-title">{service.title}</h4>
-                  <p className="service-description">{service.description}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-
-          {/* Call to Action */}
-          <div className={`cta-container ${isVisible ? 'animate-cta' : ''}`}>
-            <div className="cta-glass">
-              <h3>Comienza tu experiencia</h3>
-              <p>Accede al sistema de gestión más completo para el cuidado profesional</p>
-              <button className="primary-cta">
-                <span>Iniciar Sesión</span>
-                <div className="cta-icon">
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                    <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/>
-                    <polyline points="10,17 15,12 10,7"/>
-                    <line x1="15" y1="12" x2="3" y2="12"/>
-                  </svg>
-                </div>
+                <Minus size={16} />
+              </button>
+              <span className="font-display">{Math.round(fontSize * 100)}%</span>
+              <button
+                onClick={() => setFontSize(Math.min(1.8, fontSize + 0.1))}
+                className="font-btn"
+                aria-label="Aumentar tamaño de fuente"
+              >
+                <Plus size={16} />
               </button>
             </div>
           </div>
-
-        </main>
-
-        {/* Footer */}
-        <footer className="main-footer">
-          <p>SENTYA - © 2025 AOSSA Global </p>
-           <p>30 años de experiencia en servicios integrales.</p> 
-        </footer>
+        </div>
       </div>
+
+      {/* Header */}
+      <header className="main-header">
+        <div className="header-container">
+          <div className="logo-section">
+            <div className="logo-info">
+              {/* Ajuste del logo Sentya */}
+              <img className="logo-sentya" src="/Sentya.png" alt="Sentya Logo" />
+              <p className="brand-subtitle">by</p>
+              {/* Ajuste del logo Aossa */}
+              <div className="aossa-logo">
+                <img className="img-aossa" src="https://aossa.es/wp-content/uploads/2021/07/logo-aossa-global.png" alt="logo Aossa" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      {/* Hero */}
+      <section className="hero-section">
+        <div className="hero-container">
+          <div className="hero-grid">
+            <div className="hero-content">
+              <div className="hero-badge">
+                <span className="badge-text">Para personas mayores y sus cuidadores</span>
+              </div>
+
+              <h1 className="hero-title">
+                Tu vida.
+                <br />
+                Tus actividades.
+                <br />
+                <span className="hero-highlight">Tu bienestar.</span>
+              </h1>
+
+              <p className="hero-description">
+                Una plataforma pensada para que puedas gestionar tus talleres,
+                ver tu progreso y mantenerte conectado con tu centro de día.
+              </p>
+
+              <button className="hero-cta">
+                Explorar SENTYA
+              </button>
+            </div>
+
+            <div className="hero-visual" style={{ transform }}>
+              <div className="visual-card">
+                <div className="visual-content">
+                  <div className="visual-icon">
+                    <Heart size={64} strokeWidth={1.5} />
+                  </div>
+                  <h3 className="visual-title">Cuidado personalizado</h3>
+                  <p className="visual-text">
+                    Cada actividad adaptada a tus necesidades y preferencias
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Funcionalidades */}
+      <section className="features-section">
+        <div className="features-container">
+          <h2 className="features-title">¿Qué puedes hacer con SENTYA?</h2>
+          <div className="features-list">
+            {/* Talleres */}
+            <div className="feature-item">
+              <div className="feature-content">
+                <div className="feature-icon-large">
+                  <Target size={48} />
+                </div>
+                <h3 className="feature-title">Apúntate a talleres</h3>
+                <p className="feature-description">
+                  Desde yoga suave hasta talleres de memoria.
+                  Elige las actividades que más te gusten y apúntate con un solo clic.
+                </p>
+                <div className="feature-quote">
+                  <p className="quote-text">
+                    "Ahora puedo ver todos mis talleres de la semana de un vistazo"
+                  </p>
+                </div>
+              </div>
+              <div className="feature-visual">
+                <div className="visual-box orange-gradient">
+                  <div className="visual-center">
+                    <div className="visual-large-icon">
+                      <Target size={80} />
+                    </div>
+                    <h4 className="visual-heading">Fácil y rápido</h4>
+                    <p className="visual-subtext">
+                      Sin complicaciones, sin formularios largos
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            {/* Progreso */}
+            <div className="feature-item feature-reverse">
+              <div className="feature-visual">
+                <div className="visual-box teal-gradient">
+                  <div className="visual-center">
+                    <div className="visual-large-icon">
+                      <TrendingUp size={80} />
+                    </div>
+                    <h4 className="visual-heading">Tu evolución</h4>
+                    <p className="visual-subtext">
+                      Ve cómo mejoras semana a semana
+                    </p>
+                  </div>
+                </div>
+              </div>
+              <div className="feature-content">
+                <div className="feature-icon-large">
+                  <TrendingUp size={48} />
+                </div>
+                <h3 className="feature-title">Sigue tu progreso</h3>
+                <p className="feature-description">
+                  Mira cuántos talleres has completado, qué actividades te gustan más
+                  y cómo has ido mejorando en diferentes áreas.
+                </p>
+                <div className="feature-quote">
+                  <p className="quote-text">
+                    "Me motiva ver que cada mes participo más en actividades"
+                  </p>
+                </div>
+              </div>
+            </div>
+            {/* Conectar */}
+            <div className="feature-item">
+              <div className="feature-content">
+                <div className="feature-icon-large">
+                  <Users size={48} />
+                </div>
+                <h3 className="feature-title">Conecta con otros</h3>
+                <p className="feature-description">
+                  Ve quién más va a tus talleres favoritos.
+                  Haz nuevos amigos y mantente en contacto con tu familia.
+                </p>
+                <div className="feature-quote">
+                  <p className="quote-text">
+                    "He conocido a personas maravillosas en los talleres"
+                  </p>
+                </div>
+              </div>
+              <div className="feature-visual">
+                <div className="visual-box purple-gradient">
+                  <div className="visual-center">
+                    <div className="visual-large-icon">
+                      <Users size={80} />
+                    </div>
+                    <h4 className="visual-heading">Comunidad</h4>
+                    <p className="visual-subtext">
+                      Nunca estarás solo en tu camino
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Respaldo AOSSA */}
+      <section className="aossa-section">
+        <div className="aossa-container">
+          <div className="aossa-card">
+            <div className="aossa-icon">
+              <Award size={80} />
+            </div>
+            <h2 className="aossa-title">
+              Respaldado por 30 años de experiencia
+            </h2>
+            <p className="aossa-description">
+              AOSSA Global lleva tres décadas cuidando de personas mayores.
+              SENTYA es la evolución digital de todo ese conocimiento y cariño.
+            </p>
+            <div className="stats-grid">
+              <div className="stat-item">
+                <div className="stat-number">500+</div>
+                <p className="stat-label">Centros de día</p>
+              </div>
+              <div className="stat-item">
+                <div className="stat-number">50,000+</div>
+                <p className="stat-label">Personas cuidadas</p>
+              </div>
+              <div className="stat-item">
+                <div className="stat-number">30</div>
+                <p className="stat-label">Años de experiencia</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* CTA Final */}
+      <section className="final-cta">
+        <div className="cta-container">
+          <div className="cta-icon">
+            <Rocket size={80} />
+          </div>
+          <h2 className="cta-title">
+            Tu nueva vida digital
+            <br />
+            <span className="cta-highlight">empieza aquí</span>
+          </h2>
+          <p className="cta-description">
+            Únete a miles de personas que ya han mejorado su bienestar con SENTYA
+          </p>
+          <button className="cta-button">
+            Comenzar mi experiencia
+          </button>
+        </div>
+        <div className="cta-decoration-1" style={{ transform }} />
+        <div className="cta-decoration-2" style={{ transform: `translateY(${-scrollY * 0.05}px)` }} />
+      </section>
+
+      {/* Footer */}
+      <footer className="main-footer">
+        <div className="footer-container">
+          <div className="footer-logo">
+            {/* Ajuste del logo Sentya y Aossa en el footer */}
+            <div className="footer-logos-group">
+              <img className="logo-sentya" src="/Sentya.png" alt="Sentya logo" />
+              <span className="footer-by">by</span>
+              <img className="img-aossa" src="https://aossa.es/wp-content/uploads/2021/07/logo-aossa-global.png" alt="logo Aossa" />
+            </div>
+          </div>
+          <p className="footer-text">
+            © 2025 AOSSA Global • Cuidando personas desde 1995
+          </p>
+        </div>
+      </footer>
     </div>
   );
 };
