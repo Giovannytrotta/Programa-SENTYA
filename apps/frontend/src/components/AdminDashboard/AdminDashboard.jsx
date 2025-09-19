@@ -30,6 +30,7 @@ const AdminDashboard = () => {
         createUser,
         updateUser,
         updateUserStatus,
+        updateUserRole,
         deleteUser,
         filterUsers
     } = useAdminUsers();
@@ -238,11 +239,11 @@ const AdminDashboard = () => {
     // Cambiar rol de usuario
     const handleRoleChange = useCallback(async (userId, newRole) => {
         try {
-            await updateUser(userId, newRole)
+            await updateUserRole(userId, newRole)
         } catch (error) {
             console.error('Error updating role:', error)
         }
-    }, [updateUser])
+    }, [updateUserRole])
 
     // Cambiar estado de usuario
     const handleStatusChange = useCallback(async (userId, isActive) => {
