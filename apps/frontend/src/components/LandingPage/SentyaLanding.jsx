@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Heart, Target, TrendingUp, Users, Award, Rocket } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import "./SentyaLanding.css"
 
 const SentyaLanding = () => {
@@ -66,10 +67,15 @@ const SentyaLanding = () => {
                   <div className="visual-icon">
                     <Heart size={64} strokeWidth={1.5} />
                   </div>
-                  <h3 className="visual-title">Cuidado personalizado</h3>
+                  <h3 className="visual-title">¿Es tu primera vez usando Sentya?</h3>
                   <p className="visual-text">
-                    Cada actividad adaptada a tus necesidades y preferencias
+                    Accede a un rapido tutorial para conocer los primeros pasos que has de realizar en nuestra aplicacion
                   </p>
+                  <Link to={ "/tutorial"}>
+                 <button className="hero-cta">
+                Accede al Tutorial
+              </button>
+              </Link>
                 </div>
               </div>
             </div>

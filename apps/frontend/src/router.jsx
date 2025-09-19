@@ -5,6 +5,8 @@ import LandingPage from './pages/LandingPage';
 import LoginAdminPage from './pages/LoginAdmin';
 import Auth2faPage from './pages/Auth2faPage';
 import AdminDashboardPage from './pages/AdminDashboardPage';
+import SentyaTutorialPage from './pages/SentyaTutorialPage';
+
 
 // Componente de protección para rutas autenticadas
 const ProtectedRoute = ({ children }) => {
@@ -114,7 +116,11 @@ export const router = createBrowserRouter([
     path: "/",
     element: <LandingPage />
   },
-  
+  //Ruta de Tutorial
+  {
+    path: "/tutorial",
+    element: <SentyaTutorialPage />
+  },
   // Rutas de administración
   {
     path: "/aossadmin",
