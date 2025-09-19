@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from "react"
 import { Link } from "react-router-dom"
 import "./AdminDashboard.css"
 import ExitToggle from "./ExitToggle"
-import EditUserModal from "./EditUserModal"
+import EditDrawer from "./EditDrawer"
 import { useAdminUsers } from "../../hooks/useAdminUsers"
 
 const AdminDashboard = () => {
@@ -1145,7 +1145,7 @@ const AdminDashboard = () => {
             )}
 
             {/* Modal de edición de usuario */}
-            <EditUserModal
+            <EditDrawer
                 user={selectedUser}
                 isOpen={showEditModal}
                 onClose={() => {
