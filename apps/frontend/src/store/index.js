@@ -1,4 +1,3 @@
-// store/index.js
 export const initialStore = () => {
   return {
     auth: {
@@ -6,6 +5,7 @@ export const initialStore = () => {
       user: null,
       role: null,
       isLoading: false,
+      isInitializing: true, // 🆕 Nuevo campo para controlar la carga inicial
       error: null,
       requires2FA: false,
       requires2FASetup: false
@@ -25,6 +25,7 @@ export const ACTION_TYPES = {
   LOGIN_REQUIRES_2FA_SETUP: 'LOGIN_REQUIRES_2FA_SETUP',
   LOGOUT: 'LOGOUT',
   SET_USER: 'SET_USER',
+  AUTH_INIT_COMPLETE: 'AUTH_INIT_COMPLETE', // 🆕 Para marcar fin de inicialización
   
   // UI actions
   ADD_NOTIFICATION: 'ADD_NOTIFICATION',
@@ -34,6 +35,16 @@ export const ACTION_TYPES = {
 
 export default function storeReducer(store, action = {}) {
   switch(action.type) {
+    case ACTION_TYPES.AUTH_INIT_COMPLETE:
+      return {
+        ...store,
+        auth: {
+          ...store.auth,
+          isLoading: false,
+          isInitializing: false
+        }
+      }
+
     case ACTION_TYPES.LOGIN_START:
       return {
         ...store,
@@ -55,6 +66,7 @@ export default function storeReducer(store, action = {}) {
           user: action.payload.user,
           role: action.payload.role,
           isLoading: false,
+          isInitializing: false, // 🆕 Marcar inicialización como completa
           error: null,
           requires2FA: false,
           requires2FASetup: false
@@ -94,6 +106,7 @@ export default function storeReducer(store, action = {}) {
           user: null,
           role: null,
           isLoading: false,
+          isInitializing: false, // 🆕 Marcar inicialización como completa
           error: action.payload,
           requires2FA: false,
           requires2FASetup: false
@@ -108,6 +121,7 @@ export default function storeReducer(store, action = {}) {
           user: null,
           role: null,
           isLoading: false,
+          isInitializing: false, // 🆕 No inicializar después del logout
           error: null,
           requires2FA: false,
           requires2FASetup: false

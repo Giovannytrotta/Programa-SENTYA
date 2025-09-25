@@ -75,7 +75,9 @@ class ApiService {
     }
   }
 
-  // Auth endpoints
+  // ============================================
+  // ADMIN AUTH ENDPOINTS (existentes, sin cambios)
+  // ============================================
   async login(credentials) {
     return this.request('/auth/login', {
       method: 'POST',
@@ -110,19 +112,47 @@ class ApiService {
   }
 
   async request2faReset(email) {
-  return this.request('/auth/2fa/request-reset', {
-    method: 'POST',
-    body: { email }
-  });
-}
+    return this.request('/auth/2fa/request-reset', {
+      method: 'POST',
+      body: { email }
+    });
+  }
 
-async confirm2faReset(token) {
-  return this.request('/auth/2fa/confirm-reset', {
-    method: 'POST',
-    body: { token }
-  });
-}
-  // Admin endpoints
+  async confirm2faReset(token) {
+    return this.request('/auth/2fa/confirm-reset', {
+      method: 'POST',
+      body: { token }
+    });
+  }
+
+  // ============================================
+  // 🆕 USER AUTH ENDPOINTS (nuevos)
+  // ============================================
+  
+  /**
+   * Login para usuarios regulares (clientes, profesionales, etc.)
+   * Usa el endpoint /user/login que es más simple (sin 2FA)
+   */
+  async loginUser(credentials) {
+    return this.request('/user/login', {
+      method: 'POST',
+      body: credentials
+    });
+  }
+
+  /**
+   * Obtener información del usuario actual (tanto admin como user)
+   * NOTA: Usando /user/me que funciona para ambos contextos
+   */
+  async getCurrentUser() {
+    return this.request('/user/me', {
+      method: 'GET'
+    });
+  }
+
+  // ============================================
+  // ADMIN ENDPOINTS (existentes, sin cambios)
+  // ============================================
   async getAllUsers(filters = {}) {
     const params = new URLSearchParams();
     Object.keys(filters).forEach(key => {
@@ -149,7 +179,7 @@ async confirm2faReset(token) {
   async updateUser(userId, userData) {
     return this.request(`/auth/admin/users/${userId}`, {
       method: 'PUT',
-      body:  userData  // Cualquier campo que quieras actualizar
+      body:  userData
     });
   }
 
@@ -182,16 +212,7 @@ async confirm2faReset(token) {
       method: 'GET'
     });
   }
-
-  async getCurrentUser() {
-  return this.request('/auth/me', {
-    method: 'GET'
-  });
 }
-
-}
-
-
 
 export const apiService = new ApiService();
 export { ApiError };

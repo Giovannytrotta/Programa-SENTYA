@@ -17,6 +17,14 @@ const MESSAGES = {
     REQUIRES_2FA_SETUP: '📱 Debes configurar la autenticación de dos factores',
     TOO_MANY_ATTEMPTS: '⏱️ Demasiados intentos. Intenta de nuevo en unos minutos'
   },
+  // 🆕 Nuevos mensajes para usuarios regulares
+  USER_LOGIN: {
+    SUCCESS: '🎉 ¡Bienvenido a SENTYA!',
+    ERROR: '❌ Error al iniciar sesión',
+    INVALID_CREDENTIALS: '⚠️ Email o contraseña incorrectos',
+    INACTIVE_USER: '🚫 Tu cuenta está inactiva. Contacta a tu centro',
+    FIRST_TIME: '👋 ¡Bienvenido! Es tu primera vez en SENTYA'
+  },
   TWO_FA: {
     SETUP_SUCCESS: '✅ Autenticación de dos factores configurada correctamente',
     VERIFY_SUCCESS: '✅ Código verificado correctamente',
@@ -54,36 +62,35 @@ export const useAuth = () => {
     });
   }, [dispatch]);
 
+  // ============================================
+  // 🔹 ADMIN LOGIN (existente, sin cambios)
+  // ============================================
   const login = useCallback(async (credentials) => {
     dispatch({ type: ACTION_TYPES.LOGIN_START });
 
     try {
       const response = await apiService.login(credentials);
 
-      // NUNCA debería llegar aquí si requiere 2FA porque el backend devuelve 401
-      if (response && response.msg === 'Login successful') {
-        dispatch({
-          type: ACTION_TYPES.LOGIN_SUCCESS,
-          payload: {
-            user: response.user || { email: credentials.email },
-            role: response.role
-          }
-        });
+    if (response && response.msg === 'Login successful') {
+      dispatch({
+        type: ACTION_TYPES.LOGIN_SUCCESS,
+        payload: {
+          user: response.user || { email: credentials.email },
+          role: response.role
+        }
+      });
 
-        showNotification(MESSAGES.LOGIN.SUCCESS, 'success');
-        navigate('/aossadmin/dashboard');
-        return { success: true };
-      }
+      showNotification(MESSAGES.LOGIN.SUCCESS, 'success');
+      navigate('/aossadmin/dashboard');
+      return { success: true };
+    }
 
-      // Respuesta inesperada
-      throw new Error('Respuesta inesperada del servidor');
+    throw new Error('Respuesta inesperada del servidor');
 
     } catch (error) {
       console.error('Login error:', error);
 
-      // CLAVE: Manejar los 401 con flags de 2FA
       if (error instanceof ApiError && error.status === 401 && error.data) {
-        // Caso 1: Requiere configurar 2FA por primera vez
         if (error.data.requires_2fa_setup) {
           dispatch({ type: ACTION_TYPES.LOGIN_REQUIRES_2FA_SETUP });
           showNotification('📱 Debes configurar la autenticación de dos factores', 'warning');
@@ -100,7 +107,6 @@ export const useAuth = () => {
           return { success: false, requires2FASetup: true };
         }
 
-        // Caso 2: Requiere código 2FA (ya configurado)
         if (error.data.requires_2fa) {
           dispatch({ type: ACTION_TYPES.LOGIN_REQUIRES_2FA });
           showNotification('🔐 Ingresa tu código de autenticación', 'info');
@@ -117,7 +123,6 @@ export const useAuth = () => {
         }
       }
 
-      // Otros errores
       let errorMessage = MESSAGES.LOGIN.ERROR;
 
       if (error instanceof ApiError) {
@@ -140,6 +145,65 @@ export const useAuth = () => {
     }
   }, [dispatch, navigate, showNotification]);
 
+  // ============================================
+  // 🆕 USER LOGIN (nuevo, para usuarios regulares)
+  // ============================================
+  const loginUser = useCallback(async (credentials) => {
+    dispatch({ type: ACTION_TYPES.LOGIN_START });
+
+    try {
+       const response = await apiService.loginUser(credentials);
+
+    if (response && response.msg === 'Login successful') {
+      dispatch({
+        type: ACTION_TYPES.LOGIN_SUCCESS,
+        payload: {
+          user: response.user || { email: credentials.email },
+          role: response.role
+        }
+      });
+
+      const welcomeMessage = response.user?.last_login === null ? 
+        MESSAGES.USER_LOGIN.FIRST_TIME : 
+        MESSAGES.USER_LOGIN.SUCCESS;
+
+      showNotification(welcomeMessage, 'success');
+      navigate('/dashboard');
+      return { success: true };
+    }
+
+    throw new Error('Respuesta inesperada del servidor');
+
+    } catch (error) {
+      console.error('User login error:', error);
+
+      let errorMessage = MESSAGES.USER_LOGIN.ERROR;
+
+      if (error instanceof ApiError) {
+        if (error.status === 401) {
+          errorMessage = MESSAGES.USER_LOGIN.INVALID_CREDENTIALS;
+        } else if (error.status === 0) {
+          errorMessage = MESSAGES.LOGIN.CONNECTION_ERROR;
+        } else if (error.message.includes('inactiv')) {
+          errorMessage = MESSAGES.USER_LOGIN.INACTIVE_USER;
+        } else {
+          errorMessage = error.message || MESSAGES.USER_LOGIN.ERROR;
+        }
+      }
+
+      dispatch({
+        type: ACTION_TYPES.LOGIN_ERROR,
+        payload: errorMessage
+      });
+
+      showNotification(errorMessage, 'error');
+      return { success: false, error: errorMessage };
+    }
+  }, [dispatch, navigate, showNotification]);
+
+  // ============================================
+  // 🔹 RESTO DE FUNCIONES (existentes, sin cambios)
+  // ============================================
   const loginWith2FA = useCallback(async (credentials) => {
     dispatch({ type: ACTION_TYPES.LOGIN_START });
 
@@ -192,12 +256,11 @@ export const useAuth = () => {
       await apiService.logout();
       dispatch({ type: ACTION_TYPES.LOGOUT });
       showNotification(MESSAGES.LOGOUT.SUCCESS, 'info');
-      navigate('/aossadmin');
+      navigate('/');
     } catch (error) {
-      // Aunque falle el servidor, limpiamos el estado local
       dispatch({ type: ACTION_TYPES.LOGOUT });
       showNotification(MESSAGES.LOGOUT.ERROR, 'warning');
-      navigate('/aossadmin');
+      navigate('/');
     }
   }, [dispatch, navigate, showNotification]);
 
@@ -221,7 +284,6 @@ export const useAuth = () => {
     try {
       const response = await apiService.verify2FASetup(token);
 
-      // Si es el setup inicial y la respuesta incluye datos de login
       if (isInitialSetup && response.setup_complete) {
         dispatch({
           type: ACTION_TYPES.LOGIN_SUCCESS,
@@ -247,11 +309,9 @@ export const useAuth = () => {
     }
   }, [dispatch, navigate, showNotification]);
 
-  //funcion para restablecimiento de 2fa 
-
   const request2faReset = useCallback(async (email) => {
     try {
-      dispatch({ type: ACTION_TYPES.LOGIN_START }); // Reutilizar loading
+      dispatch({ type: ACTION_TYPES.LOGIN_START });
       const response = await apiService.request2faReset(email);
 
       showNotification('📧 Código de verificación enviado a tu email', 'success');
@@ -266,13 +326,13 @@ export const useAuth = () => {
       showNotification(message, 'error');
       throw new Error(message);
     } finally {
-      dispatch({ type: ACTION_TYPES.LOGIN_ERROR, payload: null }); // Limpiar loading
+      dispatch({ type: ACTION_TYPES.LOGIN_ERROR, payload: null });
     }
   }, [dispatch, showNotification]);
 
   const confirm2faReset = useCallback(async (token) => {
     try {
-      dispatch({ type: ACTION_TYPES.LOGIN_START }); // Reutilizar loading
+      dispatch({ type: ACTION_TYPES.LOGIN_START });
       const response = await apiService.confirm2faReset(token);
 
       showNotification('✅ Verificación exitosa. Ya puedes iniciar sesión', 'success');
@@ -287,24 +347,19 @@ export const useAuth = () => {
       showNotification(message, 'error');
       throw new Error(message);
     } finally {
-      dispatch({ type: ACTION_TYPES.LOGIN_ERROR, payload: null }); // Limpiar loading
+      dispatch({ type: ACTION_TYPES.LOGIN_ERROR, payload: null });
     }
   }, [dispatch, showNotification]);
 
-//=====================
-
-  // Función para validar formularios
   const validateLoginForm = useCallback((formData) => {
     const errors = {};
 
-    // Validar email
     if (!formData.email) {
       errors.email = MESSAGES.VALIDATION.EMAIL_REQUIRED;
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
       errors.email = MESSAGES.VALIDATION.EMAIL_INVALID;
     }
 
-    // Validar contraseña
     if (!formData.password) {
       errors.password = MESSAGES.VALIDATION.PASSWORD_REQUIRED;
     } else if (formData.password.length < 8) {
@@ -327,6 +382,7 @@ export const useAuth = () => {
   const checkAuthOnLoad = useCallback(async () => {
   try {
     const response = await apiService.getCurrentUser();
+    
     dispatch({
       type: ACTION_TYPES.LOGIN_SUCCESS,
       payload: {
@@ -336,39 +392,42 @@ export const useAuth = () => {
     });
     return true;
   } catch (error) {
-    dispatch({ type: ACTION_TYPES.LOGOUT });
+    dispatch({ type: ACTION_TYPES.AUTH_INIT_COMPLETE }); // 🆕 Marcar como completo aunque falle
     return false;
   }
 }, [dispatch]);
 
+
   return {
-    // Estado
-    isAuthenticated: store.auth.isAuthenticated,
-    user: store.auth.user,
-    role: store.auth.role,
-    isLoading: store.auth.isLoading,
-    error: store.auth.error,
-    requires2FA: store.auth.requires2FA,
-    requires2FASetup: store.auth.requires2FASetup,
+  // Estado
+  isAuthenticated: store.auth.isAuthenticated,
+  user: store.auth.user,
+  role: store.auth.role,
+  isLoading: store.auth.isLoading,
+  isInitializing: store.auth.isInitializing, // 🆕 Nuevo campo
+  error: store.auth.error,
+  requires2FA: store.auth.requires2FA,
+  requires2FASetup: store.auth.requires2FASetup,
 
-    // Funciones
-    login,
-    loginWith2FA,
-    logout,
-    clearErrors,
-    setup2FA,
-    verify2FASetup,
-    request2faReset, //reseteo 2fa
-    confirm2faReset, //reseteo 2fa
+  // Funciones
+  login, // Para admins
+  loginUser, // Para usuarios regulares  
+  loginWith2FA,
+  logout,
+  clearErrors,
+  setup2FA,
+  verify2FASetup,
+  request2faReset,
+  confirm2faReset,
 
-    // Validaciones
-    validateLoginForm,
-    validate2FAToken,
+  // Validaciones
+  validateLoginForm,
+  validate2FAToken,
 
-    //estado de carga 
-    checkAuthOnLoad,
+  // Estado de carga 
+  checkAuthOnLoad,
 
-    // Mensajes
-    MESSAGES
-  };
+  // Mensajes
+  MESSAGES
+};
 };

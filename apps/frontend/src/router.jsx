@@ -1,247 +1,188 @@
-// router.jsx
-import { createBrowserRouter } from 'react-router-dom';
+import { createBrowserRouter, Navigate } from 'react-router-dom';
 import { useAuth } from './hooks/useAuth';
 import LandingPage from './pages/LandingPage';
 import LoginAdminPage from './pages/LoginAdmin';
+import UserLoginPage from './pages/UserLoginPage';
 import Auth2faPage from './pages/Auth2faPage';
 import AdminDashboardPage from './pages/AdminDashboardPage';
 import SentyaTutorialPage from './pages/SentyaTutorialPage';
+import LoadingPage from './pages/LoadingPage';
+import NotFoundPage from './pages/NotFoundPage';
 import { useEffect } from 'react';
 
-//corregido el problema de refrescamiento de pagina agregado AuthInitializer para no perder o encontrar los
-//datos del usuario y evitar que se pierdan por la cookie para poder mantener la sesion agregado en todas las
-//protectRoute para mantenerlo
-
-const AuthInitializer = ({ children }) => {
-  const { checkAuthOnLoad } = useAuth();
+// 🆕 Componente global para inicialización de auth
+const AuthProvider = ({ children }) => {
+  const { checkAuthOnLoad, isInitializing } = useAuth();
 
   useEffect(() => {
     checkAuthOnLoad();
   }, [checkAuthOnLoad]);
 
+  // Mientras inicializa, mostrar loading
+  if (isInitializing) {
+    return <LoadingPage message="Verificando autenticación..." />;
+  }
+
   return children;
 };
 
-// Componente de protección para rutas autenticadas
+// Componente de protección para usuarios regulares
 const ProtectedRoute = ({ children }) => {
-  const { isAuthenticated, isLoading } = useAuth();
+  const { isAuthenticated, isInitializing } = useAuth();
   
-  if (isLoading) {
-    return (
-      <AuthInitializer>
-        {isLoading && (
-      <div style={{
-        minHeight: '100vh',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        background: 'linear-gradient(135deg, rgba(37, 99, 235, 0.4) 0%, rgba(5, 150, 105, 0.3) 50%, rgba(249, 115, 22, 0.3) 100%)'
-      }}>
-        <div style={{
-          background: 'rgba(248, 250, 252, 0.15)',
-          backdropFilter: 'blur(24px)',
-          borderRadius: '24px',
-          border: '1px solid rgba(248, 250, 252, 0.25)',
-          padding: '48px',
-          textAlign: 'center',
-          color: 'rgba(248, 250, 252, 0.9)'
-        }}>
-          <div style={{
-            width: '40px',
-            height: '40px',
-            border: '3px solid rgba(248, 250, 252, 0.2)',
-            borderTop: '3px solid rgba(37, 99, 235, 0.8)',
-            borderRadius: '50%',
-            animation: 'spin 1s linear infinite',
-            margin: '0 auto 20px'
-          }}></div>
-          <p style={{ margin: 0, fontSize: '1.125rem', fontWeight: '600' }}>
-            Cargando...
-          </p>
-          <style jsx>{`
-            @keyframes spin {
-              0% { transform: rotate(0deg); }
-              100% { transform: rotate(360deg); }
-            }
-          `}</style>
-        </div>
-      </div>
-     )};
-        {!isLoading && !isAuthenticated && (
-        window.location.href = '/aossadmin',
-        null
-      )}
-    {!isLoading && isAuthenticated && children}
-    </AuthInitializer>
-  );
-};
+  if (isInitializing) {
+    return <LoadingPage message="Cargando..." />;
+  }
+
+  if (!isAuthenticated) {
+    return <Navigate to="/login" replace />;
+  }
   
   return children;
 };
 
-// Componente de protección para rutas públicas (ya autenticado)
-const PublicRoute = ({ children }) => {
-  const { isAuthenticated, isLoading } = useAuth();
+// Componente de protección para admins
+const AdminProtectedRoute = ({ children }) => {
+  const { isAuthenticated, isInitializing, role } = useAuth();
   
-  if (isLoading) {
-    return (
-      <div style={{
-        minHeight: '100vh',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        background: 'linear-gradient(135deg, rgba(37, 99, 235, 0.4) 0%, rgba(5, 150, 105, 0.3) 50%, rgba(249, 115, 22, 0.3) 100%)'
-      }}>
-        <div style={{
-          background: 'rgba(248, 250, 252, 0.15)',
-          backdropFilter: 'blur(24px)',
-          borderRadius: '24px',
-          border: '1px solid rgba(248, 250, 252, 0.25)',
-          padding: '48px',
-          textAlign: 'center',
-          color: 'rgba(248, 250, 252, 0.9)'
-        }}>
-          <div style={{
-            width: '40px',
-            height: '40px',
-            border: '3px solid rgba(248, 250, 252, 0.2)',
-            borderTop: '3px solid rgba(37, 99, 235, 0.8)',
-            borderRadius: '50%',
-            animation: 'spin 1s linear infinite',
-            margin: '0 auto 20px'
-          }}></div>
-          <p style={{ margin: 0, fontSize: '1.125rem', fontWeight: '600' }}>
-            Verificando autenticación...
-          </p>
-        </div>
-      </div>
-    );
+  if (isInitializing) {
+    return <LoadingPage message="Verificando permisos de administrador..." />;
+  }
+  
+  if (!isAuthenticated || role !== 'administrator') {
+    return <Navigate to="/aossadmin" replace />;
+  }
+  
+  return children;
+};
+
+// Componente para rutas públicas (evita acceso si ya está logueado)
+const PublicRoute = ({ children, adminOnly = false }) => {
+  const { isAuthenticated, isInitializing, role } = useAuth();
+  
+  if (isInitializing) {
+    return <LoadingPage message="Verificando autenticación..." />;
   }
   
   if (isAuthenticated) {
-    // Redirigir al dashboard si ya está autenticado
-    window.location.href = '/aossadmin/dashboard';
-    return null;
+    // Si es admin y está en una ruta de admin, ir al dashboard admin
+    if (role === 'administrator' && adminOnly) {
+      return <Navigate to="/aossadmin/dashboard" replace />;
+    }
+    // Si no es admin y está en una ruta de usuario, ir al dashboard usuario
+    else if (role !== 'administrator' && !adminOnly) {
+      return <Navigate to="/dashboard" replace />;
+    }
   }
   
   return children;
 };
 
+// Wrapper que incluye AuthProvider en todas las rutas
+const RouteWrapper = ({ children }) => {
+  return (
+    <AuthProvider>
+      {children}
+    </AuthProvider>
+  );
+};
+
 export const router = createBrowserRouter([
-  // Ruta raíz - Landing page público
   {
     path: "/",
-    element: <LandingPage />
+    element: (
+      <RouteWrapper>
+        <LandingPage />
+      </RouteWrapper>
+    )
   },
-  //Ruta de Tutorial
+  
+  {
+    path: "/login",
+    element: (
+      <RouteWrapper>
+        <PublicRoute>
+          <UserLoginPage />
+        </PublicRoute>
+      </RouteWrapper>
+    )
+  },
+  
+  {
+    path: "/dashboard",
+    element: (
+      <RouteWrapper>
+        <ProtectedRoute>
+          <div style={{ 
+            minHeight: '100vh', 
+            padding: '40px', 
+            background: 'linear-gradient(135deg, #1f2937 0%, #111827 100%)',
+            color: 'white',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            flexDirection: 'column',
+            gap: '20px'
+          }}>
+            <h1 style={{ fontSize: '3rem', textAlign: 'center' }}>
+              🎉 ¡Bienvenido a tu Home de SENTYA!
+            </h1>
+            <p style={{ fontSize: '1.2rem', textAlign: 'center', opacity: 0.8 }}>
+              Aquí irá el dashboard adaptativo según tu rol
+            </p>
+          </div>
+        </ProtectedRoute>
+      </RouteWrapper>
+    )
+  },
+
   {
     path: "/tutorial",
-    element: <SentyaTutorialPage />
+    element: (
+      <RouteWrapper>
+        <SentyaTutorialPage />
+      </RouteWrapper>
+    )
   },
-  // Rutas de administración
+  
+  // RUTAS DE ADMINISTRACIÓN
   {
     path: "/aossadmin",
     element: (
-      <PublicRoute>
-        <LoginAdminPage />
-      </PublicRoute>
+      <RouteWrapper>
+        <PublicRoute adminOnly={true}>
+          <LoginAdminPage />
+        </PublicRoute>
+      </RouteWrapper>
     )
   },
   
-  // Ruta para autenticación 2FA
   {
     path: "/aossadmin/2fa",
-    element: <Auth2faPage />
+    element: (
+      <RouteWrapper>
+        <Auth2faPage />
+      </RouteWrapper>
+    )
   },
   
-  // Dashboard protegido
   {
     path: "/aossadmin/dashboard",
     element: (
-      <ProtectedRoute>
-        <AdminDashboardPage />
-      </ProtectedRoute>
+      <RouteWrapper>
+        <AdminProtectedRoute>
+          <AdminDashboardPage />
+        </AdminProtectedRoute>
+      </RouteWrapper>
     )
   },
   
-  // Ruta 404 - Página no encontrada
   {
     path: "*",
     element: (
-      <div style={{
-        minHeight: '100vh',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        background: 'linear-gradient(135deg, rgba(37, 99, 235, 0.4) 0%, rgba(5, 150, 105, 0.3) 50%, rgba(249, 115, 22, 0.3) 100%)',
-        fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif'
-      }}>
-        <div style={{
-          background: 'rgba(248, 250, 252, 0.15)',
-          backdropFilter: 'blur(24px)',
-          borderRadius: '24px',
-          border: '1px solid rgba(248, 250, 252, 0.25)',
-          padding: '64px 48px',
-          textAlign: 'center',
-          maxWidth: '480px',
-          margin: '20px'
-        }}>
-          <div style={{
-            fontSize: '72px',
-            fontWeight: '900',
-            background: 'linear-gradient(135deg, #2563eb 0%, #059669 100%)',
-            backgroundClip: 'text',
-            WebkitBackgroundClip: 'text',
-            WebkitTextFillColor: 'transparent',
-            marginBottom: '24px',
-            lineHeight: 1
-          }}>
-            404
-          </div>
-          <h1 style={{
-            color: 'rgba(248, 250, 252, 0.95)',
-            fontSize: '1.5rem',
-            fontWeight: '700',
-            margin: '0 0 12px 0'
-          }}>
-            Página no encontrada
-          </h1>
-          <p style={{
-            color: 'rgba(248, 250, 252, 0.7)',
-            fontSize: '1rem',
-            margin: '0 0 32px 0',
-            lineHeight: 1.6
-          }}>
-            La página que estás buscando no existe o ha sido movida.
-          </p>
-          <button
-            onClick={() => window.location.href = '/'}
-            style={{
-              padding: '16px 32px',
-              background: 'linear-gradient(135deg, #2563eb 0%, #059669 100%)',
-              border: 'none',
-              borderRadius: '16px',
-              color: 'white',
-              fontSize: '1rem',
-              fontWeight: '700',
-              cursor: 'pointer',
-              transition: 'all 0.3s ease',
-              textDecoration: 'none',
-              display: 'inline-block'
-            }}
-            onMouseEnter={(e) => {
-              e.target.style.transform = 'translateY(-2px)';
-              e.target.style.boxShadow = '0 8px 28px rgba(37, 99, 235, 0.35)';
-            }}
-            onMouseLeave={(e) => {
-              e.target.style.transform = 'translateY(0)';
-              e.target.style.boxShadow = 'none';
-            }}
-          >
-            Volver al inicio
-          </button>
-        </div>
-      </div>
+      <RouteWrapper>
+        <NotFoundPage />
+      </RouteWrapper>
     )
   }
 ]);

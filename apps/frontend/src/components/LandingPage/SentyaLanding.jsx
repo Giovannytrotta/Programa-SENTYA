@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Heart, Target, TrendingUp, Users, Award, Rocket } from 'lucide-react';
-import { Link } from 'react-router-dom';
 import "./SentyaLanding.css"
 
 const SentyaLanding = () => {
   const [scrollY, setScrollY] = useState(0);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const handleScroll = () => setScrollY(window.scrollY);
@@ -13,6 +14,15 @@ const SentyaLanding = () => {
   }, []);
 
   const transform = `translateY(${scrollY * 0.1}px)`;
+
+  // 🔥 Funciones de navegación usando React Router
+  const goToLogin = () => {
+    navigate('/login');
+  };
+
+  const goToTutorial = () => {
+    navigate('/tutorial');
+  };
 
   return (
     <div className="sentya-landing">
@@ -28,7 +38,11 @@ const SentyaLanding = () => {
               </div>
             </div>
           </div>
-          <button className="sentya-login-btn">
+          {/* 🆕 Conectar botón de login */}
+          <button 
+            className="sentya-login-btn"
+            onClick={goToLogin}
+          >
             Iniciar sesión
           </button>
         </div>
@@ -56,7 +70,11 @@ const SentyaLanding = () => {
                 ver tu progreso y mantenerte conectado con tu centro de día.
               </p>
 
-              <button className="hero-cta">
+              {/* 🆕 Conectar botón principal */}
+              <button 
+                className="hero-cta"
+                onClick={goToLogin}
+              >
                 Explorar SENTYA
               </button>
             </div>
@@ -69,13 +87,15 @@ const SentyaLanding = () => {
                   </div>
                   <h3 className="visual-title">¿Es tu primera vez usando Sentya?</h3>
                   <p className="visual-text">
-                    Accede a un rapido tutorial para conocer los primeros pasos que has de realizar en nuestra aplicacion
+                    Accede a un rápido tutorial para conocer los primeros pasos que has de realizar en nuestra aplicación
                   </p>
-                  <Link to={ "/tutorial"}>
-                 <button className="hero-cta">
-                Accede al Tutorial
-              </button>
-              </Link>
+                  {/* 🔥 Tutorial sigue igual (ya funciona) */}
+                  <button 
+                    className="hero-cta"
+                    onClick={goToTutorial}
+                  >
+                    Accede al Tutorial
+                  </button>
                 </div>
               </div>
             </div>
@@ -229,9 +249,13 @@ const SentyaLanding = () => {
             <span className="cta-highlight">empieza aquí</span>
           </h2>
           <p className="cta-description">
-            Únete a el resto de personas que ya han mejorado su bienestar con SENTYA
+            Únete al resto de personas que ya han mejorado su bienestar con SENTYA
           </p>
-          <button className="cta-button">
+          {/* 🆕 Conectar botón final */}
+          <button 
+            className="cta-button"
+            onClick={goToLogin}
+          >
             Comenzar mi experiencia
           </button>
         </div>
