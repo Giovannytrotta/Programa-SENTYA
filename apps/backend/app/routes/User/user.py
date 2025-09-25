@@ -85,3 +85,23 @@ def login():
     
     set_access_cookies(response, access_token)
     return response
+
+@user_bp.route("/me", methods=["GET"])
+@jwt_required()
+def get_current_user():
+    current_user_id = get_jwt_identity()
+    user = SystemUser.query.get(current_user_id)
+    
+    if not user or not user.is_active:
+        raise UnauthorizedError("Usuario no válido")
+    
+    return jsonify({
+        "user": {
+            "id": user.id,
+            "name": user.name,
+            "last_name": user.last_name,
+            "email": user.email,
+            "rol": user.rol.value
+        },
+        "role": user.rol.value 
+    })

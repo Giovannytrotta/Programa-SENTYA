@@ -324,6 +324,23 @@ export const useAuth = () => {
     return null;
   }, []);
 
+  const checkAuthOnLoad = useCallback(async () => {
+  try {
+    const response = await apiService.getCurrentUser();
+    dispatch({
+      type: ACTION_TYPES.LOGIN_SUCCESS,
+      payload: {
+        user: response.user,
+        role: response.role
+      }
+    });
+    return true;
+  } catch (error) {
+    dispatch({ type: ACTION_TYPES.LOGOUT });
+    return false;
+  }
+}, [dispatch]);
+
   return {
     // Estado
     isAuthenticated: store.auth.isAuthenticated,
@@ -347,6 +364,9 @@ export const useAuth = () => {
     // Validaciones
     validateLoginForm,
     validate2FAToken,
+
+    //estado de carga 
+    checkAuthOnLoad,
 
     // Mensajes
     MESSAGES

@@ -182,7 +182,16 @@ async confirm2faReset(token) {
       method: 'GET'
     });
   }
+
+  async getCurrentUser() {
+  return this.request('/auth/me', {
+    method: 'GET'
+  });
 }
+
+}
+
+
 
 export const apiService = new ApiService();
 export { ApiError };

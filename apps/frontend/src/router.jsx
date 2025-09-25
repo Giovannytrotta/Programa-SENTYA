@@ -6,7 +6,21 @@ import LoginAdminPage from './pages/LoginAdmin';
 import Auth2faPage from './pages/Auth2faPage';
 import AdminDashboardPage from './pages/AdminDashboardPage';
 import SentyaTutorialPage from './pages/SentyaTutorialPage';
+import { useEffect } from 'react';
 
+//corregido el problema de refrescamiento de pagina agregado AuthInitializer para no perder o encontrar los
+//datos del usuario y evitar que se pierdan por la cookie para poder mantener la sesion agregado en todas las
+//protectRoute para mantenerlo
+
+const AuthInitializer = ({ children }) => {
+  const { checkAuthOnLoad } = useAuth();
+
+  useEffect(() => {
+    checkAuthOnLoad();
+  }, [checkAuthOnLoad]);
+
+  return children;
+};
 
 // Componente de protección para rutas autenticadas
 const ProtectedRoute = ({ children }) => {
@@ -14,6 +28,8 @@ const ProtectedRoute = ({ children }) => {
   
   if (isLoading) {
     return (
+      <AuthInitializer>
+        {isLoading && (
       <div style={{
         minHeight: '100vh',
         display: 'flex',
@@ -50,14 +66,15 @@ const ProtectedRoute = ({ children }) => {
           `}</style>
         </div>
       </div>
-    );
-  }
-  
-  if (!isAuthenticated) {
-    // Redirigir al login si no está autenticado
-    window.location.href = '/aossadmin';
-    return null;
-  }
+     )};
+        {!isLoading && !isAuthenticated && (
+        window.location.href = '/aossadmin',
+        null
+      )}
+    {!isLoading && isAuthenticated && children}
+    </AuthInitializer>
+  );
+};
   
   return children;
 };
