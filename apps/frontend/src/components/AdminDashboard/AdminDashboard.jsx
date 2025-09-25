@@ -193,7 +193,6 @@ const AdminDashboard = () => {
             resetForm()
             setShowRegisterModal(false)
         } catch (error) {
-            // Los errores ya son manejados por el hook useAdminUsers
             console.error('Error creating user:', error)
         }
     }, [currentStep, totalSteps, validateStep, nextStep, newUser, createUser, resetForm])
@@ -201,16 +200,14 @@ const AdminDashboard = () => {
     // Función para manejar la edición de usuarios
    const handleSaveUser = useCallback(async (userId, userData) => {
     try {
-        // Una sola llamada - tu endpoint maneja todo
         await updateUser(userId, userData);
-        
         setShowEditModal(false);
         setSelectedUser(null);
     } catch (error) {
         console.error('Error saving user:', error);
         throw error;
     }
-}, [updateUser]); // ← Solo esta dependencia
+}, [updateUser]);
 
     // Funciones para modales de edición
     const handleEditUser = useCallback((user) => {
@@ -1042,8 +1039,8 @@ const AdminDashboard = () => {
 
                         <div style={{ padding: '0 0 32px 0' }}>
                             <div style={{
-                                background: 'rgba(239, 68, 68, 0.1)',
-                                border: '1px solid rgba(239, 68, 68, 0.2)',
+                                background: 'rgba(220, 38, 38, 0.1)',
+                                border: '1px solid rgba(220, 38, 38, 0.3)',
                                 borderRadius: '16px',
                                 padding: '20px',
                                 marginBottom: '24px',
@@ -1052,13 +1049,13 @@ const AdminDashboard = () => {
                                 <div style={{
                                     width: '48px',
                                     height: '48px',
-                                    background: 'rgba(239, 68, 68, 0.2)',
+                                    background: 'rgba(220, 38, 38, 0.15)',
                                     borderRadius: '50%',
                                     display: 'flex',
                                     alignItems: 'center',
                                     justifyContent: 'center',
                                     margin: '0 auto 16px',
-                                    color: '#ef4444'
+                                    color: '#dc2626'
                                 }}>
                                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor">
                                         <path d="M3 6h18m-2 0v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6m3 0V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/>
@@ -1067,7 +1064,7 @@ const AdminDashboard = () => {
                                     </svg>
                                 </div>
                                 <h3 style={{
-                                    color: 'rgba(248, 250, 252, 0.95)',
+                                    color: 'rgba(255, 255, 255, 0.95)',
                                     margin: '0 0 8px 0',
                                     fontSize: '1.25rem',
                                     fontWeight: '700'
@@ -1075,11 +1072,11 @@ const AdminDashboard = () => {
                                     ¿Eliminar usuario?
                                 </h3>
                                 <p style={{
-                                    color: 'rgba(248, 250, 252, 0.7)',
+                                    color: 'rgba(255, 255, 255, 0.7)',
                                     margin: '0',
                                     lineHeight: '1.5'
                                 }}>
-                                    Estás a punto de eliminar a <strong style={{ color: 'rgba(248, 250, 252, 0.9)' }}>
+                                    Estás a punto de eliminar a <strong style={{ color: 'rgba(255, 255, 255, 0.9)' }}>
                                     {selectedUser.name} {selectedUser.last_name}
                                     </strong>
                                 </p>
@@ -1091,10 +1088,10 @@ const AdminDashboard = () => {
                                     disabled={loading}
                                     style={{
                                         padding: '12px 24px',
-                                        background: 'rgba(248, 250, 252, 0.1)',
-                                        border: '1px solid rgba(248, 250, 252, 0.2)',
+                                        background: 'rgba(255, 255, 255, 0.08)',
+                                        border: '1px solid rgba(255, 255, 255, 0.15)',
                                         borderRadius: '12px',
-                                        color: 'rgba(248, 250, 252, 0.8)',
+                                        color: 'rgba(255, 255, 255, 0.8)',
                                         fontWeight: '600',
                                         cursor: 'pointer',
                                         transition: 'all 0.3s ease'
@@ -1108,7 +1105,7 @@ const AdminDashboard = () => {
                                     disabled={loading}
                                     style={{
                                         padding: '12px 24px',
-                                        background: 'linear-gradient(135deg, #ef4444, #dc2626)',
+                                        background: 'linear-gradient(135deg, #dc2626, #b91c1c)',
                                         border: 'none',
                                         borderRadius: '12px',
                                         color: 'white',
@@ -1128,10 +1125,10 @@ const AdminDashboard = () => {
                                     disabled={loading}
                                     style={{
                                         padding: '12px 24px',
-                                        background: 'rgba(100, 116, 139, 0.1)',
-                                        border: '1px solid rgba(100, 116, 139, 0.2)',
+                                        background: 'rgba(136, 136, 136, 0.1)',
+                                        border: '1px solid rgba(136, 136, 136, 0.3)',
                                         borderRadius: '12px',
-                                        color: 'rgba(100, 116, 139, 0.8)',
+                                        color: 'rgba(136, 136, 136, 0.8)',
                                         fontWeight: '600',
                                         cursor: 'pointer',
                                         transition: 'all 0.3s ease'

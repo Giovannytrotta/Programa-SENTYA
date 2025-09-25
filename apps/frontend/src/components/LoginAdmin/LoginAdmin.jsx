@@ -1,10 +1,9 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 import './LoginAdmin.css';
 
-const LoginAdminPage = () => {
+const LoginAdmin = () => {
   const [formData, setFormData] = useState({
     email: '',
     password: ''
@@ -122,22 +121,22 @@ const LoginAdminPage = () => {
   };
 
   return (
-    <div className="login-admin-container">
-      <div className="login-admin-wrapper">
-        <div className="login-admin-form">
+    <div className="admin-login-container">
+      <div className="admin-login-wrapper">
+        <div className="admin-login-form">
           {/* Header */}
-          <div className="login-header">
-            <div className="logo-container">
-              <h1 className="logo">Sentya</h1>
-              <div className="logo-accent"></div>
+          <div className="admin-login-header">
+            <div className="admin-logo-container">
+              <h1 className="admin-logo">Sentya</h1>
+              <div className="admin-logo-accent"></div>
             </div>
-            <h2 className="login-title">Panel de Administración</h2>
-            <p className="login-subtitle">Sistema de gestión integral</p>
+            <h2 className="admin-login-title">Panel de Administración</h2>
+            <p className="admin-login-subtitle">Sistema de gestión integral</p>
           </div>
 
           {/* Error general */}
           {(error || errors.general) && (
-            <div className="error-message general">
+            <div className="admin-error-message general">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor">
                 <circle cx="12" cy="12" r="10"/>
                 <line x1="15" y1="9" x2="9" y2="15"/>
@@ -147,15 +146,15 @@ const LoginAdminPage = () => {
             </div>
           )}
 
-          <form className="login-form" onSubmit={handleSubmit} noValidate>
+          <form className="admin-form" onSubmit={handleSubmit} noValidate>
             {/* Campo Email */}
-            <div className="input-group">
-              <div className={`input-container ${errors.email && touched.email ? 'error' : ''}`}>
+            <div className="admin-input-group">
+              <div className={`admin-input-container ${errors.email && touched.email ? 'error' : ''}`}>
                 <input
                   type="email"
                   name="email"
                   placeholder="Correo electrónico"
-                  className="input-field"
+                  className="admin-input-field"
                   value={formData.email}
                   onChange={handleChange}
                   onBlur={handleBlur}
@@ -165,7 +164,7 @@ const LoginAdminPage = () => {
                   autoCorrect="off"
                   spellCheck="false"
                 />
-                <div className="input-icon">
+                <div className="admin-input-icon">
                   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor">
                     <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
                     <polyline points="22,6 12,13 2,6"/>
@@ -173,18 +172,18 @@ const LoginAdminPage = () => {
                 </div>
               </div>
               {errors.email && touched.email && (
-                <span className="error-text">{errors.email}</span>
+                <span className="admin-error-text">{errors.email}</span>
               )}
             </div>
 
             {/* Campo Password */}
-            <div className="input-group">
-              <div className={`input-container ${errors.password && touched.password ? 'error' : ''}`}>
+            <div className="admin-input-group">
+              <div className={`admin-input-container ${errors.password && touched.password ? 'error' : ''}`}>
                 <input
                   type={showPassword ? 'text' : 'password'}
                   name="password"
                   placeholder="Contraseña"
-                  className="input-field"
+                  className="admin-input-field"
                   value={formData.password}
                   onChange={handleChange}
                   onBlur={handleBlur}
@@ -193,7 +192,7 @@ const LoginAdminPage = () => {
                 />
                 <button
                   type="button"
-                  className="input-icon toggle-password"
+                  className="admin-toggle-password"
                   onClick={() => setShowPassword(!showPassword)}
                   disabled={isLoading}
                   tabIndex="-1"
@@ -213,14 +212,22 @@ const LoginAdminPage = () => {
                 </button>
               </div>
               {errors.password && touched.password && (
-                <span className="error-text">{errors.password}</span>
+                <span className="admin-error-text">{errors.password}</span>
               )}
             </div>
 
             {/* Opciones adicionales */}
-            <div className="form-options">
+            <div className="admin-form-options">
+              {/* Checkbox "Recordarme" - opcional */}
+              {/* 
+              <div className="admin-checkbox-container">
+                <input type="checkbox" id="remember" />
+                <span className="admin-checkmark"></span>
+                <span className="admin-checkbox-text">Recordarme</span>
+              </div>
+              */}
 
-              <a href="#" className="forgot-password">
+              <a href="#" className="admin-forgot-password">
                 ¿Olvidaste tu contraseña?
               </a>
             </div>
@@ -228,18 +235,18 @@ const LoginAdminPage = () => {
             {/* Botón de envío */}
             <button 
               type="submit" 
-              className={`login-button ${isLoading ? 'loading' : ''}`}
+              className={`admin-login-button ${isLoading ? 'loading' : ''}`}
               disabled={isLoading}
             >
               {isLoading ? (
                 <>
-                  <div className="spinner"></div>
-                  <span className="button-text">Iniciando sesión...</span>
+                  <div className="admin-spinner"></div>
+                  <span className="admin-button-text">Iniciando sesión...</span>
                 </>
               ) : (
                 <>
-                  <span className="button-text">Iniciar Sesión</span>
-                  <div className="button-icon">
+                  <span className="admin-button-text">Iniciar Sesión</span>
+                  <div className="admin-button-icon">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor">
                       <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/>
                       <polyline points="10,17 15,12 10,7"/>
@@ -252,11 +259,11 @@ const LoginAdminPage = () => {
           </form>
 
           {/* Footer */}
-          <div className="login-footer">
-            <p className="footer-text">
-              © 2025 AOSSA Global.
+          <div className="admin-login-footer">
+            <p className="admin-footer-text">
+              © 2025 SENTYA by AOSSA Global.
             </p>
-            <p className="footer-text">30 años de experiencia en servicios integrales.</p>
+            <p className="admin-footer-text">30 años de experiencia en servicios integrales.</p>
           </div>
         </div>
       </div>
@@ -264,4 +271,4 @@ const LoginAdminPage = () => {
   );
 };
 
-export default LoginAdminPage;
+export default LoginAdmin;

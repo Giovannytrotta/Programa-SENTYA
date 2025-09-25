@@ -1,44 +1,49 @@
-/* ===== LOGIN ADMIN GLASSMORPHISM STYLES - AOSSA THEME ===== */
+/* ===== ADMIN LOGIN SENTYA THEME ===== */
 
-/* Variables de colores AOSSA */
+/* Variables de colores SENTYA */
 :root {
-  --aossa-primary: #2563eb;        /* Azul principal - confianza */
-  --aossa-secondary: #059669;      /* Verde esmeralda - crecimiento */
-  --aossa-accent: #f97316;         /* Coral - calidez humana */
-  --aossa-neutral: #64748b;        /* Gris azulado - profesionalismo */
-  --aossa-light: #f8fafc;          /* Blanco suave - limpieza */
-  --aossa-gradient-start: rgba(37, 99, 235, 0.4);   /* Azul translúcido */
-  --aossa-gradient-mid: rgba(5, 150, 105, 0.3);     /* Verde translúcido */
-  --aossa-gradient-end: rgba(249, 115, 22, 0.3);    /* Coral translúcido */
+  --orange-primary: #E9531A;
+  --red-primary: #dc2626;
+  --orange-secondary: #ea580c;
+  --gray-dark: #333333;
+  --gray-darker: #1f1f1f;
+  --white: #ffffff;
+  --gray-light: #f5f5f5;
+  --gray-medium: #888888;
+  
+  /* Gradientes SENTYA */
+  --sentya-gradient-start: rgba(233, 83, 26, 0.4);
+  --sentya-gradient-mid: rgba(220, 38, 38, 0.3);
+  --sentya-gradient-end: rgba(234, 88, 12, 0.35);
 }
 
-/* Contenedor principal con gradiente AOSSA */
-.login-admin-container {
+/* Contenedor principal con gradiente SENTYA */
+.admin-login-container {
   min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
   background: linear-gradient(135deg, 
-    var(--aossa-gradient-start) 0%, 
-    var(--aossa-gradient-mid) 50%, 
-    var(--aossa-gradient-end) 100%
+    var(--gray-darker) 0%, 
+    var(--gray-dark) 50%, 
+    #2d2d2d 100%
   );
   background-size: 400% 400%;
-  animation: gradientMove 20s ease infinite;
+  animation: sentyaGradientMove 15s ease infinite;
   padding: 20px;
   position: relative;
   overflow: hidden;
 }
 
-/* Animación del fondo gradiente */
-@keyframes gradientMove {
+/* Animación del fondo gradiente más sutil */
+@keyframes sentyaGradientMove {
   0% { background-position: 0% 50%; }
   50% { background-position: 100% 50%; }
   100% { background-position: 0% 50%; }
 }
 
-/* Efectos de partículas de fondo con colores AOSSA */
-.login-admin-container::before {
+/* Efectos de partículas de fondo con colores SENTYA */
+.admin-login-container::before {
   content: '';
   position: absolute;
   top: 0;
@@ -46,40 +51,67 @@
   right: 0;
   bottom: 0;
   background-image: 
-    radial-gradient(circle at 20% 80%, var(--aossa-gradient-start) 0%, transparent 60%),
-    radial-gradient(circle at 80% 20%, var(--aossa-gradient-end) 0%, transparent 60%),
-    radial-gradient(circle at 40% 40%, var(--aossa-gradient-mid) 0%, transparent 60%);
-  pointer-events: none;
-  animation: floatParticles 25s ease-in-out infinite;
+    radial-gradient(circle at 25% 75%, var(--sentya-gradient-start) 0%, transparent 50%),
+    radial-gradient(circle at 75% 25%, var(--sentya-gradient-mid) 0%, transparent 50%),
+    radial-gradient(circle at 50% 50%, var(--sentya-gradient-end) 0%, transparent 60%);
+  pointer-events: none; /* 🔑 Las partículas no deben interferir */
+  animation: sentyaFloatParticles 20s ease-in-out infinite;
+  z-index: 0;
 }
 
-@keyframes floatParticles {
-  0%, 100% { transform: translateY(0px) rotate(0deg); }
-  50% { transform: translateY(-20px) rotate(5deg); }
+@keyframes sentyaFloatParticles {
+  0%, 100% { transform: translateY(0px) rotate(0deg); opacity: 0.6; }
+  50% { transform: translateY(-15px) rotate(3deg); opacity: 0.8; }
 }
 
-/* Wrapper del formulario con efecto glassmorphism AOSSA */
-.login-admin-wrapper {
-  background: rgba(248, 250, 252, 0.15);
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
-  border-radius: 24px;
-  border: 1px solid rgba(248, 250, 252, 0.25);
+/* Wrapper del formulario con efecto glassmorphism SENTYA */
+.admin-login-wrapper {
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
   box-shadow: 
-    0 12px 40px rgba(37, 99, 235, 0.12),
-    inset 0 1px 0 rgba(248, 250, 252, 0.25),
-    0 4px 16px rgba(5, 150, 105, 0.08);
+    0 10px 35px rgba(233, 83, 26, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2),
+    0 4px 12px rgba(220, 38, 38, 0.1);
   width: 100%;
-  max-width: 460px;
-  padding: 48px;
+  max-width: 440px;
+  padding: 40px;
   position: relative;
-  animation: slideInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+  animation: sentyaSlideInUp 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
-@keyframes slideInUp {
+/* Efecto de brillo sutil en el borde */
+.admin-login-wrapper::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 20px;
+  padding: 1px;
+  background: linear-gradient(135deg, 
+    var(--orange-primary), 
+    transparent 30%, 
+    transparent 70%, 
+    var(--red-primary)
+  );
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask-composite: xor;
+  opacity: 0.3;
+  animation: sentyaBorderGlow 8s ease-in-out infinite;
+  pointer-events: none; /* 🔑 CLAVE: Permitir clics a través del overlay */
+  z-index: -1; /* 🔑 Enviar el overlay al fondo */
+}
+
+@keyframes sentyaBorderGlow {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 0.6; }
+}
+
+@keyframes sentyaSlideInUp {
   from {
     opacity: 0;
-    transform: translateY(30px);
+    transform: translateY(25px);
   }
   to {
     opacity: 1;
@@ -88,246 +120,261 @@
 }
 
 /* Formulario */
-.login-admin-form {
+.admin-login-form {
   width: 100%;
 }
 
-/* Header del login con branding AOSSA */
-.login-header {
+/* Header del login con branding SENTYA */
+.admin-login-header {
   text-align: center;
-  margin-bottom: 36px;
+  margin-bottom: 32px;
 }
 
-.logo-container {
+.admin-logo-container {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 12px;
-  margin-bottom: 20px;
+  gap: 10px;
+  margin-bottom: 18px;
 }
 
-.logo {
-  font-size: 36px;
-  font-weight: 800;
-  background: linear-gradient(135deg, var(--aossa-primary) 0%, var(--aossa-secondary) 100%);
+.admin-logo {
+  font-size: 32px;
+  font-weight: 900;
+  background: linear-gradient(135deg, var(--orange-primary) 0%, var(--red-primary) 100%);
   background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   margin: 0;
-  letter-spacing: -0.8px;
-  filter: drop-shadow(0 2px 4px rgba(37, 99, 235, 0.1));
+  letter-spacing: -0.5px;
+  filter: drop-shadow(0 2px 4px rgba(233, 83, 26, 0.2));
 }
 
-.logo-accent {
-  width: 10px;
-  height: 10px;
-  background: linear-gradient(135deg, var(--aossa-primary) 0%, var(--aossa-accent) 100%);
+.admin-logo-accent {
+  width: 8px;
+  height: 8px;
+  background: linear-gradient(135deg, var(--orange-primary) 0%, var(--red-primary) 100%);
   border-radius: 50%;
-  animation: pulse 2.5s ease-in-out infinite;
-  box-shadow: 0 0 0 0 rgba(37, 99, 235, 0.4);
+  animation: sentyaPulse 3s ease-in-out infinite;
+  box-shadow: 0 0 0 0 rgba(233, 83, 26, 0.4);
 }
 
-@keyframes pulse {
+@keyframes sentyaPulse {
   0%, 100% { 
     transform: scale(1); 
     opacity: 1;
-    box-shadow: 0 0 0 0 rgba(37, 99, 235, 0.4);
+    box-shadow: 0 0 0 0 rgba(233, 83, 26, 0.4);
   }
   50% { 
-    transform: scale(1.1); 
+    transform: scale(1.2); 
     opacity: 0.8;
-    box-shadow: 0 0 0 8px rgba(37, 99, 235, 0);
+    box-shadow: 0 0 0 6px rgba(233, 83, 26, 0);
   }
 }
 
-.login-title {
-  font-size: 26px;
+.admin-login-title {
+  font-size: 24px;
   font-weight: 700;
-  color: rgba(248, 250, 252, 0.95);
-  margin: 0 0 10px 0;
-  text-shadow: 0 2px 8px rgba(37, 99, 235, 0.15);
-  letter-spacing: -0.3px;
+  color: rgba(255, 255, 255, 0.95);
+  margin: 0 0 8px 0;
+  text-shadow: 0 2px 8px rgba(233, 83, 26, 0.2);
+  letter-spacing: -0.2px;
 }
 
-.login-subtitle {
-  font-size: 18px;
-  color: rgba(248, 250, 252, 0.75);
+.admin-login-subtitle {
+  font-size: 16px;
+  color: rgba(255, 255, 255, 0.7);
   margin: 0;
   font-weight: 500;
-  letter-spacing: 0.025em;
+  letter-spacing: 0.02em;
 }
 
-/* Mensaje de error general con colores AOSSA */
-.error-message.general {
+/* Mensaje de error general con colores SENTYA */
+.admin-error-message.general {
   display: flex;
   align-items: center;
-  gap: 10px;
-  background: rgba(239, 68, 68, 0.12);
+  gap: 8px;
+  background: rgba(220, 38, 38, 0.12);
   color: #fecaca;
-  padding: 14px 18px;
-  border-radius: 14px;
-  border: 1px solid rgba(239, 68, 68, 0.25);
+  padding: 12px 16px;
+  border-radius: 12px;
+  border: 1px solid rgba(220, 38, 38, 0.3);
   font-size: 14px;
-  margin-bottom: 24px;
-  backdrop-filter: blur(12px);
-  animation: shake 0.6s ease-in-out;
+  margin-bottom: 20px;
+  backdrop-filter: blur(10px);
+  animation: sentyaShake 0.5s ease-in-out;
   font-weight: 500;
 }
 
-@keyframes shake {
+@keyframes sentyaShake {
   0%, 100% { transform: translateX(0); }
-  20% { transform: translateX(-6px); }
-  40% { transform: translateX(6px); }
-  60% { transform: translateX(-4px); }
-  80% { transform: translateX(4px); }
+  25% { transform: translateX(-4px); }
+  75% { transform: translateX(4px); }
 }
 
-/* Grupos de input con estilo AOSSA */
-.input-group {
-  margin-bottom: 24px;
+/* Grupos de input con estilo SENTYA */
+.admin-input-group {
+  margin-bottom: 20px;
 }
 
-.input-container {
+.admin-input-container {
   position: relative;
-  background: rgba(248, 250, 252, 0.12);
-  border: 1.5px solid rgba(248, 250, 252, 0.25);
-  border-radius: 18px;
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  background: rgba(255, 255, 255, 0.08);
+  border: 1.5px solid rgba(255, 255, 255, 0.2);
+  border-radius: 14px;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   overflow: hidden;
 }
 
-.input-container::before {
+/* Efecto de brillo en hover */
+.admin-input-container::before {
   content: '';
   position: absolute;
   top: 0;
   left: -100%;
   width: 100%;
   height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(248, 250, 252, 0.05), transparent);
-  transition: left 0.6s;
+  background: linear-gradient(90deg, transparent, rgba(233, 83, 26, 0.1), transparent);
+  transition: left 0.5s;
+  pointer-events: none; /* 🔑 Permitir clics a través del efecto */
+  z-index: 1;
 }
 
-.input-container:hover {
-  border-color: rgba(248, 250, 252, 0.4);
-  background: rgba(248, 250, 252, 0.18);
+.admin-input-container:hover {
+  border-color: rgba(233, 83, 26, 0.4);
+  background: rgba(255, 255, 255, 0.12);
   transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(233, 83, 26, 0.1);
 }
 
-.input-container:hover::before {
+.admin-input-container:hover::before {
   left: 100%;
 }
 
-.input-container:focus-within {
-  border-color: var(--aossa-primary);
-  background: rgba(248, 250, 252, 0.22);
+.admin-input-container:focus-within {
+  border-color: var(--orange-primary);
+  background: rgba(255, 255, 255, 0.15);
   box-shadow: 
-    0 0 0 3px rgba(37, 99, 235, 0.12),
-    0 4px 12px rgba(37, 99, 235, 0.08);
+    0 0 0 3px rgba(233, 83, 26, 0.15),
+    0 6px 16px rgba(233, 83, 26, 0.2);
   transform: translateY(-2px);
 }
 
-.input-container.error {
-  border-color: rgba(239, 68, 68, 0.6);
-  background: rgba(239, 68, 68, 0.08);
-  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+.admin-input-container.error {
+  border-color: rgba(220, 38, 38, 0.6);
+  background: rgba(220, 38, 38, 0.08);
+  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
 }
 
 /* Campos de input mejorados */
-.input-field {
+.admin-input-field {
   width: 100%;
-  padding: 18px 55px 18px 22px;
+  padding: 16px 50px 16px 20px;
   border: none;
   background: transparent;
-  color: rgba(248, 250, 252, 0.95);
-  font-size: 16px;
-  border-radius: 18px;
+  color: rgba(255, 255, 255, 0.95);
+  font-size: 15px;
+  border-radius: 14px;
   outline: none;
   font-weight: 500;
-  letter-spacing: 0.025em;
+  letter-spacing: 0.02em;
   transition: color 0.3s ease;
+  position: relative;
+  z-index: 2;
 }
 
-.input-field::placeholder {
-  color: rgb(248, 250, 252);
+.admin-input-field::placeholder {
+  color: rgba(255, 255, 255, 0.5);
   font-weight: 400;
   transition: color 0.3s ease;
 }
 
-.input-container:focus-within .input-field::placeholder {
-  color: rgba(248, 250, 252, 0.986);
+.admin-input-container:focus-within .admin-input-field::placeholder {
+  color: rgba(255, 255, 255, 0.7);
 }
 
-.input-field:disabled {
+.admin-input-field:disabled {
   opacity: 0.6;
   cursor: not-allowed;
 }
 
-/* Iconos de input con colores AOSSA */
-.input-icon {
+/* Iconos de input con colores SENTYA */
+.admin-input-icon {
   position: absolute;
-  right: 18px;
+  right: 16px;
   top: 50%;
   transform: translateY(-50%);
-  color: #ffffff;
+  color: rgba(255, 255, 255, 0.6);
   pointer-events: none;
   transition: all 0.3s ease;
-  z-index: 1;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.input-container:focus-within .input-icon {
-  color: var(--aossa-primary);
+.admin-input-container:focus-within .admin-input-icon {
+  color: var(--orange-primary);
   transform: translateY(-50%) scale(1.05);
 }
 
-.input-container.error .input-icon {
-  color: rgba(239, 68, 68, 0.8);
+.admin-input-container.error .admin-input-icon {
+  color: rgba(220, 38, 38, 0.8);
 }
 
 /* Botón toggle password mejorado */
-.toggle-password {
+.admin-toggle-password {
+  position: absolute;
+  right: 16px;
+  top: 50%;
+  transform: translateY(-50%);
   background: none;
   border: none;
   cursor: pointer;
   pointer-events: all;
   padding: 6px;
-  border-radius: 8px;
+  border-radius: 6px;
   transition: all 0.3s ease;
-  position: absolute;
+  z-index: 4;
+  color: rgba(255, 255, 255, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.toggle-password:hover {
-  background: rgba(248, 250, 252, 0.12);
+.admin-toggle-password:hover {
+  background: rgba(233, 83, 26, 0.1);
   transform: scale(1.05);
 }
 
-.toggle-password:focus {
-  outline: 2px solid var(--aossa-primary);
+.admin-toggle-password:focus {
+  outline: 2px solid var(--orange-primary);
   outline-offset: 2px;
 }
 
-.toggle-password:disabled {
+.admin-toggle-password:disabled {
   cursor: not-allowed;
   opacity: 0.5;
 }
 
 /* Texto de error mejorado */
-.error-text {
+.admin-error-text {
   display: block;
-  color: #fecaca;
+  color: #fca5a5;
   font-size: 13px;
-  margin-top: 8px;
-  margin-left: 6px;
+  margin-top: 6px;
+  margin-left: 4px;
   font-weight: 500;
-  letter-spacing: 0.025em;
-  animation: slideInError 0.3s ease-out;
+  letter-spacing: 0.02em;
+  animation: sentyaSlideInError 0.3s ease-out;
 }
 
-@keyframes slideInError {
+@keyframes sentyaSlideInError {
   from {
     opacity: 0;
-    transform: translateY(-8px);
+    transform: translateY(-6px);
   }
   to {
     opacity: 1;
@@ -336,17 +383,17 @@
 }
 
 /* Opciones del formulario mejoradas */
-.form-options {
+.admin-form-options {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 28px;
+  margin-bottom: 24px;
   flex-wrap: wrap;
-  gap: 16px;
+  gap: 14px;
 }
 
-/* Checkbox personalizado con estilo AOSSA */
-.checkbox-container {
+/* Checkbox personalizado con estilo SENTYA */
+.admin-checkbox-container {
   display: flex;
   align-items: center;
   cursor: pointer;
@@ -355,59 +402,59 @@
   transition: transform 0.2s ease;
 }
 
-.checkbox-container:hover {
+.admin-checkbox-container:hover {
   transform: scale(1.02);
 }
 
-.checkbox-container input[type="checkbox"] {
+.admin-checkbox-container input[type="checkbox"] {
   position: absolute;
   opacity: 0;
   cursor: pointer;
 }
 
-.checkmark {
-  width: 20px;
-  height: 20px;
-  background: rgba(248, 250, 252, 0.12);
-  border: 1.5px solid rgba(248, 250, 252, 0.35);
-  border-radius: 6px;
-  margin-right: 12px;
+.admin-checkmark {
+  width: 18px;
+  height: 18px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1.5px solid rgba(255, 255, 255, 0.3);
+  border-radius: 5px;
+  margin-right: 10px;
   position: relative;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  backdrop-filter: blur(10px);
+  backdrop-filter: blur(8px);
 }
 
-.checkbox-container:hover .checkmark {
-  background: rgba(248, 250, 252, 0.18);
-  border-color: var(--aossa-primary);
-  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.1);
+.admin-checkbox-container:hover .admin-checkmark {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: var(--orange-primary);
+  box-shadow: 0 0 0 2px rgba(233, 83, 26, 0.1);
 }
 
-.checkbox-container input:checked ~ .checkmark {
-  background: linear-gradient(135deg, var(--aossa-primary) 0%, var(--aossa-secondary) 100%);
-  border-color: var(--aossa-primary);
-  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.25);
+.admin-checkbox-container input:checked ~ .admin-checkmark {
+  background: linear-gradient(135deg, var(--orange-primary) 0%, var(--red-primary) 100%);
+  border-color: var(--orange-primary);
+  box-shadow: 0 2px 8px rgba(233, 83, 26, 0.3);
 }
 
-.checkmark:after {
+.admin-checkmark:after {
   content: "";
   position: absolute;
   display: none;
-  left: 6px;
-  top: 2px;
-  width: 6px;
-  height: 10px;
+  left: 5px;
+  top: 1px;
+  width: 5px;
+  height: 9px;
   border: solid white;
-  border-width: 0 2.5px 2.5px 0;
+  border-width: 0 2px 2px 0;
   transform: rotate(45deg);
 }
 
-.checkbox-container input:checked ~ .checkmark:after {
+.admin-checkbox-container input:checked ~ .admin-checkmark:after {
   display: block;
-  animation: checkmarkAppear 0.3s ease-out;
+  animation: sentyaCheckmarkAppear 0.3s ease-out;
 }
 
-@keyframes checkmarkAppear {
+@keyframes sentyaCheckmarkAppear {
   from {
     opacity: 0;
     transform: rotate(45deg) scale(0.5);
@@ -418,51 +465,51 @@
   }
 }
 
-.checkbox-text {
-  font-size: 15px;
-  color: rgba(248, 250, 252, 0.85);
+.admin-checkbox-text {
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.8);
   font-weight: 500;
-  letter-spacing: 0.025em;
+  letter-spacing: 0.02em;
 }
 
 /* Enlace "olvidaste contraseña" mejorado */
-.forgot-password {
-  color: var(--aossa-primary);
+.admin-forgot-password {
+  color: var(--orange-primary);
   text-decoration: none;
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 600;
   transition: all 0.3s ease;
   position: relative;
-  letter-spacing: 0.025em;
+  letter-spacing: 0.02em;
 }
 
-.forgot-password::after {
+.admin-forgot-password::after {
   content: '';
   position: absolute;
   width: 0;
   height: 2px;
   bottom: -2px;
   left: 0;
-  background: linear-gradient(90deg, var(--aossa-primary), var(--aossa-accent));
+  background: linear-gradient(90deg, var(--orange-primary), var(--red-primary));
   transition: width 0.3s ease;
 }
 
-.forgot-password:hover {
-  color: var(--aossa-accent);
+.admin-forgot-password:hover {
+  color: var(--red-primary);
   transform: translateY(-1px);
 }
 
-.forgot-password:hover::after {
+.admin-forgot-password:hover::after {
   width: 100%;
 }
 
-/* Botón de login con diseño AOSSA premium */
-.login-button {
+/* Botón de login con diseño SENTYA premium */
+.admin-login-button {
   width: 100%;
-  padding: 18px 28px;
-  background: linear-gradient(135deg, var(--aossa-primary) 0%, var(--aossa-secondary) 100%);
+  padding: 16px 24px;
+  background: linear-gradient(135deg, var(--orange-primary) 0%, var(--red-primary) 100%);
   border: none;
-  border-radius: 18px;
+  border-radius: 14px;
   color: white;
   font-size: 16px;
   font-weight: 700;
@@ -470,102 +517,89 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 10px;
+  gap: 8px;
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
   overflow: hidden;
-  letter-spacing: 0.025em;
+  letter-spacing: 0.02em;
   box-shadow: 
-    0 4px 16px rgba(37, 99, 235, 0.25),
+    0 4px 15px rgba(233, 83, 26, 0.3),
     inset 0 1px 0 rgba(255, 255, 255, 0.2);
 }
 
-.login-button::before {
+/* Efecto de brillo en hover */
+.admin-login-button::before {
   content: '';
   position: absolute;
   top: 0;
   left: -100%;
   width: 100%;
   height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.25), transparent);
-  transition: left 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.login-button::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border-radius: 18px;
-  background: linear-gradient(135deg, var(--aossa-accent), var(--aossa-primary));
-  opacity: 0;
-  transition: opacity 0.4s ease;
-}
-
-.login-button:hover::before {
+.admin-login-button:hover::before {
   left: 100%;
 }
 
-.login-button:hover::after {
-  opacity: 1;
-}
-
-.login-button:hover {
-  transform: translateY(-3px);
+.admin-login-button:hover {
+  transform: translateY(-2px);
   box-shadow: 
-    0 8px 28px rgba(37, 99, 235, 0.35),
-    0 4px 12px rgba(5, 150, 105, 0.2),
+    0 6px 20px rgba(233, 83, 26, 0.4),
+    0 2px 8px rgba(220, 38, 38, 0.2),
     inset 0 1px 0 rgba(255, 255, 255, 0.3);
 }
 
-.login-button:active {
+.admin-login-button:active {
   transform: translateY(-1px);
   transition-duration: 0.1s;
 }
 
-.login-button:disabled {
-  opacity: 0.7;
+.admin-login-button:disabled {
+  opacity: 0.6;
   cursor: not-allowed;
   transform: none;
-  background: rgba(100, 116, 139, 0.6);
+  background: rgba(136, 136, 136, 0.6);
 }
 
-.login-button:disabled:hover {
+.admin-login-button:disabled:hover {
   transform: none;
-  box-shadow: 0 4px 16px rgba(37, 99, 235, 0.25);
+  box-shadow: 0 4px 15px rgba(233, 83, 26, 0.3);
 }
 
-.login-button:disabled::after {
+.admin-login-button:disabled::before {
   display: none;
 }
 
 /* Estados de carga mejorados */
-.login-button.loading {
-  background: linear-gradient(135deg, rgba(37, 99, 235, 0.8), rgba(5, 150, 105, 0.8));
+.admin-login-button.loading {
+  background: linear-gradient(135deg, rgba(233, 83, 26, 0.8), rgba(220, 38, 38, 0.8));
   cursor: wait;
 }
 
-.spinner {
-  width: 22px;
-  height: 22px;
-  border: 2.5px solid rgba(255, 255, 255, 0.25);
+.admin-spinner {
+  width: 20px;
+  height: 20px;
+  border: 2.5px solid rgba(255, 255, 255, 0.3);
   border-top: 2.5px solid white;
   border-radius: 50%;
-  animation: spin 1s linear infinite;
+  animation: sentyaSpin 1s linear infinite;
 }
 
-@keyframes spin {
+@keyframes sentyaSpin {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
 }
 
-.button-text {
+.admin-button-text {
   font-weight: 700;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.03em;
   position: relative;
   z-index: 1;
 }
 
-.button-icon {
+.admin-button-icon {
   display: flex;
   align-items: center;
   transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
@@ -573,88 +607,88 @@
   z-index: 1;
 }
 
-.login-button:hover .button-icon {
-  transform: translateX(3px);
+.admin-login-button:hover .admin-button-icon {
+  transform: translateX(2px);
 }
 
-/* Footer mejorado con branding AOSSA */
-.login-footer {
-  margin-top: 36px;
+/* Footer mejorado con branding SENTYA */
+.admin-login-footer {
+  margin-top: 32px;
   text-align: center;
-  padding-top: 24px;
-  border-top: 1px solid rgba(248, 250, 252, 0.1);
+  padding-top: 20px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.footer-text {
-  font-size: 18px;
-  color: rgba(248, 250, 252, 0.6);
+.admin-footer-text {
+  font-size: 16px;
+  color: rgba(255, 255, 255, 0.6);
   margin: 0;
   font-weight: 500;
-  letter-spacing: 0.025em;
-  background: linear-gradient(135deg, rgba(248, 250, 252, 0.6), rgba(248, 250, 252, 0.4));
+  letter-spacing: 0.02em;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0.4));
   background-clip: text;
   -webkit-background-clip: text;
 }
 
-/* Responsive Design mejorado para AOSSA */
+/* Responsive Design mejorado para SENTYA */
 @media (max-width: 480px) {
-  .login-admin-wrapper {
-    padding: 32px 28px;
-    margin: 12px;
-    border-radius: 20px;
+  .admin-login-wrapper {
+    padding: 28px 24px;
+    margin: 10px;
+    border-radius: 16px;
     max-width: none;
   }
   
-  .logo {
-    font-size: 30px;
+  .admin-logo {
+    font-size: 28px;
   }
   
-  .login-title {
-    font-size: 22px;
+  .admin-login-title {
+    font-size: 20px;
   }
   
-  .login-subtitle {
-    font-size: 18px;
-  }
-  
-  .form-options {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 18px;
-  }
-  
-  .input-field {
-    padding: 16px 50px 16px 18px;
-    font-size: 16px; /* Evita zoom en iOS */
-  }
-  
-  .login-button {
-    padding: 16px 22px;
+  .admin-login-subtitle {
     font-size: 15px;
   }
   
-  .checkbox-text,
-  .forgot-password {
-    font-size: 14px;
+  .admin-form-options {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+  
+  .admin-input-field {
+    padding: 14px 45px 14px 16px;
+    font-size: 16px; /* Evita zoom en iOS */
+  }
+  
+  .admin-login-button {
+    padding: 14px 20px;
+    font-size: 15px;
+  }
+  
+  .admin-checkbox-text,
+  .admin-forgot-password {
+    font-size: 13px;
   }
 }
 
 @media (max-width: 360px) {
-  .login-admin-wrapper {
-    padding: 24px;
-    margin: 8px;
+  .admin-login-wrapper {
+    padding: 20px;
+    margin: 6px;
   }
   
-  .input-field {
-    padding: 14px 45px 14px 16px;
+  .admin-input-field {
+    padding: 12px 40px 12px 14px;
   }
   
-  .login-button {
-    padding: 15px 20px;
+  .admin-login-button {
+    padding: 13px 18px;
   }
   
-  .logo {
-    font-size: 26px;
+  .admin-logo {
+    font-size: 24px;
   }
 }
 
@@ -666,7 +700,7 @@
     transition-duration: 0.01ms !important;
   }
   
-  .login-admin-wrapper {
+  .admin-login-wrapper {
     animation: none;
   }
 }
@@ -674,29 +708,28 @@
 /* Tema de alto contraste mejorado */
 @media (prefers-contrast: high) {
   :root {
-    --aossa-primary: #1e40af;
-    --aossa-secondary: #047857;
-    --aossa-accent: #ea580c;
+    --orange-primary: #ea580c;
+    --red-primary: #b91c1c;
   }
   
-  .login-admin-wrapper {
-    background: rgba(248, 250, 252, 0.25);
-    border: 2px solid rgba(248, 250, 252, 0.6);
+  .admin-login-wrapper {
+    background: rgba(255, 255, 255, 0.15);
+    border: 2px solid rgba(255, 255, 255, 0.4);
   }
   
-  .input-container {
-    background: rgba(248, 250, 252, 0.2);
-    border: 2px solid rgba(248, 250, 252, 0.5);
+  .admin-input-container {
+    background: rgba(255, 255, 255, 0.12);
+    border: 2px solid rgba(255, 255, 255, 0.4);
   }
   
-  .login-title,
-  .input-field {
+  .admin-login-title,
+  .admin-input-field {
     color: white;
   }
   
-  .login-button {
+  .admin-login-button {
     box-shadow: 
-      0 6px 20px rgba(37, 99, 235, 0.4),
+      0 6px 18px rgba(233, 83, 26, 0.4),
       inset 0 1px 0 rgba(255, 255, 255, 0.3);
   }
 }
@@ -704,14 +737,14 @@
 /* Modo oscuro nativo */
 @media (prefers-color-scheme: dark) {
   :root {
-    --aossa-light: #0f172a;
+    --gray-light: #0f0f0f;
   }
   
-  .login-admin-container {
+  .admin-login-container {
     background: linear-gradient(135deg, 
-      rgba(37, 99, 235, 0.3) 0%, 
-      rgba(5, 150, 105, 0.25) 50%, 
-      rgba(249, 115, 22, 0.25) 100%
+      rgba(233, 83, 26, 0.25) 0%, 
+      rgba(220, 38, 38, 0.2) 50%, 
+      rgba(234, 88, 12, 0.25) 100%
     );
   }
 }
