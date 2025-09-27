@@ -1,10 +1,12 @@
-/* ===== ADMIN DASHBOARD SENTYA THEME ===== */
+/* ===== ADMIN DASHBOARD SENTYA THEME - VERSIÓN FINAL ===== */
 
 /* Variables de colores SENTYA - Consistentes con toda la aplicación */
 :root {
   --orange-primary: #E9531A;
   --red-primary: #dc2626;
   --orange-secondary: #ea580c;
+  --teal-primary: #06b6d4;
+  --teal-secondary: #0891b2;
   --gray-dark: #333333;
   --gray-darker: #1f1f1f;
   --white: #ffffff;
@@ -382,9 +384,21 @@
 }
 
 .css-icon {
+  background: rgba(6, 182, 212, 0.15);
+  color: var(--teal-primary);
+  border-color: rgba(6, 182, 212, 0.3);
+}
+
+.warning-icon {
   background: rgba(251, 191, 36, 0.15);
   color: #fbbf24;
   border-color: rgba(251, 191, 36, 0.3);
+}
+
+.success-icon {
+  background: rgba(34, 197, 94, 0.15);
+  color: #22c55e;
+  border-color: rgba(34, 197, 94, 0.3);
 }
 
 .stat-info {
@@ -604,6 +618,7 @@
   font-size: 1rem;
   outline: none;
   transition: all 0.3s ease;
+  box-sizing: border-box;
 }
 
 .search-input::placeholder {
@@ -718,53 +733,410 @@
   transform: translateY(-1px);
 }
 
-/* Tabla de usuarios */
+/* ===== TABLA TOTALMENTE RESPONSIVE ===== */
+
+/* Base: Estilos comunes para tabla */
 .users-table-container {
-  background: rgba(255, 255, 255, 0.06);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 20px;
-  overflow-x: auto;
-  box-shadow: 0 8px 32px rgba(233, 83, 26, 0.1);
-  margin-bottom: 32px;
+    background: rgba(255, 255, 255, 0.06);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 8px 32px rgba(233, 83, 26, 0.1);
+    margin-bottom: 32px;
 }
 
 .users-table {
-  width: 100%;
-  border-collapse: collapse;
+    width: 100%;
+    border-collapse: collapse;
+    display: table;
 }
 
 .users-table thead {
-  background: rgba(255, 255, 255, 0.08);
+    background: rgba(255, 255, 255, 0.08);
+    display: table-header-group;
 }
 
-.users-table th {
-  padding: 20px 24px;
-  text-align: left;
-  color: rgba(255, 255, 255, 0.9);
-  font-weight: 700;
-  font-size: 0.9rem;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+.users-table tbody {
+    display: table-row-group;
 }
 
 .user-row {
-  transition: all 0.3s ease;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    display: table-row;
+    transition: all 0.3s ease;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .user-row:hover {
-  background: rgba(233, 83, 26, 0.05);
-  border-color: rgba(233, 83, 26, 0.1);
+    background: rgba(233, 83, 26, 0.05);
+    border-color: rgba(233, 83, 26, 0.1);
 }
 
+.users-table th,
 .users-table td {
-  padding: 20px 24px;
-  color: rgba(255, 255, 255, 0.9);
-  font-size: 0.95rem;
-  vertical-align: middle;
+    display: table-cell;
+    text-align: left;
+    vertical-align: middle;
+    border: none;
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.users-table th {
+    color: rgba(255, 255, 255, 0.9);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.08);
+}
+
+/* Desktop (1200px+): Tabla completa optimizada */
+@media (min-width: 1200px) {
+    .users-table-container {
+        border-radius: 20px;
+        margin-bottom: 32px;
+    }
+
+    .users-table th,
+    .users-table td {
+        padding: 20px 16px;
+        font-size: 0.95rem;
+    }
+
+    .users-table th {
+        font-size: 0.85rem;
+        padding: 18px 16px;
+    }
+
+    /* Optimizar anchos de columnas para desktop grande */
+    .users-table th:nth-child(1), /* Usuario */
+    .users-table td:nth-child(1) { min-width: 200px; }
+    
+    .users-table th:nth-child(2), /* Email */  
+    .users-table td:nth-child(2) { min-width: 180px; }
+    
+    .users-table th:nth-child(6), /* Centro Social */
+    .users-table td:nth-child(6) { min-width: 160px; }
+    
+    .users-table th:nth-child(7), /* Rol */
+    .users-table td:nth-child(7) { min-width: 140px; }
+
+    .user-css { min-width: 160px; }
+    .user-role { min-width: 140px; }
+}
+
+/* Desktop Mediano (992px-1199px): Tabla completa compacta */
+@media (max-width: 1199px) and (min-width: 992px) {
+    .users-table-container {
+        border-radius: 18px;
+        margin-bottom: 28px;
+    }
+
+    .users-table th,
+    .users-table td {
+        padding: 16px 12px;
+        font-size: 0.9rem;
+    }
+
+    .users-table th {
+        font-size: 0.8rem;
+        padding: 14px 12px;
+    }
+
+    /* Ajustar anchos para desktop mediano */
+    .users-table th:nth-child(1),
+    .users-table td:nth-child(1) { min-width: 180px; }
+    
+    .users-table th:nth-child(2),
+    .users-table td:nth-child(2) { min-width: 160px; }
+
+    .user-css { min-width: 140px; }
+    .user-role { min-width: 120px; }
+
+    /* Compactar algunos elementos */
+    .user-avatar {
+        width: 36px;
+        height: 36px;
+        font-size: 0.8rem;
+    }
+
+    .action-btn {
+        width: 32px;
+        height: 32px;
+    }
+
+    .action-btn svg {
+        width: 14px;
+        height: 14px;
+    }
+}
+
+/* Tablet (768px-991px): Tabla simplificada */
+@media (max-width: 991px) and (min-width: 768px) {
+    .users-table-container {
+        border-radius: 16px;
+        margin-bottom: 24px;
+    }
+
+    .users-table th,
+    .users-table td {
+        padding: 14px 10px;
+        font-size: 0.85rem;
+    }
+
+    .users-table th {
+        font-size: 0.75rem;
+        padding: 12px 10px;
+    }
+
+    /* Ocultar columnas menos importantes en tablet */
+    .users-table th:nth-child(4), /* DNI */
+    .users-table td:nth-child(4),
+    .users-table th:nth-child(5), /* Edad */
+    .users-table td:nth-child(5),
+    .users-table th:nth-child(9), /* Registro */
+    .users-table td:nth-child(9) {
+        display: none;
+    }
+
+    /* Ajustar elementos para tablet */
+    .user-avatar {
+        width: 34px;
+        height: 34px;
+        font-size: 0.75rem;
+    }
+
+    .user-name {
+        font-size: 0.9rem;
+    }
+
+    .user-email {
+        font-size: 0.8rem;
+    }
+
+    .role-badge {
+        padding: 4px 8px;
+        font-size: 0.7rem;
+    }
+
+    .action-btn {
+        width: 30px;
+        height: 30px;
+    }
+
+    .action-btn svg {
+        width: 12px;
+        height: 12px;
+    }
+
+    .user-css { min-width: 120px; }
+    .user-role { min-width: 100px; }
+
+    /* Mejorar select en tablet */
+    .role-select {
+        font-size: 0.75rem;
+        padding: 3px 6px;
+        min-width: 90px;
+    }
+}
+
+/* Móvil: Convertir tabla a cards apiladas */
+@media (max-width: 767px) {
+    .users-table-container {
+        background: transparent;
+        border: none;
+        border-radius: 0;
+        overflow: visible;
+        box-shadow: none;
+        margin-bottom: 20px;
+    }
+
+    .users-table {
+        display: block;
+        width: 100%;
+        border: none;
+    }
+
+    .users-table thead {
+        display: none;
+    }
+
+    .users-table tbody {
+        display: block;
+        width: 100%;
+    }
+
+    .user-row {
+        display: block;
+        background: rgba(255, 255, 255, 0.08);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        border-radius: 16px;
+        padding: 20px;
+        margin-bottom: 16px;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+    }
+
+    .user-row:hover {
+        background: rgba(255, 255, 255, 0.12);
+        border-color: rgba(233, 83, 26, 0.3);
+        transform: translateY(-2px);
+        box-shadow: 0 8px 24px rgba(233, 83, 26, 0.15);
+    }
+
+    .users-table td {
+        display: block;
+        width: 100%;
+        padding: 0;
+        margin-bottom: 12px;
+        border: none;
+        text-align: left;
+        position: relative;
+        color: rgba(255, 255, 255, 0.9);
+        font-size: 0.95rem;
+    }
+
+    .users-table td:last-child {
+        margin-bottom: 0;
+    }
+
+    /* Añadir etiquetas a cada campo */
+    .users-table td::before {
+        content: attr(data-label);
+        font-weight: 600;
+        color: rgba(255, 255, 255, 0.8);
+        font-size: 0.85rem;
+        display: block;
+        margin-bottom: 4px;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+
+    /* Estilos específicos para cada campo */
+    .user-info {
+        flex-direction: row;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 16px;
+    }
+
+    .user-info::before {
+        display: none;
+    }
+
+    .user-avatar {
+        width: 50px;
+        height: 50px;
+        font-size: 1rem;
+        flex-shrink: 0;
+    }
+
+    .user-details {
+        flex: 1;
+    }
+
+    .user-name {
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: rgba(255, 255, 255, 0.95);
+    }
+
+    .user-email {
+        color: rgba(255, 255, 255, 0.8);
+        font-size: 0.9rem;
+        word-break: break-all;
+    }
+
+    /* Status con mejor visualización */
+    .status-indicator {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 12px;
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 8px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    /* Acciones siempre al final */
+    .user-actions {
+        display: flex;
+        gap: 8px;
+        justify-content: center;
+        margin-top: 16px;
+        padding-top: 16px;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .user-actions::before {
+        display: none;
+    }
+
+    .action-btn {
+        flex: 1;
+        height: 44px;
+        max-width: 60px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    /* Mejorar selects en móvil */
+    .role-select {
+        width: 100%;
+        min-width: auto;
+        padding: 8px 12px;
+        font-size: 0.9rem;
+    }
+
+    /* Badges más grandes en móvil */
+    .role-badge {
+        padding: 8px 12px;
+        font-size: 0.9rem;
+        width: 100%;
+        display: block;
+        text-align: center;
+    }
+
+    /* Status más visible */
+    .status-dot {
+        width: 10px;
+        height: 10px;
+    }
+
+    .status-text {
+        font-size: 0.9rem;
+        font-weight: 600;
+    }
+}
+
+/* Móvil muy pequeño: Simplificar aún más */
+@media (max-width: 480px) {
+    .user-row {
+        padding: 16px;
+        margin-bottom: 12px;
+    }
+
+    .user-avatar {
+        width: 44px;
+        height: 44px;
+        font-size: 0.9rem;
+    }
+
+    .user-name {
+        font-size: 1rem;
+    }
+
+    .users-table td::before {
+        font-size: 0.8rem;
+    }
+
+    .action-btn {
+        height: 40px;
+    }
 }
 
 .user-info {
@@ -810,6 +1182,9 @@
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.05em;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  position: relative;
 }
 
 .role-badge.admin,
@@ -835,9 +1210,10 @@
 
 .role-badge.trabajador_css,
 .role-badge.css_technician {
-  background: rgba(251, 191, 36, 0.15);
-  color: #fbbf24;
-  border: 1px solid rgba(251, 191, 36, 0.3);
+  background: rgba(6, 182, 212, 0.15);
+  color: white;
+  border: 1px solid rgba(6, 182, 212, 0.3);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
 }
 
 .role-badge.usuario,
@@ -845,6 +1221,141 @@
   background: rgba(233, 83, 26, 0.15);
   color: var(--orange-primary);
   border: 1px solid rgba(233, 83, 26, 0.3);
+}
+
+/* Badge para centros sociales - Teal para mejor contraste */
+.role-badge.css {
+  background: rgba(6, 182, 212, 0.15);
+  border: 1px solid rgba(6, 182, 212, 0.3);
+  color: white;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.role-badge.css::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(6, 182, 212, 0.2), transparent);
+  transition: left 0.5s;
+}
+
+.role-badge.css:hover {
+  background: rgba(6, 182, 212, 0.25);
+  border-color: rgba(6, 182, 212, 0.5);
+  color: white;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(6, 182, 212, 0.3);
+}
+
+.role-badge.css:hover::before {
+  left: 100%;
+}
+
+/* Select dentro del badge CSS */
+.role-badge.css .role-select {
+  background: transparent;
+  color: white;
+  border: none;
+  font-size: 0.8rem;
+  font-weight: 600;
+  width: 100%;
+  cursor: pointer;
+  outline: none;
+  appearance: none;
+  text-transform: capitalize;
+  min-width: 120px;
+  padding: 0;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%23ffffff' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+  background-position: right 4px center;
+  background-repeat: no-repeat;
+  background-size: 12px;
+  padding-right: 20px;
+}
+
+.role-badge.css .role-select option {
+  background: rgba(30, 41, 59, 0.95);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  color: rgba(255, 255, 255, 0.95);
+  padding: 8px 12px;
+  font-weight: 500;
+  border: none;
+}
+
+.role-badge.css .role-select:focus {
+  box-shadow: 0 0 0 2px rgba(6, 182, 212, 0.3);
+}
+
+/* Para usuarios sin CSS asignado */
+.role-badge.css .role-select option[value=""] {
+  background: rgba(220, 38, 38, 0.1);
+  color: var(--red-primary);
+  font-style: italic;
+  border-top: 1px solid rgba(220, 38, 38, 0.2);
+}
+
+/* Disabled state */
+.role-badge.css .role-select:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  background-image: none;
+}
+
+/* Estilos para el select de roles en la tabla */
+.role-select {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 8px;
+  color: rgba(255, 255, 255, 0.95);
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 4px 8px;
+  outline: none;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  min-width: 120px;
+  text-transform: capitalize;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%23ffffff' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+  background-position: right 8px center;
+  background-repeat: no-repeat;
+  background-size: 12px;
+  padding-right: 28px;
+}
+
+.role-select:focus {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: var(--orange-primary);
+  box-shadow: 0 0 0 2px rgba(233, 83, 26, 0.15);
+}
+
+.role-select:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.25);
+}
+
+.role-select:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.role-select option {
+  background-color: rgba(30, 41, 59, 0.95);
+  color: rgba(255, 255, 255, 0.95);
+  padding: 8px 12px;
+  font-weight: 500;
 }
 
 /* Indicador de estado */
@@ -897,6 +1408,34 @@
   width: 150px;
 }
 
+.user-css {
+  min-width: 160px;
+}
+
+.css-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.css-name {
+  color: rgba(255, 255, 255, 0.95);
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.css-code {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.8rem;
+  font-style: italic;
+}
+
+.no-css {
+  color: rgba(220, 38, 38, 0.8);
+  font-style: italic;
+  font-size: 0.85rem;
+}
+
 /* Acciones de usuario */
 .user-actions {
   display: flex;
@@ -944,54 +1483,6 @@
   background: rgba(220, 38, 38, 0.2);
   border-color: rgba(220, 38, 38, 0.4);
   transform: scale(1.05);
-}
-
-/* Estilos para el select de roles en la tabla */
-.role-select {
-  background: rgba(255, 255, 255, 0.05);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  border-radius: 8px;
-  color: rgba(255, 255, 255, 0.95);
-  font-size: 0.8rem;
-  font-weight: 600;
-  padding: 4px 8px;
-  outline: none;
-  transition: all 0.3s ease;
-  cursor: pointer;
-  min-width: 120px;
-  text-transform: capitalize;
-  appearance: none;
-  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%23ffffff' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
-  background-position: right 8px center;
-  background-repeat: no-repeat;
-  background-size: 12px;
-  padding-right: 28px;
-}
-
-.role-select:focus {
-  background: rgba(255, 255, 255, 0.1);
-  border-color: var(--orange-primary);
-  box-shadow: 0 0 0 2px rgba(233, 83, 26, 0.15);
-}
-
-.role-select:hover:not(:disabled) {
-  background: rgba(255, 255, 255, 0.08);
-  border-color: rgba(255, 255, 255, 0.25);
-}
-
-.role-select:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-  background: rgba(255, 255, 255, 0.02);
-}
-
-.role-select option {
-  background-color: rgba(30, 41, 59, 0.95);
-  color: rgba(255, 255, 255, 0.95);
-  padding: 8px 12px;
-  font-weight: 500;
 }
 
 /* Paginación */
@@ -1313,7 +1804,7 @@
   flex-direction: column;
   gap: 8px;
   margin-bottom: 16px;
-  min-width: 0; /* Permite que el contenido se comprima */
+  min-width: 0;
 }
 
 .form-group label {
@@ -1338,7 +1829,7 @@
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
   width: 100%;
-  min-width: 0; /* Evita desbordamientos */
+  min-width: 0;
   box-sizing: border-box;
 }
 
@@ -1647,6 +2138,47 @@
   100% { transform: rotate(360deg); }
 }
 
+/* Estados de carga para móvil */
+@media (max-width: 767px) {
+    .user-row.loading {
+        opacity: 0.6;
+        pointer-events: none;
+    }
+
+    .user-row.loading::after {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 20px;
+        height: 20px;
+        border: 2px solid rgba(233, 83, 26, 0.3);
+        border-top: 2px solid var(--orange-primary);
+        border-radius: 50%;
+        animation: sentyaSpin 1s linear infinite;
+    }
+}
+
+/* Loading state para el select de CSS */
+.role-badge.css .role-select:disabled {
+    position: relative;
+}
+
+.role-badge.css .role-select:disabled::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    right: 4px;
+    transform: translateY(-50%);
+    width: 12px;
+    height: 12px;
+    border: 1px solid rgba(6, 182, 212, 0.3);
+    border-top: 1px solid var(--teal-primary);
+    border-radius: 50%;
+    animation: sentyaSpin 1s linear infinite;
+}
+
 /* ===== RESPONSIVE DESIGN ===== */
 
 /* Large screens (1200px - 1399px) */
@@ -1700,6 +2232,25 @@
     width: 16px;
     height: 16px;
   }
+
+  .user-css {
+    min-width: 140px;
+  }
+  
+  .css-name {
+    font-size: 0.85rem;
+  }
+  
+  .css-code {
+    font-size: 0.75rem;
+  }
+  
+  .role-badge.css .role-select {
+    font-size: 0.75rem;
+    min-width: 100px;
+    background-size: 10px;
+    padding-right: 16px;
+  }
 }
 
 /* Small screens (768px - 991px) */
@@ -1749,12 +2300,6 @@
     gap: 24px;
   }
 
-  .users-table th,
-  .users-table td {
-    padding: 16px 18px;
-    font-size: 0.9rem;
-  }
-
   .user-avatar {
     width: 38px;
     height: 38px;
@@ -1764,6 +2309,29 @@
   .modal-container {
     max-width: 480px;
     padding: 36px 32px;
+  }
+
+  .user-css {
+    min-width: 120px;
+  }
+  
+  .css-name {
+    font-size: 0.8rem;
+  }
+  
+  .css-code {
+    font-size: 0.7rem;
+  }
+  
+  .role-badge.css {
+    padding: 4px 8px;
+  }
+  
+  .role-badge.css .role-select {
+    font-size: 0.7rem;
+    min-width: 90px;
+    background-size: 8px;
+    padding-right: 14px;
   }
 }
 
@@ -1907,21 +2475,6 @@
     align-self: center;
     width: fit-content;
     margin: 0 auto;
-  }
-
-  .users-table-container {
-    overflow-x: auto;
-    border-radius: 16px;
-  }
-
-  .users-table {
-    min-width: 700px;
-  }
-
-  .users-table th,
-  .users-table td {
-    padding: 14px 16px;
-    font-size: 0.9rem;
   }
 
   .pagination {
@@ -2150,6 +2703,38 @@
     padding: 6px 8px;
     font-size: 0.75rem;
   }
+
+  /* En móvil, mostrar solo el código del centro */
+  .user-css {
+    min-width: 80px;
+  }
+  
+  .css-name {
+    display: none;
+  }
+  
+  .css-code {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.9);
+  }
+  
+  .role-badge.css {
+    padding: 3px 6px;
+    min-width: auto;
+  }
+  
+  .role-badge.css .role-select {
+    font-size: 0.65rem;
+    min-width: 70px;
+    background-size: 7px;
+    padding-right: 12px;
+    background-position: right 2px center;
+  }
+  
+  .no-css {
+    font-size: 0.7rem;
+  }
 }
 
 /* Micro screens (< 480px) */
@@ -2316,12 +2901,6 @@
     font-size: 0.85rem;
   }
 
-  .users-table th,
-  .users-table td {
-    padding: 12px 10px;
-    font-size: 0.85rem;
-  }
-
   .user-info {
     gap: 8px;
   }
@@ -2374,7 +2953,6 @@
     font-size: 0.85rem;
   }
 
-  /* MODAL Y FORMULARIO - CORRECCIONES ESPECÍFICAS PARA MÓVIL */
   .modal-container {
     padding: 20px 12px;
     margin: 8px;
@@ -2533,6 +3111,25 @@
     display: none;
   }
 
+  .user-css {
+    min-width: 60px;
+  }
+  
+  .css-code {
+    font-size: 0.7rem;
+  }
+  
+  .role-badge.css {
+    padding: 2px 4px;
+  }
+  
+  .role-badge.css .role-select {
+    font-size: 0.6rem;
+    min-width: 50px;
+    background-size: 6px;
+    padding-right: 10px;
+  }
+
   /* Evitar desbordamientos horizontales */
   * {
     max-width: 100%;
@@ -2610,12 +3207,22 @@
   .status-dot.online {
     animation: none;
   }
+
+  .role-badge.css,
+  .role-badge.css::before {
+    transition: none;
+  }
+  
+  .role-badge.css:hover {
+    transform: none;
+  }
 }
 
 @media (prefers-contrast: high) {
   :root {
     --orange-primary: #ea580c;
     --red-primary: #b91c1c;
+    --teal-primary: #0891b2;
   }
 
   .dashboard-header,
@@ -2632,6 +3239,19 @@
   .modal-header h2 {
     color: white;
   }
+
+  .role-badge.css {
+    background: rgba(6, 182, 212, 0.3);
+    border: 2px solid rgba(6, 182, 212, 0.6);
+    color: white;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
+  }
+  
+  .role-badge.css:hover {
+    background: rgba(6, 182, 212, 0.4);
+    border-color: rgba(6, 182, 212, 0.8);
+    color: white;
+  }
 }
 
 @media (prefers-color-scheme: dark) {
@@ -2646,100 +3266,4 @@
       rgba(234, 88, 12, 0.25) 100%
     );
   }
-}
-
-/* ===== CSS INFO COLUMN ===== */
-.user-css {
-    min-width: 160px;
-}
-
-.css-info {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-}
-
-.css-name {
-    color: rgba(255, 255, 255, 0.95);
-    font-weight: 600;
-    font-size: 0.9rem;
-}
-
-.css-code {
-    color: rgba(255, 255, 255, 0.7);
-    font-size: 0.8rem;
-    font-style: italic;
-}
-
-.no-css {
-    color: rgba(220, 38, 38, 0.8);
-    font-style: italic;
-    font-size: 0.85rem;
-}
-
-/* Warning icon para stats */
-.warning-icon {
-    background: rgba(251, 191, 36, 0.15);
-    color: #fbbf24;
-    border-color: rgba(251, 191, 36, 0.3);
-}
-
-/* Responsive - ocultar CSS en móvil si es necesario */
-@media (max-width: 768px) {
-    .user-css {
-        display: none;
-    }
-    
-    /* O mostrar solo el código */
-    .css-name {
-        display: none;
-    }
-}
-
-/* estilos de centro de servicios sociales */
-
-/* Alternativa: Si quieres que se vea igual que el rol */
-
-/* Estilos para el select de CSS (189, 171, 150, 0.3); posible*/
-.role-badge.css {
-    background: linear-gradient(135deg, #4d4b49, #af4b11);
-    border: 1px solid #1f1717;
-}
-
-/* tamaño del contenedor del color dentro de donde van las letras */
-
-.role-badge.css:hover {
-    background: linear-gradient(135deg, #262c2a, #c43f0a);
-    transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(189, 171, 150, 0.3);
-}
-
-/* Tamaño y color de las letras a selecionar */
-
-.role-badge.css .role-select {
-    background: transparent;
-    color: white;
-    border: none;
-    font-size: 0.875rem;
-    font-weight: 500;
-    width: 100%;
-    cursor: pointer;
-}
-
-.role-badge.css .role-select option {
-    background: #0f1836;
-    color: white;
-    padding: 8px;
-}
-
-.role-badge.css .role-select:focus {
-    outline: none;
-    box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.2);
-}
-
-/* Para usuarios sin CSS asignado */
-.role-badge.css .role-select option[value=""] {
-    background: #26282c;
-    color: white;
-    font-style: italic;
 }

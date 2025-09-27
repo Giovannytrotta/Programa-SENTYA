@@ -47,7 +47,8 @@ const AdminDashboard = () => {
         age: '',
         phone: '',
         rol: 'client',
-        password: ''
+        password: '',
+        css_id: ''
     })
 
     const usersPerPage = isMobile ? 5 : 10
@@ -111,7 +112,7 @@ const AdminDashboard = () => {
             case 2:
                 return newUser.email && newUser.phone
             case 3:
-                return newUser.rol && newUser.password && newUser.css_id // AGREGADO NUEVO CAMPO PARA css_id
+                return newUser.rol && newUser.password && newUser.css_id
             default:
                 return false
         }
@@ -129,7 +130,7 @@ const AdminDashboard = () => {
             phone: '',
             rol: 'client',
             password: '',
-            css_id: '' // AGREGADO NUEVO CAMPO
+            css_id: ''
         })
         setCurrentStep(1)
     }, [])
@@ -152,13 +153,6 @@ const AdminDashboard = () => {
         setCurrentPage(1)
     }, [searchQuery, roleFilter, statusFilter, filterUsers, cssFilter])
 
-    // // Cargar CSS al abrir modal
-    // useEffect(() => {
-    //     if (showRegisterModal) {
-    //         fetchCSSCenters();
-    //     }
-    // }, [showRegisterModal]);
-
     // Limpiar búsqueda
     const clearSearch = useCallback(() => {
         setSearchQuery('')
@@ -169,7 +163,7 @@ const AdminDashboard = () => {
         setSearchQuery('')
         setRoleFilter('all')
         setStatusFilter('all')
-        setCssFilter('all');
+        setCssFilter('all')
     }, [])
 
     // Manejar cambio en fecha de nacimiento y calcular edad automáticamente
@@ -572,6 +566,7 @@ const AdminDashboard = () => {
                                             <option value="inactive">Inactivos</option>
                                         </select>
                                     </div>
+
                                     <div className="filter-group">
                                         <label htmlFor="cssFilter">Centro Social:</label>
                                         <select
@@ -589,7 +584,6 @@ const AdminDashboard = () => {
                                             ))}
                                         </select>
                                     </div>
-
 
                                     {(roleFilter !== 'all' || statusFilter !== 'all' || cssFilter !== 'all' || searchQuery) && (
                                         <button
@@ -629,19 +623,20 @@ const AdminDashboard = () => {
                                             <tbody>
                                                 {currentUsers.map(user => (
                                                     <tr key={user.id} className="user-row">
-                                                        <td className="user-info">
+                                                        <td className="user-info" data-label="Usuario">
                                                             <div className="user-avatar">
                                                                 {user.name?.charAt(0)?.toUpperCase()}{user.last_name?.charAt(0)?.toUpperCase()}
                                                             </div>
                                                             <div className="user-details">
                                                                 <span className="user-name">{user.name} {user.last_name}</span>
+                                                                <span className="user-email">{user.email}</span>
                                                             </div>
                                                         </td>
-                                                        <td className="user-email">{user.email}</td>
-                                                        <td className="user-phone">{user.phone}</td>
-                                                        <td className="user-dni">{user.dni}</td>
-                                                        <td className="user-age">{user.age}</td>
-                                                        <td className="user-css">
+                                                        <td className="user-email-mobile" data-label="Email">{user.email}</td>
+                                                        <td className="user-phone" data-label="Teléfono">{user.phone}</td>
+                                                        <td className="user-dni" data-label="DNI">{user.dni}</td>
+                                                        <td className="user-age" data-label="Edad">{user.age}</td>
+                                                        <td className="user-css" data-label="Centro Social">
                                                             <div className="role-badge css">
                                                                 <select
                                                                     value={user.css_id || ''}
@@ -658,7 +653,7 @@ const AdminDashboard = () => {
                                                                 </select>
                                                             </div>
                                                         </td>
-                                                        <td className="user-role">
+                                                        <td className="user-role" data-label="Rol">
                                                             <div className={`role-badge ${user.rol}`}>
                                                                 <select
                                                                     value={user.rol}
@@ -674,7 +669,7 @@ const AdminDashboard = () => {
                                                                 </select>
                                                             </div>
                                                         </td>
-                                                        <td>
+                                                        <td data-label="Estado">
                                                             <div className="status-indicator">
                                                                 <button
                                                                     onClick={() => handleStatusChange(user.id, !user.is_active)}
@@ -695,10 +690,10 @@ const AdminDashboard = () => {
                                                                 </button>
                                                             </div>
                                                         </td>
-                                                        <td className="join-date">
+                                                        <td className="join-date" data-label="Registro">
                                                             {user.created_at ? new Date(user.created_at).toLocaleDateString() : '-'}
                                                         </td>
-                                                        <td className="user-actions">
+                                                        <td className="user-actions" data-label="Acciones">
                                                             <button
                                                                 className="action-btn edit"
                                                                 onClick={() => handleEditUser(user)}
@@ -952,8 +947,6 @@ const AdminDashboard = () => {
                                         <h3>Configuración de Cuenta</h3>
                                         <p>Define el rol y contraseña del usuario</p>
                                     </div>
-
-
 
                                     <div className="form-row">
                                         <div className="form-group">
