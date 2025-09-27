@@ -26,6 +26,7 @@ export const useAdminUsers = () => {
   const [users, setUsers] = useState([]);
   const [filteredUsers, setFilteredUsers] = useState([]);
   const [roles, setRoles] = useState([]);
+  const [cssCenters, setCssCenters] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [stats, setStats] = useState({
@@ -59,10 +60,88 @@ export const useAdminUsers = () => {
       coordinadores: usersList.filter(u => u.rol === 'coordinator').length,
       profesores: usersList.filter(u => u.rol === 'professional').length,
       trabajadoresCSS: usersList.filter(u => u.rol === 'css_technician').length,
-      usuarios: usersList.filter(u => u.rol === 'client').length
+      usuarios: usersList.filter(u => u.rol === 'client').length,
+      withCSS: usersList.filter(u => u.css_id).length,
+      withoutCSS: usersList.filter(u => !u.css_id).length,
+      cssCenters: [...new Set(usersList.map(u => u.css_info?.name).filter(Boolean))].length
     };
     setStats(newStats);
   }, []);
+
+  const fetchCSSCenters = useCallback(async () => {
+    try {
+      const response = await apiService.getActiveCSSCenters();
+      
+      if (response && response.css_centers) {
+        setCssCenters(response.css_centers);
+      } else if (Array.isArray(response)) {
+        setCssCenters(response);
+      } else {
+        console.warn('Unexpected CSS response format:', response);
+        setCssCenters([]);
+      }
+    } catch (err) {
+      console.error('Error fetching CSS centers:', err);
+      showNotification('❌ Error al cargar centros sociales', 'error');
+      setCssCenters([]);
+    }
+  }, [showNotification]);
+
+  //FUNCIÓN PARA ACTUALIZAR CSS DE USUARIO
+  const updateUserCSS = useCallback(async (userId, cssId) => {
+    try {
+      // Asumiendo que tienes esta función en tu API
+      const response = await apiService.updateUserCSS(userId, cssId);
+      
+      if (response && response.message) {
+        showNotification('✅ Centro social actualizado correctamente', 'success');
+        
+        // Buscar la info del CSS
+        const cssInfo = cssCenters.find(css => css.id === parseInt(cssId));
+        
+        // Actualizar usuario en el estado local
+        setUsers(prevUsers => 
+          prevUsers.map(user => 
+            user.id === userId ? { 
+              ...user, 
+              css_id: parseInt(cssId),
+              css_info: cssInfo || null
+            } : user
+          )
+        );
+        
+        setFilteredUsers(prevUsers => 
+          prevUsers.map(user => 
+            user.id === userId ? { 
+              ...user, 
+              css_id: parseInt(cssId),
+              css_info: cssInfo || null
+            } : user
+          )
+        );
+        
+        return { success: true, data: response };
+      }
+      
+      throw new Error('Error al actualizar centro social');
+    } catch (err) {
+      let errorMessage = '❌ Error al actualizar centro social';
+      
+      if (err instanceof ApiError) {
+        if (err.status === 403) {
+          errorMessage = '🚫 No tienes permisos para realizar esta acción';
+        } else if (err.status === 404) {
+          errorMessage = '❌ Usuario no encontrado';
+        } else {
+          errorMessage = `❌ ${err.message}`;
+        }
+      }
+      
+      showNotification(errorMessage, 'error');
+      throw new Error(errorMessage);
+    }
+  }, [cssCenters, showNotification]);
+
 
   // Obtener todos los usuarios
   const fetchUsers = useCallback(async (filters = {}) => {
@@ -354,7 +433,7 @@ export const useAdminUsers = () => {
   }, [users, showNotification, calculateStats]);
 
   // Filtrar usuarios localmente
-  const filterUsers = useCallback((searchQuery, roleFilter, statusFilter) => {
+  const filterUsers = useCallback((searchQuery, roleFilter, statusFilter,cssFilter) => {
     let filtered = [...users];
     
     // Filtro de búsqueda
@@ -366,7 +445,8 @@ export const useAdminUsers = () => {
           user.last_name?.toLowerCase().includes(query) ||
           user.email?.toLowerCase().includes(query) ||
           user.dni?.toLowerCase().includes(query) ||
-          user.phone?.includes(query)
+          user.phone?.includes(query) ||
+          user.css_info?.name?.toLowerCase().includes(query)
         );
       });
     }
@@ -381,6 +461,11 @@ export const useAdminUsers = () => {
       const isActive = statusFilter === 'active';
       filtered = filtered.filter(user => user.is_active === isActive);
     }
+
+    // Filtro de CSS
+    if (cssFilter && cssFilter !== 'all') {
+        filtered = filtered.filter(user => user.css_id === parseInt(cssFilter));
+    }
     
     setFilteredUsers(filtered);
   }, [users]);
@@ -389,6 +474,7 @@ export const useAdminUsers = () => {
   useEffect(() => {
     fetchUsers();
     fetchRoles();
+    fetchCSSCenters();
   }, []);
 
   return {
@@ -396,15 +482,18 @@ export const useAdminUsers = () => {
     users,
     filteredUsers,
     roles,
+    cssCenters,
     loading,
     error,
     stats,
     
     // Funciones
     fetchUsers,
+    fetchCSSCenters,
     createUser,
     updateUser,
     updateUserRole,
+    updateUserCSS,
     updateUserStatus,
     deleteUser,
     filterUsers,

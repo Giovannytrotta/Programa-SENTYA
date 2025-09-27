@@ -1,6 +1,7 @@
 from flask import Blueprint, jsonify, request, session,current_app
 from app.extensions import db, jwt, bcrypt
 from app.models.user import SystemUser, UserRole
+from app.models.css import Css
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity, unset_jwt_cookies, set_access_cookies,decode_token
 from app.exceptions import ValidationError, UnauthorizedError, ForbiddenError, AppError, BadRequestError,NotFoundError,ConflictError
 from app.utils.helper import build_qr_data_uri, issue_tokens_for_user,validate_international_phone
@@ -340,7 +341,7 @@ def register():
         raise BadRequestError("Datos JSON inválidos")
     
     # Validaciones mejoradas
-    required_fields = ['email', 'password', 'name', 'last_name', 'dni', 'rol', 'birth_date', 'age', 'phone']
+    required_fields = ['email', 'password', 'name', 'last_name', 'dni', 'rol', 'birth_date', 'age', 'phone','css_id']
     missing_fields = [field for field in required_fields if not data.get(field)]
     
     if missing_fields:
@@ -406,6 +407,14 @@ def register():
     
     # Crear hash de contraseña
     password_hash = bcrypt.generate_password_hash(password).decode("utf-8")
+    # ✅ VALIDAR que el CSS existe
+    
+    css_id = data.get('css_id')
+    css_center = Css.query.get(css_id)
+    if not css_center:
+        raise ValidationError("El centro CSS seleccionado no existe")
+    if not css_center.is_active:
+        raise ValidationError("El centro CSS seleccionado no esta disponible")
     
     # Crear usuario
     user = SystemUser(
@@ -418,6 +427,7 @@ def register():
         phone=phone,
         birth_date=birth_date,
         age=age,
+        css_id=css_id,
         is_active=False,  # Se activará en el primer login
         address=data.get("address", "").strip(),
         observations=data.get("observations", "").strip()
@@ -443,6 +453,7 @@ def get_all_users():
     try:
         role_filter = request.args.get('role')
         active_filter = request.args.get('active')
+        css_filter = request.args.get('css')  # ✅ NUEVO FILTRO agregado 
         search = request.args.get('search', '').strip()
         page = request.args.get('page', 1, type=int)
         per_page = request.args.get('per_page', 10, type=int)
@@ -469,6 +480,7 @@ def get_all_users():
                 (SystemUser.name.ilike(like)) |
                 (SystemUser.last_name.ilike(like)) |
                 (SystemUser.dni.ilike(like))
+                (Css.name.ilike(like))
             )
         
         # Paginación
@@ -498,7 +510,15 @@ def get_all_users():
                     "created_at": user.created_at.isoformat() if user.created_at else None,
                     "last_login": user.last_login.isoformat() if user.last_login else None,
                     "birth_date": user.birth_date.isoformat() if user.birth_date else None,
-                    "age": user.age
+                    "age": user.age,
+                    "css_id": user.css_id,
+                    # ✅ INCLUIR INFORMACIÓN DEL CSS para el filtro 
+                    "css_info": {
+                        "id": user.css.id,
+                        "name": user.css.name,
+                        "code": user.css.code,
+                        "address": user.css.address
+                    } if user.css else None
                 }
                 for user in users
             ],
@@ -523,6 +543,43 @@ def get_all_users():
         
     except Exception as e:
         raise AppError(f"Error obteniendo usuarios: {str(e)}")
+    
+    
+# En Nuevo endpoint para filtrar css
+
+@auth_bp.route("/admin/css", methods=["GET"])
+@requires_admin
+def get_active_css():
+    css_centers = Css.query.filter_by(is_active=True).all()
+    return jsonify({
+        "css_centers": [
+            {
+                "id": css.id,
+                "name": css.name,
+                "code": css.code,
+                "address": css.address,
+                "manager": css.manager
+            } for css in css_centers
+        ]
+    }), 200
+    
+# actualizacion de centro de servicio social 
+@auth_bp.route("/admin/user/<int:user_id>/css", methods=["PUT"])
+@requires_admin
+def update_user_css(user_id):
+    data = request.get_json()
+    css_id = data.get('css_id')
+    
+    user = SystemUser.query.get_or_404(user_id)
+    user.css_id = css_id
+    
+    db.session.commit()
+    
+    return jsonify({
+        "message": "Centro social actualizado correctamente",
+        "user_id": user_id,
+        "css_id": css_id
+    }), 200
 
 # PARA GESTIÓN COMPLETA (todos los demás campos incluyendo rol)
 

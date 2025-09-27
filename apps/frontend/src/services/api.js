@@ -212,7 +212,22 @@ class ApiService {
       method: 'GET'
     });
   }
+  //Nuevo centro de servicios sociales aca vienen los inyectados en la base de datos
+  async getActiveCSSCenters() {
+    return this.request('/auth/admin/css', {
+        method: 'GET'
+    });
 }
+//Para actualizacion
+async updateUserCSS(userId, cssId) {
+    return this.request(`/auth/admin/user/${userId}/css`, {
+        method: 'PUT',
+        body: JSON.stringify({ css_id: parseInt(cssId) })
+    });
+}
+}
+
+
 
 export const apiService = new ApiService();
 export { ApiError };

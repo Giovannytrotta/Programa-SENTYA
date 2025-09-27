@@ -2647,3 +2647,99 @@
     );
   }
 }
+
+/* ===== CSS INFO COLUMN ===== */
+.user-css {
+    min-width: 160px;
+}
+
+.css-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.css-name {
+    color: rgba(255, 255, 255, 0.95);
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.css-code {
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.8rem;
+    font-style: italic;
+}
+
+.no-css {
+    color: rgba(220, 38, 38, 0.8);
+    font-style: italic;
+    font-size: 0.85rem;
+}
+
+/* Warning icon para stats */
+.warning-icon {
+    background: rgba(251, 191, 36, 0.15);
+    color: #fbbf24;
+    border-color: rgba(251, 191, 36, 0.3);
+}
+
+/* Responsive - ocultar CSS en móvil si es necesario */
+@media (max-width: 768px) {
+    .user-css {
+        display: none;
+    }
+    
+    /* O mostrar solo el código */
+    .css-name {
+        display: none;
+    }
+}
+
+/* estilos de centro de servicios sociales */
+
+/* Alternativa: Si quieres que se vea igual que el rol */
+
+/* Estilos para el select de CSS (189, 171, 150, 0.3); posible*/
+.role-badge.css {
+    background: linear-gradient(135deg, #4d4b49, #af4b11);
+    border: 1px solid #1f1717;
+}
+
+/* tamaño del contenedor del color dentro de donde van las letras */
+
+.role-badge.css:hover {
+    background: linear-gradient(135deg, #262c2a, #c43f0a);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(189, 171, 150, 0.3);
+}
+
+/* Tamaño y color de las letras a selecionar */
+
+.role-badge.css .role-select {
+    background: transparent;
+    color: white;
+    border: none;
+    font-size: 0.875rem;
+    font-weight: 500;
+    width: 100%;
+    cursor: pointer;
+}
+
+.role-badge.css .role-select option {
+    background: #0f1836;
+    color: white;
+    padding: 8px;
+}
+
+.role-badge.css .role-select:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.2);
+}
+
+/* Para usuarios sin CSS asignado */
+.role-badge.css .role-select option[value=""] {
+    background: #26282c;
+    color: white;
+    font-style: italic;
+}
