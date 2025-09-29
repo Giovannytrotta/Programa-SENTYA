@@ -140,7 +140,7 @@ const AdminDashboard = () => {
         const roleNames = {
             'administrator': 'Administrador',
             'coordinator': 'Coordinador',
-            'professional': 'Profesor',
+            'professional': "Monitor",
             'css_technician': 'Trabajador CSS',
             'client': 'Usuario'
         }
@@ -391,7 +391,7 @@ const AdminDashboard = () => {
                                     </div>
                                     <div className="stat-info">
                                         <span className="stat-number">{stats.profesores}</span>
-                                        <span className="stat-label">Profesores</span>
+                                        <span className="stat-label">Monitor</span>
                                     </div>
                                 </div>
 
@@ -546,7 +546,7 @@ const AdminDashboard = () => {
                                             <option value="all">Todos los roles</option>
                                             <option value="administrator">Administrador</option>
                                             <option value="coordinator">Coordinador</option>
-                                            <option value="professional">Profesor</option>
+                                            <option value="professional">Monitor</option>
                                             <option value="css_technician">Trabajador CSS</option>
                                             <option value="client">Usuario</option>
                                         </select>
@@ -617,7 +617,7 @@ const AdminDashboard = () => {
                                                     <th>Rol</th>
                                                     <th>Estado</th>
                                                     <th>Registro</th>
-                                                    <th>Acciones</th>
+                                                    <th>Accion</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -663,7 +663,7 @@ const AdminDashboard = () => {
                                                                 >
                                                                     <option value="administrator">Administrador</option>
                                                                     <option value="coordinator">Coordinador</option>
-                                                                    <option value="professional">Profesor</option>
+                                                                    <option value="professional">Monitor</option>
                                                                     <option value="css_technician">Trabajador CSS</option>
                                                                     <option value="client">Usuario</option>
                                                                 </select>
@@ -977,7 +977,7 @@ const AdminDashboard = () => {
                                             >
                                                 <option value="client">Usuario</option>
                                                 <option value="css_technician">Trabajador CSS</option>
-                                                <option value="professional">Profesor</option>
+                                                <option value="professional">Monitor</option>
                                                 <option value="coordinator">Coordinador</option>
                                                 <option value="administrator">Administrador</option>
                                             </select>
