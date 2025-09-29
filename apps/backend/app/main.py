@@ -36,8 +36,10 @@ def create_app():
     #BLUEPRINTS 
     from app.routes.auth.auth import auth_bp
     from app.routes.User.user import user_bp
+    from app.routes.workshop.workshop import workshop_bp
     app.register_blueprint(auth_bp)
     app.register_blueprint(user_bp)
+    app.register_blueprint(workshop_bp)
     
     # 4) Error handler global
     # Manejador de AppError personalizados (400, 401, 403, 404, 409, 422 de negocio, etc.)

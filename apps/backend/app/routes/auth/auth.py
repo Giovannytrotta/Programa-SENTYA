@@ -581,7 +581,7 @@ def update_user_css(user_id):
         "css_id": css_id
     }), 200
 
-# PARA GESTIÓN COMPLETA (todos los demás campos incluyendo rol)
+# PARA GESTIÓN ( de campos incluyendo rol)
 
 
 
@@ -650,6 +650,10 @@ def admin_change_status(user_id: int):
         "new_status": new_status,
         "changed_by": admin_id
     }), 200
+
+# =============================================================
+#       Gestion completa de Todos los campos de usuarios
+# ==============================================================
 
 @auth_bp.route("/admin/users/<int:user_id>", methods=['PUT'])
 @requires_admin

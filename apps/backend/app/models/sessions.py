@@ -29,3 +29,21 @@ class Session(db.Model):
     workshop = relationship("Workshop", back_populates="sessions")
     professional = relationship("SystemUser", foreign_keys=[professional_id], back_populates="sessions_taught")
     attendances = relationship("Attendance", back_populates="session")
+    
+    def serialize(self):
+        """Serializar sesión para JSON"""
+        return {
+            "id": self.id,
+            "workshop_id": self.workshop_id,
+            "workshop_name": self.workshop.name,
+            "date": self.date,
+            "start_time": self.start_time,
+            "end_time": self.end_time,
+            "topic": self.topic,
+            "observations": self.observations,
+            "professional_id": self.professional_id,
+            "professional_name": f"{self.professional.name} {self.professional.last_name}",
+            "status": self.status,
+            "created_at": self.created_at,
+            "updated_at": self.updated_at
+        }   
