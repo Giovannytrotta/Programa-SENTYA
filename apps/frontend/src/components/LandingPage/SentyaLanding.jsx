@@ -29,7 +29,7 @@ const SentyaLanding = () => {
 
 
 
-  // 🔥 Funciones de navegación usando React Router
+  //  Funciones de navegación 
 
   const goToLogin = () => {
 
@@ -75,7 +75,7 @@ const SentyaLanding = () => {
 
           </div>
 
-          {/* 🆕 Conectar botón de login */}
+          {/*  botón de login */}
 
           <button
 
@@ -139,7 +139,7 @@ const SentyaLanding = () => {
 
 
 
-              {/* 🆕 Conectar botón principal */}
+              {/*   botón principal */}
 
               <button
 
@@ -177,7 +177,7 @@ const SentyaLanding = () => {
 
                   </p>
 
-                  {/* 🔥 Tutorial sigue igual (ya funciona) */}
+                  {/*  Tutorial  */}
 
                   <button
 

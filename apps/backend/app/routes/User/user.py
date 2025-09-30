@@ -101,7 +101,8 @@ def get_current_user():
             "name": user.name,
             "last_name": user.last_name,
             "email": user.email,
-            "rol": user.rol.value
+            "rol": user.rol.value,
+            "css_id" : user.css_id
         },
         "role": user.rol.value 
     })

@@ -6,9 +6,11 @@ import UserLoginPage from './pages/UserLoginPage';
 import Auth2faPage from './pages/Auth2faPage';
 import AdminDashboardPage from './pages/AdminDashboardPage';
 import SentyaTutorialPage from './pages/SentyaTutorialPage';
+import Layout from './components/Layout/Layout';
 import LoadingPage from './pages/LoadingPage';
 import NotFoundPage from './pages/NotFoundPage';
 import { useEffect } from 'react';
+import DashboardRouter from './components/DashboardRouter/DashBoardRouter';
 
 // 🆕 Componente global para inicialización de auth
 const AuthProvider = ({ children }) => {
@@ -87,6 +89,10 @@ const RouteWrapper = ({ children }) => {
   );
 };
 
+const LayoutWrapper = ({ children }) => {
+  return <Layout>{children}</Layout>;
+};
+
 export const router = createBrowserRouter([
   {
     path: "/",
@@ -113,24 +119,9 @@ export const router = createBrowserRouter([
     element: (
       <RouteWrapper>
         <ProtectedRoute>
-          <div style={{ 
-            minHeight: '100vh', 
-            padding: '40px', 
-            background: 'linear-gradient(135deg, #1f2937 0%, #111827 100%)',
-            color: 'white',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            flexDirection: 'column',
-            gap: '20px'
-          }}>
-            <h1 style={{ fontSize: '3rem', textAlign: 'center' }}>
-              🎉 ¡Bienvenido a tu Home de SENTYA!
-            </h1>
-            <p style={{ fontSize: '1.2rem', textAlign: 'center', opacity: 0.8 }}>
-              Aquí irá el dashboard adaptativo según tu rol
-            </p>
-          </div>
+          <LayoutWrapper>
+          <DashboardRouter />
+          </LayoutWrapper>
         </ProtectedRoute>
       </RouteWrapper>
     )

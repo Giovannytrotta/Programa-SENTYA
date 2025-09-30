@@ -1,0 +1,47 @@
+/* src/components/Layout/Layout.css */
+
+.app-layout {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: linear-gradient(
+    135deg,
+    rgba(31, 41, 55, 0.95) 0%,
+    rgba(17, 24, 39, 0.95) 50%,
+    rgba(55, 65, 81, 0.95) 100%
+  );
+  background-attachment: fixed;
+}
+
+.app-content {
+  flex: 1;
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 100px 32px 32px; /* 100px top para el navbar fijo */
+  animation: fadeIn 0.5s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .app-content {
+    padding: 90px 24px 24px;
+  }
+}
+
+@media (max-width: 480px) {
+  .app-content {
+    padding: 80px 16px 20px;
+  }
+}

@@ -1,4 +1,4 @@
-/* ===== SENTYA LANDING SPECTACULAR STYLES ===== */
+/* ===== SENTYA LANDING STYLES ===== */
 
 :root {
   --orange-primary: #E9531A;
@@ -19,7 +19,7 @@
 
   --gray-dark: #333333;
 
-  /* Gradientes espectaculares */
+  /* Gradientes */
 
   --sentya-gradient-1: linear-gradient(135deg, #E9531A 0%, #dc2626 50%, #ea580c 100%);
 
@@ -33,7 +33,7 @@
 
 
 
-/* Reset CSS mejorado */
+/* Reset CSS  */
 
 * {
 
@@ -166,7 +166,7 @@ button {
 
 
 
-/* ===== HEADER ESPECTACULAR ===== */
+/* ===== HEADER ===== */
 
 .main-header {
 
@@ -299,15 +299,15 @@ button {
 
 
 
-/* LOGO SENTYA ESPECTACULAR */
+/* LOGO SENTYA  */
 
 .logo-sentya {
 
-  height: 120px;
+  height: 140px;
 
   width: auto;
 
-  max-width: 200px;
+  max-width: 300px;
 
   filter: drop-shadow(0 4px 12px rgba(233, 83, 26, 0.4));
 
@@ -407,7 +407,7 @@ button {
 
 
 
-/* BOTÓN DE LOGIN ESPECTACULAR */
+/* BOTÓN DE LOGIN  */
 
 .sentya-login-btn {
 
@@ -541,7 +541,7 @@ button {
 
 
 
-/* ===== HERO SECTION ESPECTACULAR ===== */
+/* ===== HERO SECTION ===== */
 
 .hero-section {
 
@@ -1156,7 +1156,7 @@ button {
 
 
 
-/* ===== FEATURES SECTION ESPECTACULAR ===== */
+/* ===== FEATURES SECTION  ===== */
 
 .features-section {
 
@@ -1641,7 +1641,7 @@ button {
 
 
 
-/* ===== AOSSA SECTION ESPECTACULAR ===== */
+/* ===== AOSSA SECTION  ===== */
 
 .aossa-section {
 
@@ -1929,7 +1929,7 @@ button {
 
 
 
-/* ===== CTA FINAL ESPECTACULAR ===== */
+/* ===== CTA FINAL ===== */
 
 .final-cta {
 
@@ -2202,7 +2202,7 @@ button {
 
 
 
-/* ===== FOOTER ESPECTACULAR ===== */
+/* ===== FOOTER ===== */
 
 .main-footer {
 
