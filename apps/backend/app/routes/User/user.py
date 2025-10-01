@@ -106,3 +106,147 @@ def get_current_user():
         },
         "role": user.rol.value 
     })
+    
+# =================================================================
+#   RUTAS PARA OBTENER PERFIL DEL USUARIO O INFORMACION DEL USUARIO
+# ==================================================================
+
+@user_bp.route("/profile", methods=["GET"])
+@jwt_required()
+def get_current_user_profile():
+    """Obtener perfil completo del usuario actual.
+    Returns: 
+        200: Perfil completo del usuario
+        404: Usuario no encontrado
+    No requiere confirmación - solo lectura"""
+    
+    current_user_id = get_jwt_identity()
+    user = SystemUser.query.get(current_user_id)
+    
+    if not user or not user.is_active:
+        raise UnauthorizedError("Usuario no válido")
+    
+    return jsonify({
+        "success": True,
+        "data": {
+            "id": user.id,
+            "name": user.name,
+            "last_name": user.last_name,
+            "email": user.email,
+            "dni": user.dni,
+            "phone": user.phone,
+            "birth_date": user.birth_date.isoformat() if user.birth_date else None,
+            "age": user.age,
+            "address": user.address,
+            "observations": user.observations,
+            "css_id": user.css_id,
+            "rol": user.rol.value,
+            "is_active": user.is_active,
+            "last_login": user.last_login.isoformat() if user.last_login else None,
+            "created_at": user.created_at.isoformat() if user.created_at else None,
+            "updated_at": user.updated_at.isoformat() if user.updated_at else None
+        }
+    }), 200
+    
+# =================================================================
+#           RUTA PARA ACTUALIZAR EL PERFIL DEL USUARIO
+# ==================================================================
+
+@user_bp.route("/profile", methods=["PUT"])
+@jwt_required()
+def update_current_user_profile():
+    """Actualizar perfil del usuario actual. Body:
+        - name: string (opcional)
+        - last_name: string (opcional)
+        - email: string (opcional)
+        - phone: string (opcional)
+        - bio: string (opcional)
+        - location: string (opcional)
+        - website: string (opcional)
+        - address: string (opcional)
+        - birth_date: string (opcional) - formato YYYY-MM-DD
+    Returns:
+        200: Perfil actualizado exitosamente
+        400: Datos inválidos
+        404: Usuario no encontrado
+    """
+    try:
+        current_user_id = get_jwt_identity()
+        user = SystemUser.query.get(current_user_id)
+        
+        if not user or not user.is_active:
+            raise UnauthorizedError("Usuario no válido")
+        
+        # Obtener datos del request
+        data = request.get_json(silent=True) or {}
+        if not data:
+            raise BadRequestError("No se proporcionaron datos para actualizar")
+
+        # Array para trackear cambios
+        changes_made = []
+        
+        # ========== CAMPOS PERSONALES (todos opcionales) ==========
+        
+        # Actualizar nombre
+        if 'name' in data:
+            new_name = data['name'].strip() if data['name'] else ''
+            if new_name and user.name != new_name:
+                user.name = new_name
+                changes_made.append("nombre")
+        
+        # Actualizar apellidos
+        if 'last_name' in data:
+            new_last_name = data['last_name'].strip() if data['last_name'] else ''
+            if new_last_name and user.last_name != new_last_name:
+                user.last_name = new_last_name
+                changes_made.append("apellidos")
+        
+        # Actualizar teléfono
+        if 'phone' in data:
+            new_phone = data['phone'].strip() if data['phone'] else None
+            if new_phone:
+                # Validar formato básico de teléfono
+                if len(new_phone) < 8:
+                    raise BadRequestError("El número de teléfono es demasiado corto")
+                
+                if user.phone != new_phone:
+                    user.phone = new_phone
+                    changes_made.append("teléfono")
+        
+        
+        # Actualizar dirección
+        if 'address' in data:
+            new_address = data['address'].strip() if data['address'] else None
+            if user.address != new_address:
+                user.address = new_address
+                changes_made.append("dirección")
+        
+        
+        # ========== FINALIZACIÓN ==========
+        
+        # Si no hubo cambios, informarlo
+        if not changes_made:
+            return jsonify({
+                "success": True,
+                "message": "No se realizaron cambios",
+                "changes": []
+            }), 200
+        
+        # Actualizar timestamp y guardar
+        user.updated_at = datetime.now(timezone.utc)
+        
+        db.session.commit()
+        
+        return jsonify({
+            "success": True,
+            "message": f"Perfil actualizado exitosamente. Cambios realizados: {', '.join(changes_made)}",
+            "changes": changes_made,
+            "updated_at": user.updated_at.isoformat()
+        }), 200
+        
+    except (BadRequestError, ConflictError, UnauthorizedError) as e:
+        db.session.rollback()
+        raise e
+    except Exception as e:
+        db.session.rollback()
+        raise BadRequestError(f"Error al actualizar el perfil: {str(e)}")

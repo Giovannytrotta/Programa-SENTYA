@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify
-from flask_jwt_extended import get_jwt_identity
+from flask_jwt_extended import get_jwt_identity,jwt_required
 from app.utils.decotators import (
     requires_coordinator_or_admin,
     requires_professional_access,
@@ -11,7 +11,7 @@ from app.models.thematic_areas import ThematicArea
 from app.models.css import Css
 from app.extensions import db
 from datetime import datetime, timezone
-from app.exceptions import ValidationError,NotFoundError,BadRequestError
+from app.exceptions import ValidationError,NotFoundError,BadRequestError,ForbiddenError
 from app.models.sessions import Session
 from app.models.attendance import Attendance
 
@@ -160,10 +160,26 @@ def create_workshop():
 # Listamos todos los talleres
 
 @workshop_bp.route("/", methods=["GET"])
-@requires_staff_access  # ← Todos menos clientes
+@jwt_required()  # Cambiar de @requires_staff_access
 def get_all_workshops():
-    """Listar todos los talleres"""
-    workshops = Workshop.query.all()
+    """Listar talleres según permisos del usuario"""
+    user_id = int(get_jwt_identity())
+    user = SystemUser.query.get(user_id)
+    
+    if not user:
+        raise NotFoundError("Usuario no encontrado")
+    
+    # Clientes solo ven talleres de su CSS
+    if user.rol == UserRole.CLIENT:
+        # Solo talleres de su CSS (activos con cupo)
+        workshops = Workshop.query.filter(
+            Workshop.css_id == user.css_id,
+            Workshop.status == WorkshopStatus.ACTIVE,
+            Workshop.current_capacity < Workshop.max_capacity
+        ).all()
+    else:
+        # Staff ve todos
+        workshops = Workshop.query.all()
     
     return jsonify({
         "workshops": [w.serialize() for w in workshops]
@@ -186,6 +202,97 @@ def get_workshop_details(workshop_id):
         "workshop": workshop.serialize()
     }), 200
 
+
+# # ============================================================
+# #               LISTAR TALLERES DE UN CSS activo por confirmar
+# # ============================================================
+
+# @workshop_bp.route("/css/<int:css_id>/active", methods=["GET"])
+# @requires_staff_access #POR CONFIRMAR 
+# def get_active_workshops_by_css(css_id):
+#     """
+#     Listar solo talleres ACTIVOS de un CSS
+#     (Para mostrar en panel de inscripciones)
+#     """
+#     css = Css.query.get(css_id)
+    
+#     if not css:
+#         raise NotFoundError(f"Centro social con ID {css_id} no encontrado")
+    
+#     # Solo talleres activos con cupos disponibles
+#     workshops = Workshop.query.filter(
+#         Workshop.css_id == css_id,
+#         Workshop.status == WorkshopStatus.ACTIVE,
+#         Workshop.current_capacity < Workshop.max_capacity  # Tienen cupo
+#     ).all()
+    
+#     return jsonify({
+#         "css": {
+#             "id": css.id,
+#             "name": css.name
+#         },
+#         "available_workshops": len(workshops),
+#         "workshops": [w.serialize() for w in workshops]
+#     }), 200
+
+    
+# ==================================================================
+#               LISTAR TALLERES DE UN CSS ESPECÍFICO
+# ==================================================================
+
+@workshop_bp.route("/css/<int:css_id>", methods=["GET"])
+@jwt_required()
+def get_workshops_by_css(css_id):
+    """
+    Listar todos los talleres de un centro social específico
+    Permisos:
+    - CLIENTES: Solo pueden ver talleres de su propio CSS
+    - STAFF: Pueden ver talleres de cualquier CSS
+    para:
+    - Panel de usuario: ver talleres de su CSS
+    - Filtrar talleres por centro
+    - Inscripciones: mostrar talleres disponibles
+    """
+    
+    user_id = int(get_jwt_identity())
+    user = SystemUser.query.get(user_id)
+    
+    if not user:
+        raise NotFoundError("Usuario no encontrado")
+    
+    # Verificar que el CSS existe
+    css = Css.query.get(css_id)
+    if not css:
+        raise NotFoundError(f"Centro social con ID {css_id} no encontrado")
+    
+    # VALIDACIÓN DE PERMISOS
+    
+    # Si es cliente, solo puede ver talleres de su CSS
+    if user.rol == UserRole.CLIENT:
+        if user.css_id != css_id:
+            raise ForbiddenError(
+                "No tienes permiso para ver talleres de otros centros sociales"
+            )
+        
+        # Clientes solo ven talleres ACTIVOS con cupo disponible
+        workshops = Workshop.query.filter(
+            Workshop.css_id == css_id,
+            Workshop.status == WorkshopStatus.ACTIVE,
+            Workshop.current_capacity < Workshop.max_capacity
+        ).all()
+    else:
+        # Staff ve TODOS los talleres (sin filtros)
+        workshops = Workshop.query.filter_by(css_id=css_id).all()
+    
+    return jsonify({
+        "css": {
+            "id": css.id,
+            "name": css.name
+        },
+        "total_workshops": len(workshops),
+        "workshops": [w.serialize() for w in workshops]
+    }), 200
+    
     
 # =============================================================
 # ACTUALIZAR TALLER
@@ -301,7 +408,6 @@ def update_workshop(workshop_id):
         "message": "Taller actualizado exitosamente",
         "workshop": workshop.serialize()
     }), 200
-
 
 
 
