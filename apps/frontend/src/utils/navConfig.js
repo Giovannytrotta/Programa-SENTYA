@@ -1,14 +1,15 @@
-// src/utils/navConfig.js
+// apps/frontend/src/utils/navConfig.js
+
 import { 
   Home, 
   Users, 
-  BookOpen, 
+  BookOpen,  
   Building2, 
   BarChart3, 
   ClipboardCheck,
   Calendar,
   GraduationCap,
-  BookAudioIcon
+  BookAudio
 } from 'lucide-react';
 
 export const getNavLinks = (role) => {
@@ -16,13 +17,13 @@ export const getNavLinks = (role) => {
     administrator: [
       { path: '/dashboard', icon: Home, label: 'Panel Admin' },
       { path: '/users', icon: Users, label: 'Usuarios' },
-      { path: '/workshopsPost', icon: BookAudioIcon, label: 'Crear nuevo taller' },
+      { path: '/workshops', icon: BookOpen, label: 'Talleres' }, // ← NUEVO
       { path: '/css', icon: Building2, label: 'Centros' },
       { path: '/reports', icon: BarChart3, label: 'Reportes' }
     ],
     coordinator: [
       { path: '/dashboard', icon: Home, label: 'Inicio' },
-      { path: '/workshops', icon: BookOpen, label: 'Talleres' },
+      { path: '/workshops', icon: BookOpen, label: 'Talleres' }, // ← NUEVO
       { path: '/users', icon: Users, label: 'Usuarios' },
       { path: '/css', icon: Building2, label: 'Centros' },
       { path: '/reports', icon: BarChart3, label: 'Reportes' }
@@ -40,7 +41,7 @@ export const getNavLinks = (role) => {
     ],
     css_technician: [
       { path: '/dashboard', icon: Home, label: 'Inicio' },
-      { path: '/workshops', icon: BookOpen, label: 'Ver Talleres' },
+      { path: '/workshops', icon: BookOpen, label: 'Ver Talleres' }, // ← NUEVO
       { path: '/css', icon: Building2, label: 'Centros' },
       { path: '/reports', icon: BarChart3, label: 'Reportes' }
     ]

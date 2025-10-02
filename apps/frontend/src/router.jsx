@@ -6,6 +6,7 @@ import UserLoginPage from './pages/UserLoginPage';
 import Auth2faPage from './pages/Auth2faPage';
 import AdminDashboardPage from './pages/AdminDashboardPage';
 import SentyaTutorialPage from './pages/SentyaTutorialPage';
+import WorkshopsView from './components/WorkshopsView/WorkshopsView';
 import Layout from './components/Layout/Layout';
 import LoadingPage from './pages/LoadingPage';
 import NotFoundPage from './pages/NotFoundPage';
@@ -126,6 +127,18 @@ export const router = createBrowserRouter([
       </RouteWrapper>
     )
   },
+  {
+  path: "/workshops",
+  element: (
+    <RouteWrapper>
+      <ProtectedRoute>
+        <LayoutWrapper>
+          <WorkshopsView />
+        </LayoutWrapper>
+      </ProtectedRoute>
+    </RouteWrapper>
+  )
+},
 
   {
     path: "/tutorial",
