@@ -1,41 +1,16 @@
 from flask import Blueprint, jsonify, request, session,current_app
 from app.extensions import db, jwt, bcrypt
-from app.models.user import SystemUser
+from app.models.user import SystemUser,UserRole
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity, unset_jwt_cookies, set_access_cookies,decode_token
 from app.exceptions import ValidationError, UnauthorizedError, ForbiddenError, AppError, BadRequestError,NotFoundError,ConflictError
 from app.utils.helper import issue_tokens_for_user
 from datetime import datetime, timezone, timedelta,date
 import re
 from functools import wraps
+from app.utils.decotators import requires_coordinator_or_admin
 
 user_bp = Blueprint("user", __name__, url_prefix='/user')
 
-# @api_bp.route("/login",methods=["POST"])
-# def login():
-#     data = request.get_json(silent=True) or {}
-#     email = data.get("email", "").strip()
-#     password = data.get("password", "")
-#     #campos requeridos
-#     if not email or not password:
-#         raise UnauthorizedError("Email and password are required.")
-    
-# #Verificamos si el usuario existe 
-#     user = SystemUser.query.filter_by(email=email).first()
-#     if not user:
-#         raise UnauthorizedError("Invalid credentials")
-    
-#     if not bcrypt.check_password_hash(user.password, password):
-#         raise UnauthorizedError("Invalid credentials")
-#     # if not user.confirmed:
-#     #     raise ForbiddenError("unconfirmed account")
-    
-#     access_token = create_access_token(identity=str(user.id))
-    
-#     response = jsonify({"msg": 'Login successful',"user":user.serialize()})
-    
-#     set_access_cookies(response, access_token)
-    
-#     return response
 
 @user_bp.route("/login", methods=["POST"])
 def login():
@@ -250,3 +225,31 @@ def update_current_user_profile():
     except Exception as e:
         db.session.rollback()
         raise BadRequestError(f"Error al actualizar el perfil: {str(e)}")
+
+# =================================================================
+#       RUTA PARA OBTENER LISTA DE PROFESIONALES 
+# ==================================================================
+ 
+    
+@user_bp.route("/professionals", methods=["GET"])
+@requires_coordinator_or_admin
+def get_professionals():
+    """
+    Obtener lista de profesionales activos
+    (Para select al crear/editar taller)
+    """
+    professionals = SystemUser.query.filter_by(
+        rol=UserRole.PROFESSIONAL,
+        is_active=True
+    ).all()
+    
+    return jsonify({
+        "professionals": [
+            {
+                "id": prof.id,
+                "name": f"{prof.name} {prof.last_name}",
+                "email": prof.email
+            } 
+            for prof in professionals
+        ]
+    }), 200

@@ -19,3 +19,13 @@ class ThematicArea(db.Model):
     created_at: Mapped[datetime] = mapped_column(DateTime(),default=lambda: datetime.now(timezone.utc))#AGREGADO
     # Relaciones
     workshops = relationship("Workshop", back_populates="thematic_area")
+    
+    def serialize(self):
+        return {
+            "id": self.id,
+            "name": self.name,
+            "description": self.description,
+            "color": self.color,
+            "active": self.active,
+            "created_at": self.created_at,
+        }

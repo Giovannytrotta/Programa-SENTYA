@@ -580,7 +580,23 @@ def get_active_css():
         ]
     }), 200
     
+#OBTENER DETALLES DE UN CSS    
+  
+@auth_bp.route("/admin/<int:css_id>", methods=["GET"])
+@requires_admin
+def get_css_details(css_id):
+    """Obtener detalle de un centro social"""
+    css = Css.query.get(css_id)
+    
+    if not css:
+        raise NotFoundError(f"Centro social con ID {css_id} no encontrado")
+    
+    return jsonify({
+        "css": css.serialize()
+    }), 200
+    
 # actualizacion de centro de servicio social 
+
 @auth_bp.route("/admin/user/<int:user_id>/css", methods=["PUT"])
 @requires_admin
 def update_user_css(user_id):
