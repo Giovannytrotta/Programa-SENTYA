@@ -16,15 +16,43 @@ session_bp = Blueprint("sessions", __name__, url_prefix='/sessions')
 
 # ============================================
 # CREAR SESIÓN 
-# que hace? El coordinador programa una clase específica del taller verificamos que :
+# que hace? Una Session es cada clase individual de un taller. 
+# El coordinador programa una clase específica del taller verificamos que :
 # 1) El taller exista, 2) que el profesional o monitor es quien dara la clase, 3) fechas, 4) horarios, 5) evitar conflictos
-#                           campos Campos importantes:
+#  campos Campos importantes:
 # workshop_id: A qué taller pertenece
 # date: Qué día es la clase
 # start_time/end_time: Horario de la clase
 # professional_id: Quién la imparte
 # topic: Tema de esa clase específica (ej: "Ejercicios de respiración")
+# Su importancia: Control de Calendario, Gestión Operativa (coordinador puede crear/modificar/cancelar) clases
+# Base para asistencias: aca tendremos las asistencias de cada taller, seguimiento de actividad
+# Informe y estadisticas
+#   Ejemplo:
+
+# creas un Workshop (Taller):
+
+# Nombre: "Taller de Fisioterapia"
+# Días: Lunes y Miércoles
+# Horario: 09:00 - 11:00
+# Duración: 3 meses (Octubre - Diciembre)
+
+# Ese taller tendrá múltiples sesiones:
+
+# Sesión 1: Lunes 7 Oct, 09:00-11:00
+# Sesión 2: Miércoles 9 Oct, 09:00-11:00
+# Sesión 3: Lunes 14 Oct, 09:00-11:00 y así sucesivamente
 # ============================================
+
+# LA RELACIÓN ENTRE WORKSHOP Y SESSION FUNCIONA ASI:
+# Workshop (Taller)
+# └── Session 1 (Clase del 7 Oct)
+#     └── Attendance (Asistencias de usuarios)
+# └── Session 2 (Clase del 9 Oct)
+#     └── Attendance (Asistencias de usuarios)
+# └── Session 3 (Clase del 14 Oct)
+#     └── Attendance (Asistencias de usuarios)
+
 
 @session_bp.route("", methods=["POST"])                                                          
 @requires_coordinator_or_admin                                             
@@ -38,8 +66,7 @@ def create_session():
         "topic": "Ejercicios de movilidad",                                         
         "observations": "Traer ropa cómoda",                                         
         "professional_id": 5,                                         
-        "status": "scheduled"                                         
-    }"""
+        "status": "scheduled" }"""
     data = request.get_json()
     
     # 1. Campos obligatorios
@@ -134,7 +161,9 @@ def create_session():
 @session_bp.route("/workshop/<int:workshop_id>", methods=["GET"])
 @requires_staff_access
 def get_workshop_sessions(workshop_id):
-    """Listar todas las sesiones de un taller"""
+    """Listar todas las sesiones de un taller 
+    Ver todas las clases programadas de un taller específico informacion administrativa
+    por eso se usa el decorador de staff access"""
     workshop = Workshop.query.get(workshop_id)
     
     if not workshop:
@@ -161,7 +190,8 @@ def get_workshop_sessions(workshop_id):
 @session_bp.route("/<int:session_id>", methods=["GET"])
 @requires_staff_access
 def get_session_details(session_id):
-    """Ver detalles de una sesión"""
+    """Ver detalles de una sesión 
+    Ver la información completa de una clase específica"""
     session = Session.query.get(session_id)
     
     if not session:
@@ -179,7 +209,9 @@ def get_session_details(session_id):
 @session_bp.route("/<int:session_id>", methods=["PUT"])
 @requires_coordinator_or_admin
 def update_session(session_id):
-    """Actualizar una sesión"""
+    """Actualizar una sesión para que? 
+    Modificar una clase ya programada
+    Ejemplo: "La clase del martes la cambio para el jueves" o "Cambio de profesional"""
     session = Session.query.get(session_id)
     
     if not session:
@@ -260,7 +292,7 @@ def update_session(session_id):
 @session_bp.route("/<int:session_id>", methods=["DELETE"])
 @requires_coordinator_or_admin
 def delete_session(session_id):
-    """Eliminar una sesión"""
+    """Eliminar una sesión Borramos una clase que ya no se va a dar por x motivo"""
     session = Session.query.get(session_id)
     
     if not session:
@@ -287,7 +319,8 @@ def delete_session(session_id):
 @session_bp.route("/<int:session_id>/complete", methods=["POST"])
 @requires_professional_access
 def complete_session(session_id):
-    """Marcar una sesión como completada"""
+    """Marcar una sesión como completada 
+    El profesional marca que la clase ya se dio """
     session = Session.query.get(session_id)
     
     if not session:
@@ -313,7 +346,8 @@ def complete_session(session_id):
 @session_bp.route("/<int:session_id>/cancel", methods=["POST"])
 @requires_coordinator_or_admin
 def cancel_session(session_id):
-    """Cancelar una sesión"""
+    """Cancelar una sesión a diferencia de delete con esta ruta podemos cancelar la
+    session por x motivo (lluvia, emergencia, etc.) nota OBLIGATORIO PEDIR LA RAZON"""
     session = Session.query.get(session_id)
     
     if not session:
@@ -343,9 +377,13 @@ def cancel_session(session_id):
 @session_bp.route("/my-sessions", methods=["GET"])
 @requires_professional_access
 def get_my_sessions():
-    """Obtener sesiones del profesional"""
+    """Obtener sesiones del profesional 
+    Profesionales ven solo SUS clases asignadas"""
     user_id = int(get_jwt_identity())
     user = SystemUser.query.get(user_id)
+    
+    if not user:
+        raise NotFoundError("Usuario no encontrado")
     
     if user.rol == UserRole.PROFESSIONAL:
         sessions = Session.query.filter_by(professional_id=user_id).order_by(

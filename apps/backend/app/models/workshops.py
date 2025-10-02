@@ -53,3 +53,32 @@ class Workshop(db.Model):
     creator = relationship("SystemUser", foreign_keys="[Workshop.created_by]", back_populates="created_workshops")
     user_assignments = relationship("WorkshopUser", back_populates="workshop", foreign_keys="WorkshopUser.workshop_id")
     sessions = relationship("Session", back_populates="workshop")
+    
+    def serialize(self):
+        """Serializar taller para JSON"""
+        return {
+            "id": self.id,
+            "name": self.name,
+            "description": self.description,
+            "thematic_area_id": self.thematic_area_id,
+            "thematic_area_name": self.thematic_area.name if self.thematic_area else None,
+            "css_id": self.css_id,
+            "css_name": self.css.name if self.css else None,
+            "professional_id": self.professional_id,
+            "professional_name": f"{self.professional.name} {self.professional.last_name}" if self.professional else None,
+            "max_capacity": self.max_capacity,
+            "current_capacity": self.current_capacity,
+            "available_spots": self.max_capacity - self.current_capacity,
+            "start_time": self.start_time.strftime('%H:%M') if self.start_time else None,
+            "end_time": self.end_time.strftime('%H:%M') if self.end_time else None,
+            "week_days": self.week_days,
+            "start_date": self.start_date.strftime('%Y-%m-%d') if self.start_date else None,
+            "end_date": self.end_date.strftime('%Y-%m-%d') if self.end_date else None,
+            "location": self.location,
+            "session_duration": self.session_duration,
+            "status": self.status.value if self.status else None,
+            "observations": self.observations,
+            "created_by": self.created_by,
+            "created_at": self.created_at.isoformat() if self.created_at else None,
+            "updated_at": self.updated_at.isoformat() if self.updated_at else None
+    }   

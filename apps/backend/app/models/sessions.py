@@ -35,15 +35,15 @@ class Session(db.Model):
         return {
             "id": self.id,
             "workshop_id": self.workshop_id,
-            "workshop_name": self.workshop.name,
-            "date": self.date,
-            "start_time": self.start_time,
-            "end_time": self.end_time,
+            "workshop_name": self.workshop.name if self.workshop else None,
+            "date": self.date.strftime('%Y-%m-%d') if self.date else None, 
+            "start_time": self.start_time.strftime('%H:%M') if self.start_time else None,
+            "end_time": self.end_time.strftime('%H:%M') if self.end_time else None,
             "topic": self.topic,
             "observations": self.observations,
             "professional_id": self.professional_id,
-            "professional_name": f"{self.professional.name} {self.professional.last_name}",
+            "professional_name": f"{self.professional.name} {self.professional.last_name}" if self.professional else None, #obtener datos completo del usuario
             "status": self.status,
-            "created_at": self.created_at,
-            "updated_at": self.updated_at
+            "created_at": self.created_at.isoformat() if self.created_at else None,
+            "updated_at": self.updated_at.isoformat() if self.updated_at else None
         }   

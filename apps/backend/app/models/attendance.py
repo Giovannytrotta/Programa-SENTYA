@@ -23,3 +23,18 @@ class Attendance(db.Model):
     session = relationship("Session", back_populates="attendances")
     user = relationship("SystemUser", foreign_keys=[user_id], back_populates="attendances")
     recorder = relationship("SystemUser", foreign_keys=[recorded_by], back_populates="attendances_recorded")
+    
+    
+def serialize(self):
+    """Serializamos las asistencias para JSON"""
+    return {
+        "id": self.id,
+        "session_id": self.session_id,
+        "user_id": self.user_id,
+        "user_name": f"{self.user.name} {self.user.last_name}" if self.user else None,
+        "present": self.present,
+        "observations": self.observations,
+        "recorded_by": self.recorded_by,
+        "recorded_by_name": f"{self.recorder.name} {self.recorder.last_name}" if self.recorder else None,#datos completos del usuario que registro la asistencia
+        "recorded_at": self.recorded_at.isoformat() if self.recorded_at else None
+    }

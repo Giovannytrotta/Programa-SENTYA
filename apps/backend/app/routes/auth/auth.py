@@ -472,6 +472,13 @@ def get_all_users():
         if active_filter is not None:
             is_active = active_filter.lower() == 'true'
             query = query.filter(SystemUser.is_active == is_active)
+            
+        if css_filter and css_filter != 'all':
+            try:
+                css_id = int(css_filter)
+                query = query.filter(SystemUser.css_id == css_id)
+            except ValueError:
+                raise ValidationError(f"CSS ID inválido: {css_filter}")
         
         if search:
             like = f"%{search}%"
@@ -480,7 +487,7 @@ def get_all_users():
                 (SystemUser.name.ilike(like)) |
                 (SystemUser.last_name.ilike(like)) |
                 (SystemUser.dni.ilike(like))
-                (Css.name.ilike(like))
+                (SystemUser.css.has(Css.name.ilike(like)))
             )
         
         # Paginación
@@ -494,6 +501,14 @@ def get_all_users():
         total_count = SystemUser.query.count()
         active_count = SystemUser.query.filter_by(is_active=True).count()
         with_2fa_count = SystemUser.query.filter_by(two_factor_enabled=True).count()
+        
+        css_stats = {}
+        if css_filter and css_filter != 'all':
+            css_id = int(css_filter)
+            css_stats = {
+                'css_total': SystemUser.query.filter_by(css_id=css_id).count(),
+                'css_active': SystemUser.query.filter_by(css_id=css_id, is_active=True).count()
+            }
         
         return jsonify({
             "users": [
@@ -532,11 +547,13 @@ def get_all_users():
                 "total_users": total_count,
                 "active_users": active_count,
                 "inactive_users": total_count - active_count,
-                "with_2fa": with_2fa_count
+                "with_2fa": with_2fa_count,
+                **css_stats
             },
             "filters_applied": {
                 "role": role_filter,
                 "active": active_filter,
+                "css": css_filter,
                 "search": search
             }
         }), 200
