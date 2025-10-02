@@ -7,7 +7,8 @@ import {
   BarChart3, 
   ClipboardCheck,
   Calendar,
-  GraduationCap
+  GraduationCap,
+  BookAudioIcon
 } from 'lucide-react';
 
 export const getNavLinks = (role) => {
@@ -15,7 +16,7 @@ export const getNavLinks = (role) => {
     administrator: [
       { path: '/dashboard', icon: Home, label: 'Panel Admin' },
       { path: '/users', icon: Users, label: 'Usuarios' },
-      { path: '/workshops', icon: BookOpen, label: 'Talleres' },
+      { path: '/workshopsPost', icon: BookAudioIcon, label: 'Crear nuevo taller' },
       { path: '/css', icon: Building2, label: 'Centros' },
       { path: '/reports', icon: BarChart3, label: 'Reportes' }
     ],

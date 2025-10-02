@@ -1,7 +1,7 @@
 // src/components/DashboardRouter.jsx
 import React from 'react';
 import { useAuth } from '../../hooks/useAuth';
-import UserDashboard from '../Dashboards/ClientDashboard/UserDashboard';
+import UserDashboard from '../Dashboards/UserDashboard/UserDashboard';
 
 const DashboardRouter = () => {
   const { user } = useAuth();
