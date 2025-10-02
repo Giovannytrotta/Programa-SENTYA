@@ -2,6 +2,7 @@ from flask import Blueprint, jsonify, request, session,current_app
 from app.extensions import db, jwt, bcrypt
 from app.models.user import SystemUser, UserRole
 from app.models.css import Css
+from app.utils.decotators import requires_coordinator_or_admin
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity, unset_jwt_cookies, set_access_cookies,decode_token
 from app.exceptions import ValidationError, UnauthorizedError, ForbiddenError, AppError, BadRequestError,NotFoundError,ConflictError
 from app.utils.helper import build_qr_data_uri, issue_tokens_for_user,validate_international_phone
@@ -565,7 +566,7 @@ def get_all_users():
 # En Nuevo endpoint para filtrar css
 
 @auth_bp.route("/admin/css", methods=["GET"])
-@requires_admin
+@requires_coordinator_or_admin
 def get_active_css():
     css_centers = Css.query.filter_by(is_active=True).all()
     return jsonify({
@@ -583,7 +584,7 @@ def get_active_css():
 #OBTENER DETALLES DE UN CSS    
   
 @auth_bp.route("/admin/<int:css_id>", methods=["GET"])
-@requires_admin
+@requires_coordinator_or_admin
 def get_css_details(css_id):
     """Obtener detalle de un centro social"""
     css = Css.query.get(css_id)
@@ -598,7 +599,7 @@ def get_css_details(css_id):
 # actualizacion de centro de servicio social 
 
 @auth_bp.route("/admin/user/<int:user_id>/css", methods=["PUT"])
-@requires_admin
+@requires_coordinator_or_admin
 def update_user_css(user_id):
     data = request.get_json()
     css_id = data.get('css_id')

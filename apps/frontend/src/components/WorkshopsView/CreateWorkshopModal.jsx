@@ -8,7 +8,7 @@ import './CreateWorkshopModal.css';
 
 const CreateWorkshopModal = ({ onClose, onSuccess }) => {
   const { createWorkshop, loading } = useWorkshops();
-  
+
   const [formData, setFormData] = useState({
     name: '',
     description: '',
@@ -31,7 +31,6 @@ const CreateWorkshopModal = ({ onClose, onSuccess }) => {
   const [cssCenters, setCssCenters] = useState([]);
   const [professionals, setProfessionals] = useState([]);
   const [errors, setErrors] = useState({});
-
   useEffect(() => {
     // Cargar datos necesarios
     const loadData = async () => {
@@ -42,17 +41,21 @@ const CreateWorkshopModal = ({ onClose, onSuccess }) => {
           setCssCenters(cssResponse.css_centers);
         }
 
-        // Cargar Profesionales
-        const profResponse = await apiService.getProfessionals();
-        if (profResponse?.users) {
-          setProfessionals(profResponse.users);
+        // ✅ Cargar Áreas Temáticas
+        const areasResponse = await apiService.getThematicAreas();
+        if (areasResponse?.thematic_areas) {
+          setThematicAreas(areasResponse.thematic_areas);
         }
 
-        // Cargar áreas temáticas (cuando tengas el endpoint)
-        // const areasResponse = await apiService.getThematicAreas();
-        // setThematicAreas(areasResponse);
+        // ✅ Cargar Profesionales
+        const profResponse = await apiService.getProfessionals();
+        if (profResponse?.professionals) {
+          setProfessionals(profResponse.professionals);
+        }
+
       } catch (error) {
         console.error('Error loading data:', error);
+        // Podrías mostrar una notificación de error aquí si quieres
       }
     };
 
@@ -65,39 +68,40 @@ const CreateWorkshopModal = ({ onClose, onSuccess }) => {
       ...prev,
       [name]: value
     }));
-    
+
     // Limpiar error del campo
     if (errors[name]) {
       setErrors(prev => ({ ...prev, [name]: '' }));
     }
   };
 
-  const validateForm = () => {
-    const newErrors = {};
+ const validateForm = () => {
+  const newErrors = {};
 
-    if (!formData.name.trim()) newErrors.name = 'El nombre es requerido';
-    if (!formData.css_id) newErrors.css_id = 'Debe seleccionar un centro';
-    if (!formData.professional_id) newErrors.professional_id = 'Debe asignar un profesional';
-    if (!formData.start_time) newErrors.start_time = 'La hora de inicio es requerida';
-    if (!formData.end_time) newErrors.end_time = 'La hora de fin es requerida';
-    if (!formData.week_days) newErrors.week_days = 'Debe seleccionar al menos un día';
-    if (!formData.start_date) newErrors.start_date = 'La fecha de inicio es requerida';
-    if (formData.max_capacity < 1) newErrors.max_capacity = 'La capacidad debe ser mayor a 0';
+  if (!formData.name.trim()) newErrors.name = 'El nombre es requerido';
+  if (!formData.thematic_area_id) newErrors.thematic_area_id = 'Debe seleccionar un área temática'; // ✅ NUEVO
+  if (!formData.css_id) newErrors.css_id = 'Debe seleccionar un centro';
+  if (!formData.professional_id) newErrors.professional_id = 'Debe asignar un profesional';
+  if (!formData.start_time) newErrors.start_time = 'La hora de inicio es requerida';
+  if (!formData.end_time) newErrors.end_time = 'La hora de fin es requerida';
+  if (!formData.week_days) newErrors.week_days = 'Debe seleccionar al menos un día';
+  if (!formData.start_date) newErrors.start_date = 'La fecha de inicio es requerida';
+  if (formData.max_capacity < 1) newErrors.max_capacity = 'La capacidad debe ser mayor a 0';
 
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
+  setErrors(newErrors);
+  return Object.keys(newErrors).length === 0;
+};
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (!validateForm()) return;
 
     try {
       // Convertir datos al formato esperado por el backend
       const workshopData = {
         ...formData,
-        thematic_area_id: parseInt(formData.thematic_area_id) || 1, // Temporal
+        thematic_area_id: parseInt(formData.thematic_area_id),
         css_id: parseInt(formData.css_id),
         professional_id: parseInt(formData.professional_id),
         max_capacity: parseInt(formData.max_capacity),
@@ -127,7 +131,7 @@ const CreateWorkshopModal = ({ onClose, onSuccess }) => {
           {/* Información básica */}
           <div className="form-section">
             <h3>Información Básica</h3>
-            
+
             <div className="form-group">
               <label>Nombre del Taller *</label>
               <input
@@ -135,9 +139,27 @@ const CreateWorkshopModal = ({ onClose, onSuccess }) => {
                 name="name"
                 value={formData.name}
                 onChange={handleChange}
-                placeholder="Ej: Taller de Fisioterapia"
+                placeholder="Ej: Taller de Risoterapia"
               />
               {errors.name && <span className="error">{errors.name}</span>}
+            </div>
+
+            {/* Área Temática */}
+            <div className="form-group">
+              <label>Área Temática *</label>
+              <select
+                name="thematic_area_id"
+                value={formData.thematic_area_id}
+                onChange={handleChange}
+              >
+                <option value="">Seleccionar área temática</option>
+                {thematicAreas.map(area => (
+                  <option key={area.id} value={area.id}>
+                    {area.name}
+                  </option>
+                ))}
+              </select>
+              {errors.thematic_area_id && <span className="error">{errors.thematic_area_id}</span>}
             </div>
 
             <div className="form-group">
@@ -155,7 +177,7 @@ const CreateWorkshopModal = ({ onClose, onSuccess }) => {
           {/* Asignaciones */}
           <div className="form-section">
             <h3>Asignaciones</h3>
-            
+
             <div className="form-row">
               <div className="form-group">
                 <label>Centro Social *</label>
@@ -207,7 +229,7 @@ const CreateWorkshopModal = ({ onClose, onSuccess }) => {
           {/* Horario */}
           <div className="form-section">
             <h3>Horario</h3>
-            
+
             <div className="form-row">
               <div className="form-group">
                 <label>Hora de Inicio *</label>
@@ -249,7 +271,7 @@ const CreateWorkshopModal = ({ onClose, onSuccess }) => {
           {/* Fechas */}
           <div className="form-section">
             <h3>Período</h3>
-            
+
             <div className="form-row">
               <div className="form-group">
                 <label>Fecha de Inicio *</label>
@@ -277,7 +299,7 @@ const CreateWorkshopModal = ({ onClose, onSuccess }) => {
           {/* Capacidad */}
           <div className="form-section">
             <h3>Capacidad</h3>
-            
+
             <div className="form-row">
               <div className="form-group">
                 <label>Capacidad Máxima *</label>
@@ -308,7 +330,7 @@ const CreateWorkshopModal = ({ onClose, onSuccess }) => {
           {/* Observaciones */}
           <div className="form-section">
             <h3>Información Adicional</h3>
-            
+
             <div className="form-group">
               <label>Observaciones</label>
               <textarea
@@ -335,16 +357,16 @@ const CreateWorkshopModal = ({ onClose, onSuccess }) => {
 
           {/* Botones */}
           <div className="modal-actions">
-            <button 
-              type="button" 
+            <button
+              type="button"
               className="btn-cancel"
               onClick={onClose}
               disabled={loading}
             >
               Cancelar
             </button>
-            <button 
-              type="submit" 
+            <button
+              type="submit"
               className="btn-submit"
               disabled={loading}
             >

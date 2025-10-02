@@ -225,7 +225,83 @@ async updateUserCSS(userId, cssId) {
         body: JSON.stringify({ css_id: parseInt(cssId) })
     });
 }
+
+async getAllWorkshops(filters = {}) {
+  const params = new URLSearchParams();
+  Object.keys(filters).forEach(key => {
+    if (filters[key]) {
+      params.append(key, filters[key]);
+    }
+  });
+  
+  const queryString = params.toString();
+  const endpoint = queryString ? `/workshops/?${queryString}` : '/workshops/';
+  
+  return this.request(endpoint, {
+    method: 'GET'
+  });
 }
+
+/**
+ * Crear nuevo taller (solo admin/coordinator)
+ */
+async createWorkshop(workshopData) {
+  return this.request('/workshops/', {
+    method: 'POST',
+    body: workshopData
+  });
+}
+
+/**
+ * Obtener detalle de un taller
+ */
+async getWorkshopDetails(workshopId) {
+  return this.request(`/workshops/${workshopId}`, {
+    method: 'GET'
+  });
+}
+
+/**
+ * Actualizar taller (solo admin/coordinator)
+ */
+async updateWorkshop(workshopId, workshopData) {
+  return this.request(`/workshops/${workshopId}`, {
+    method: 'PUT',
+    body: workshopData
+  });
+}
+
+/**
+ * Eliminar taller (solo admin/coordinator)
+ */
+async deleteWorkshop(workshopId) {
+  return this.request(`/workshops/${workshopId}`, {
+    method: 'DELETE'
+  });
+}
+
+/**
+ * Obtener todas las áreas temáticas activas
+ */
+async getThematicAreas() {
+  return this.request('/thematic-areas/', {
+    method: 'GET'
+  });
+}
+
+/**
+ * Obtener lista de profesionales activos (para select en talleres)
+ */
+async getProfessionals() {
+  return this.request('/user/professionals', {
+    method: 'GET'
+  });
+}
+
+
+}
+
+
 
 
 
