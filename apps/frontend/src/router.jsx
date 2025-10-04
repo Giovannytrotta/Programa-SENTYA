@@ -7,6 +7,8 @@ import Auth2faPage from './pages/Auth2faPage';
 import AdminDashboardPage from './pages/AdminDashboardPage';
 import SentyaTutorialPage from './pages/SentyaTutorialPage';
 import WorkshopsView from './components/WorkshopsView/WorkshopsView';
+import SessionsView from './components/SessionsView/SessionsView';
+import WorkshopEnrollments from './components/WorkshopEnrollments/WorkshopEnrollments';
 import Layout from './components/Layout/Layout';
 import LoadingPage from './pages/LoadingPage';
 import NotFoundPage from './pages/NotFoundPage';
@@ -127,6 +129,8 @@ export const router = createBrowserRouter([
       </RouteWrapper>
     )
   },
+
+            //RUTA PARA TALLERES
   {
   path: "/workshops",
   element: (
@@ -134,6 +138,32 @@ export const router = createBrowserRouter([
       <ProtectedRoute>
         <LayoutWrapper>
           <WorkshopsView />
+        </LayoutWrapper>
+      </ProtectedRoute>
+    </RouteWrapper>
+  )
+},
+          //RUTA PARA SESSIONES DE TALLERES
+{
+  path: "/workshops/:workshopId/sessions",
+  element: (
+    <RouteWrapper>
+      <ProtectedRoute>
+        <LayoutWrapper>
+          <SessionsView />
+        </LayoutWrapper>
+      </ProtectedRoute>
+    </RouteWrapper>
+  )
+},
+          //RUTA PARA INSCRIPCIONES
+{
+  path: "/workshops/:workshopId/enrollments",
+  element: (
+    <RouteWrapper>
+      <ProtectedRoute>
+        <LayoutWrapper>
+          <WorkshopEnrollments />
         </LayoutWrapper>
       </ProtectedRoute>
     </RouteWrapper>

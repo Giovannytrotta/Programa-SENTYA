@@ -1,6 +1,6 @@
 from flask import Blueprint, request, jsonify
 from flask_jwt_extended import get_jwt_identity
-from app.utils.decotators import (
+from app.utils.decorators import (
     requires_coordinator_or_admin,
     requires_professional_access,
     requires_staff_access

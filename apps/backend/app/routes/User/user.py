@@ -7,7 +7,7 @@ from app.utils.helper import issue_tokens_for_user
 from datetime import datetime, timezone, timedelta,date
 import re
 from functools import wraps
-from app.utils.decotators import requires_coordinator_or_admin
+from app.utils.decorators import requires_coordinator_or_admin
 
 user_bp = Blueprint("user", __name__, url_prefix='/user')
 

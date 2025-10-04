@@ -1,17 +1,24 @@
 // apps/frontend/src/components/Workshops/WorkshopsView.jsx
 
 import React, { useState, useEffect } from 'react';
-import { Plus, Search, Filter, Calendar, Users, MapPin, Clock } from 'lucide-react';
+import { Plus, Search, Filter, Calendar, Users, MapPin, Clock, Trash2, Edit } from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth';
 import { useWorkshops } from '../../hooks/useWorkshops';
 import CreateWorkshopModal from './CreateWorkshopModal';
+import EditWorkshopModal from './EditWorkshopModal'; //editar taller
+import DeleteWorkshopModal from './DeleteWorkshopModal'; // elimitar taller
+import { useNavigate } from 'react-router-dom';
 import './WorkshopsView.css';
 
 const WorkshopsView = () => {
+  const navigate = useNavigate();
   const { user, role } = useAuth();
   const { workshops, loading, fetchWorkshops } = useWorkshops();
-  
+  const [openDropdown, setOpenDropdown] = useState(null);
   const [showCreateModal, setShowCreateModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);      // NUEVO  editar
+  const [showDeleteModal, setShowDeleteModal] = useState(false);  // NUEVO eliminar
+  const [selectedWorkshop, setSelectedWorkshop] = useState(null); // NUEVO seleccionar
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
 
@@ -22,12 +29,21 @@ const WorkshopsView = () => {
     fetchWorkshops();
   }, [fetchWorkshops]);
 
+  useEffect(() => {
+  const handleClickOutside = () => {
+    if (openDropdown) setOpenDropdown(null);
+  };
+  
+  document.addEventListener('click', handleClickOutside);
+  return () => document.removeEventListener('click', handleClickOutside);
+}, [openDropdown]);
+
   const filteredWorkshops = workshops.filter(workshop => {
     const matchesSearch = workshop.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         workshop.description?.toLowerCase().includes(searchQuery.toLowerCase());
-    
+      workshop.description?.toLowerCase().includes(searchQuery.toLowerCase());
+
     const matchesStatus = statusFilter === 'all' || workshop.status === statusFilter;
-    
+
     return matchesSearch && matchesStatus;
   });
 
@@ -51,6 +67,28 @@ const WorkshopsView = () => {
     return labels[status] || status;
   };
 
+  const handleEdit = (workshop) => {
+    setSelectedWorkshop(workshop);
+    setShowEditModal(true);
+  };
+
+  const handleDelete = (workshop) => {
+    setSelectedWorkshop(workshop);
+    setShowDeleteModal(true);
+  };
+
+  const handleEditSuccess = () => {
+    setShowEditModal(false);
+    setSelectedWorkshop(null);
+    fetchWorkshops();
+  };
+
+  const handleDeleteSuccess = () => {
+    setShowDeleteModal(false);
+    setSelectedWorkshop(null);
+    fetchWorkshops();
+  };
+
   if (loading) {
     return (
       <div className="workshops-loading">
@@ -67,15 +105,15 @@ const WorkshopsView = () => {
         <div className="header-title">
           <h1>Talleres</h1>
           <p className="subtitle">
-            {canCreateWorkshop 
-              ? 'Gestiona los talleres disponibles' 
+            {canCreateWorkshop
+              ? 'Gestiona los talleres disponibles'
               : 'Explora los talleres disponibles'}
           </p>
         </div>
 
         {/* Botón crear - solo para admin/coordinator */}
         {canCreateWorkshop && (
-          <button 
+          <button
             className="btn-create-workshop"
             onClick={() => setShowCreateModal(true)}
           >
@@ -99,7 +137,7 @@ const WorkshopsView = () => {
 
         <div className="filter-group">
           <Filter size={18} />
-          <select 
+          <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
           >
@@ -213,8 +251,54 @@ const WorkshopsView = () => {
               {/* Acciones - solo para admin/coordinator */}
               {canCreateWorkshop && (
                 <div className="workshop-actions">
-                  <button className="btn-action edit">Editar</button>
-                  <button className="btn-action view">Ver Detalles</button>
+                  <button
+                    className="btn-action edit"
+                    onClick={() => handleEdit(workshop)}
+                  >
+                    <Edit size={16} />
+                    Editar
+                  </button>
+
+                  <button
+                    className="btn-action delete"
+                    onClick={() => handleDelete(workshop)}
+                  >
+                    <Trash2 size={16} />
+                    Eliminar
+                  </button>
+
+                  {/* Dropdown para más opciones */}
+                  <div className="dropdown-wrapper">
+                    <button
+                      className="btn-action dropdown"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setOpenDropdown(openDropdown === workshop.id ? null : workshop.id);
+                      }}
+                    >
+                      Más ⋯
+                    </button>
+
+                    {openDropdown === workshop.id && (
+                      <div
+                        className="dropdown-menu"
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        <button onClick={() => {
+                          navigate(`/workshops/${workshop.id}/sessions`);
+                          setOpenDropdown(null);
+                        }}>
+                          📅 Ver Sesiones
+                        </button>
+                        <button onClick={() => {
+                          navigate(`/workshops/${workshop.id}/enrollments`);
+                          setOpenDropdown(null);
+                        }}>
+                          👥 Ver Inscritos
+                        </button>
+                      </div>
+                    )}
+                  </div>
                 </div>
               )}
             </div>
@@ -222,14 +306,39 @@ const WorkshopsView = () => {
         )}
       </div>
 
+      {/* MODALES */}
+
       {/* Modal de creación - solo para admin/coordinator */}
       {canCreateWorkshop && showCreateModal && (
-        <CreateWorkshopModal 
+        <CreateWorkshopModal
           onClose={() => setShowCreateModal(false)}
           onSuccess={() => {
             setShowCreateModal(false);
             fetchWorkshops();
           }}
+        />
+      )}
+      {/*  Modal de edición - NUEVO */}
+      {canCreateWorkshop && showEditModal && selectedWorkshop && (
+        <EditWorkshopModal
+          workshop={selectedWorkshop}
+          onClose={() => {
+            setShowEditModal(false);
+            setSelectedWorkshop(null);
+          }}
+          onSuccess={handleEditSuccess}
+        />
+      )}
+
+      {/*  Modal de eliminación - NUEVO */}
+      {canCreateWorkshop && showDeleteModal && selectedWorkshop && (
+        <DeleteWorkshopModal
+          workshop={selectedWorkshop}
+          onClose={() => {
+            setShowDeleteModal(false);
+            setSelectedWorkshop(null);
+          }}
+          onSuccess={handleDeleteSuccess}
         />
       )}
     </div>

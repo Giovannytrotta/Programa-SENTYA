@@ -52,7 +52,7 @@ class Workshop(db.Model):
     professional = relationship("SystemUser", back_populates="assigned_workshops",foreign_keys="[Workshop.professional_id]" )
     creator = relationship("SystemUser", foreign_keys="[Workshop.created_by]", back_populates="created_workshops")
     user_assignments = relationship("WorkshopUser", back_populates="workshop", foreign_keys="WorkshopUser.workshop_id")
-    sessions = relationship("Session", back_populates="workshop")
+    sessions = relationship("Session", back_populates="workshop",cascade="all, delete-orphan")
     
     def serialize(self):
         """Serializar taller para JSON"""

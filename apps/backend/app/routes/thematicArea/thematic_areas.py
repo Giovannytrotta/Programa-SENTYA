@@ -1,6 +1,6 @@
 from flask import Blueprint, jsonify
 from app.models.thematic_areas import ThematicArea
-from app.utils.decotators import requires_staff_access
+from app.utils.decorators import requires_staff_access
 from app.exceptions import NotFoundError
 
 thematic_areas_bp = Blueprint("thematic_areas", __name__, url_prefix='/thematic-areas')

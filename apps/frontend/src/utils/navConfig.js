@@ -1,5 +1,3 @@
-// apps/frontend/src/utils/navConfig.js
-
 import { 
   Home, 
   Users, 

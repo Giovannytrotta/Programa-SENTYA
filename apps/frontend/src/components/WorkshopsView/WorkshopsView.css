@@ -57,6 +57,7 @@
   flex-wrap: wrap;
 }
 
+
 .search-box {
   flex: 1;
   min-width: 300px;
@@ -188,7 +189,7 @@
   padding: 24px;
   transition: all 0.3s ease;
   position: relative;
-  overflow: hidden;
+  overflow-x: visible;
 }
 
 .workshop-card:hover {
@@ -303,6 +304,8 @@
 
 .workshop-actions {
   display: flex;
+  position: relative;
+  z-index: 10;
   gap: 12px;
   margin-top: 20px;
   padding-top: 20px;
@@ -386,6 +389,7 @@
 }
 
 /* ===== RESPONSIVE ===== */
+
 @media (max-width: 768px) {
   .workshops-view {
     padding: 20px;
@@ -411,5 +415,119 @@
 
   .workshops-grid {
     grid-template-columns: 1fr;
+  }
+}
+
+/* ===== BOTÓN DE ELIMINAR ===== */
+
+.btn-action.delete {
+  background: rgba(239, 68, 68, 0.2);
+  color: #ef4444;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.btn-action.delete:hover {
+  background: rgba(239, 68, 68, 0.3);
+  border-color: rgba(239, 68, 68, 0.5);
+}
+
+/* ===== AJUSTES A BOTÓN EDITAR ===== */
+
+.btn-action.edit {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+/* ===== RESPONSIVE ACTIONS ===== */
+
+@media (max-width: 768px) {
+  .workshop-actions {
+    flex-direction: column;
+  }
+  
+  .btn-action {
+    width: 100%;
+  }
+}
+
+/* ===== DROPDOWN ===== */
+
+.dropdown-wrapper {
+  position: relative;
+  z-index: 100; /* ← AGREGAR */
+}
+
+.btn-action.dropdown {
+  background: rgba(255, 255, 255, 0.08);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.btn-action.dropdown:hover {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.dropdown-menu {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  background: rgba(31, 41, 55, 0.98);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 10px;
+  padding: 8px;
+  min-width: 200px;
+  z-index: 1001;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(10px);
+  animation: slideDown 0.2s ease-out;
+  
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.dropdown-menu button {
+  width: 100%;
+  padding: 10px 12px;
+  background: none;
+  border: none;
+  color: white;
+  text-align: left;
+  cursor: pointer;
+  border-radius: 8px;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.dropdown-menu button:hover {
+  background: rgba(233, 83, 26, 0.2);
+  transform: translateX(4px);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .dropdown-menu {
+    right: auto;
+    left: 50%;
+    transform: translateX(-50%);
+    min-width: 160px;
   }
 }

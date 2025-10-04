@@ -1,0 +1,97 @@
+.enrollment-info-box {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 24px;
+}
+
+.user-info-display {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.user-avatar-large {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #E9531A, #dc2626);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.user-info-display h3 {
+  color: white;
+  font-size: 1.125rem;
+  font-weight: 600;
+  margin: 0 0 6px 0;
+}
+
+.waitlist-badge {
+  color: #f59e0b;
+  font-size: 0.875rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+.enrolled-badge {
+  color: #10b981;
+  font-size: 0.875rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+.reason-input {
+  margin-top: 20px;
+}
+
+.reason-input label {
+  display: block;
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 0.875rem;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.reason-input textarea {
+  width: 100%;
+  padding: 12px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  color: white;
+  font-size: 0.875rem;
+  font-family: inherit;
+  resize: vertical;
+  transition: all 0.3s ease;
+}
+
+.reason-input textarea:focus {
+  outline: none;
+  border-color: rgba(239, 68, 68, 0.5);
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.reason-input textarea::placeholder {
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.reason-input small {
+  display: block;
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 0.75rem;
+  margin-top: 6px;
+}
+
+.reason-input .error {
+  display: block;
+  color: #ef4444;
+  font-size: 0.8125rem;
+  margin-top: 6px;
+  font-weight: 500;
+}

@@ -298,6 +298,137 @@ async getProfessionals() {
   });
 }
 
+// ============================================
+// SESSIONS
+// ============================================
+
+/**
+ * Crear nueva sesión/clase de un taller
+ */
+
+async createSession(sessionData) {
+  return this.request('/sessions', {
+    method: 'POST',
+    body: sessionData
+  });
+}
+
+/**
+ * Obtener todas las sesiones de un taller específico
+ */
+
+async getWorkshopSessions(workshopId) {
+  return this.request(`/sessions/workshop/${workshopId}`, {
+    method: 'GET'
+  });
+}
+
+/**
+ * Obtener detalle de una sesión específica
+ */
+async getSessionDetails(sessionId) {
+  return this.request(`/sessions/${sessionId}`, {
+    method: 'GET'
+  });
+}
+
+/* Actualizar una sesión*/
+
+async updateSession(sessionId, sessionData) {
+  return this.request(`/sessions/${sessionId}`, {
+    method: 'PUT',
+    body: sessionData
+  });
+}
+
+/**
+ * Eliminar una sesión
+ */
+async deleteSession(sessionId) {
+  return this.request(`/sessions/${sessionId}`, {
+    method: 'DELETE'
+  });
+}
+
+/**
+ * Marcar sesión como completada
+ */
+async completeSession(sessionId) {
+  return this.request(`/sessions/${sessionId}/complete`, {
+    method: 'POST'
+  });
+}
+
+/**
+ * Cancelar sesión con razón
+ */
+async cancelSession(sessionId, reason) {
+  return this.request(`/sessions/${sessionId}/cancel`, {
+    method: 'POST',
+    body: { reason }
+  });
+}
+
+/**
+ * Obtener mis sesiones (para profesionales)
+ */
+async getMySessions() {
+  return this.request('/sessions/my-sessions', {
+    method: 'GET'
+  });
+}
+
+// ============================================
+// WORKSHOP USERS (INSCRIPCIONES) 
+// ============================================
+
+/**
+ * Inscribir un usuario a un taller
+ */
+async enrollUserToWorkshop(enrollmentData) {
+  return this.request('/workshop-users/enroll', {
+    method: 'POST',
+    body: enrollmentData
+  });
+}
+
+/**
+ * Desinscribir un usuario de un taller
+ */
+async unenrollUserFromWorkshop(enrollmentId, reason) {
+  return this.request(`/workshop-users/${enrollmentId}`, {
+    method: 'DELETE',
+    body: { reason }
+  });
+}
+
+/**
+ * Obtener estudiantes inscritos en un taller
+ */
+async getWorkshopStudents(workshopId) {
+  return this.request(`/workshop-users/workshop/${workshopId}/students`, {
+    method: 'GET'
+  });
+}
+
+/**
+ * Obtener talleres de un usuario
+ */
+async getUserWorkshops(userId) {
+  return this.request(`/workshop-users/user/${userId}/workshops`, {
+    method: 'GET'
+  });
+}
+
+/**
+ * Obtener lista de espera de un taller
+ */
+async getWorkshopWaitlist(workshopId) {
+  return this.request(`/workshop-users/workshop/${workshopId}/waitlist`, {
+    method: 'GET'
+  });
+}
+
 
 }
 
