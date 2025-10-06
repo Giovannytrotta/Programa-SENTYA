@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify
-from flask_jwt_extended import get_jwt_identity
+from flask_jwt_extended import get_jwt_identity,jwt_required
 from app.utils.decorators import (
     requires_coordinator_or_admin,
     requires_professional_access,
@@ -7,6 +7,7 @@ from app.utils.decorators import (
 from app.models.sessions import Session
 from app.models.workshops import Workshop
 from app.models.user import SystemUser, UserRole
+from app.models.workshop_users import WorkshopUser
 from app.extensions import db
 from datetime import datetime, timezone
 from app.exceptions import ValidationError, NotFoundError, BadRequestError
@@ -159,11 +160,10 @@ def create_session():
 # ============================================
 
 @session_bp.route("/workshop/<int:workshop_id>", methods=["GET"])
-@requires_staff_access
+@jwt_required()
 def get_workshop_sessions(workshop_id):
     """Listar todas las sesiones de un taller 
-    Ver todas las clases programadas de un taller específico informacion administrativa
-    por eso se usa el decorador de staff access"""
+    Ver todas las clases programadas de un taller"""
     workshop = Workshop.query.get(workshop_id)
     
     if not workshop:
@@ -396,6 +396,52 @@ def get_my_sessions():
             Session.date.desc(),
             Session.start_time.desc()
         ).all()
+    
+    return jsonify({
+        "sessions": [s.serialize() for s in sessions]
+    }), 200
+
+# ============================================
+# MIS SESIONES INSCRITAS para (CLIENTES)
+# ============================================
+
+@session_bp.route("/my-enrolled-sessions", methods=["GET"])
+@jwt_required()
+def get_my_enrolled_sessions():
+    """Obtener sesiones de talleres donde estoy inscrito (PARA CLIENTES)
+    Los clientes ven todas las sesiones (pasadas y futuras) de sus talleres"""
+    user_id = int(get_jwt_identity())
+    user = SystemUser.query.get(user_id)
+    
+    if not user:
+        raise NotFoundError("Usuario no encontrado")
+    
+    # Solo clientes usan esta ruta
+    if user.rol != UserRole.CLIENT:
+        raise BadRequestError("Esta ruta es solo para clientes")
+    
+    # Obtener talleres donde está inscrito (sin lista de espera)
+    enrollments = WorkshopUser.query.filter_by(
+        user_id=user_id
+    ).filter(
+        WorkshopUser.waitlist_position.is_(None)  # Solo inscritos activos
+    ).all()
+    
+    workshop_ids = [e.workshop_id for e in enrollments]
+    
+    if not workshop_ids:
+        return jsonify({
+            "sessions": [],
+            "message": "No estás inscrito en ningún taller"
+        }), 200
+    
+    # Obtener todas las sesiones de esos talleres (pasadas y futuras)
+    sessions = Session.query.filter(
+        Session.workshop_id.in_(workshop_ids)
+    ).order_by(
+        Session.date.desc(),
+        Session.start_time.desc()
+    ).all()
     
     return jsonify({
         "sessions": [s.serialize() for s in sessions]

@@ -15,10 +15,12 @@ import {
 import { useAuth } from '../../hooks/useAuth';
 import { useSessions } from '../../hooks/useSessions';
 import { useWorkshops } from '../../hooks/useWorkshops';
+import { useAttendance } from '../../hooks/useAttendance';
 import './SessionsView.css';
 import CreateSessionModal from './CreateSessionModal';
 import EditSessionModal from './EditSessionModal';
 import DeleteSessionModal from './DeleteSessionModal';
+import AttendanceModal from './AttendanceModal';
 
 const SessionsView = () => {
     const { workshopId } = useParams(); // Para cuando viene desde un taller específico
@@ -30,6 +32,7 @@ const SessionsView = () => {
     const [selectedSession, setSelectedSession] = useState(null);
     const { workshops, fetchWorkshops } = useWorkshops();
     const [showCreateModal, setShowCreateModal] = useState(false);
+    const [showAttendanceModal, setShowAttendanceModal] = useState(false);
     const [selectedWorkshop, setSelectedWorkshop] = useState(null);
     const [statusFilter, setStatusFilter] = useState('all');
 
@@ -148,6 +151,11 @@ const SessionsView = () => {
         setShowDeleteModal(false);
         setSelectedSession(null);
         fetchWorkshopSessions(parseInt(workshopId));
+    };
+
+    const handleTakeAttendance = (session) => {
+        setSelectedSession(session);
+        setShowAttendanceModal(true);
     };
 
     return (
@@ -309,6 +317,18 @@ const SessionsView = () => {
                             {/* Acciones */}
                             {(canManageSessions || isProfessional) && (
                                 <div className="session-actions">
+                                    {/* Tomar Asistencia - NUEVO */}
+                                    {session.status === 'scheduled' && (
+                                        <button
+                                            className="btn-action attendance"
+                                            onClick={() => handleTakeAttendance(session)}
+                                            title="Tomar asistencia"
+                                        >
+                                            <CheckCircle size={16} />
+                                            Asistencia
+                                        </button>
+                                    )}
+
                                     {/* Completar (solo si está scheduled) */}
                                     {session.status === 'scheduled' && (
                                         <button
@@ -321,26 +341,21 @@ const SessionsView = () => {
                                         </button>
                                     )}
 
-                                    {/* Editar (solo admin/coordinator) */}
-                                    {(canManageSessions || isProfessional) && (
-                                        <>
-                                            <button
-                                                className="btn-action edit"
-                                                onClick={() => handleEdit(session)}
-                                            >
-                                                <Edit size={16} />
-                                                Editar
-                                            </button>
+                                    {/* Editar */}
+                                    <button
+                                        className="btn-action edit"
+                                        onClick={() => handleEdit(session)}
+                                    >
+                                        <Edit size={16} />
+                                        Editar
+                                    </button>
 
-                                            {/* Eliminar (solo si no está completed) */}
-
-                                            {canManageSessions && session.status !== 'completed' && (
-                                                <button className="btn-action delete" onClick={() => handleDelete(session)}>
-                                                    <Trash2 size={16} />
-                                                    Eliminar
-                                                </button>
-                                            )}
-                                        </>
+                                    {/* Eliminar (solo admin/coordinator y si no está completed) */}
+                                    {canManageSessions && session.status !== 'completed' && (
+                                        <button className="btn-action delete" onClick={() => handleDelete(session)}>
+                                            <Trash2 size={16} />
+                                            Eliminar
+                                        </button>
                                     )}
                                 </div>
                             )}
@@ -386,6 +401,22 @@ const SessionsView = () => {
                         setSelectedSession(null);
                     }}
                     onSuccess={handleDeleteSuccess}
+                />
+            )}
+            
+            {/* Modal Asistencia */}
+            {(canManageSessions || isProfessional) && showAttendanceModal && selectedSession && (
+                <AttendanceModal
+                    session={selectedSession}
+                    onClose={() => {
+                        setShowAttendanceModal(false);
+                        setSelectedSession(null);
+                    }}
+                    onSuccess={() => {
+                        setShowAttendanceModal(false);
+                        setSelectedSession(null);
+                        fetchWorkshopSessions(parseInt(workshopId));
+                    }}
                 />
             )}
 

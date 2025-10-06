@@ -378,6 +378,14 @@ async getMySessions() {
   });
 }
 
+// Obtener sessiones de talleres donde esta inscrito el cliente
+
+async getMyEnrolledSessions(){
+  return this.request('/sessions/my-enrolled-sessions',{
+    method: 'GET'
+  });
+}
+
 // ============================================
 // WORKSHOP USERS (INSCRIPCIONES) 
 // ============================================
@@ -425,6 +433,56 @@ async getUserWorkshops(userId) {
  */
 async getWorkshopWaitlist(workshopId) {
   return this.request(`/workshop-users/workshop/${workshopId}/waitlist`, {
+    method: 'GET'
+  });
+}
+
+// ============================================
+// ATTENDANCE (ASISTENCIAS)
+// ============================================
+
+/* * Tomar asistencia de una sesión */
+
+async takeAttendance(sessionId, attendances) {
+  return this.request(`/attendance/session/${sessionId}`, {
+    method: 'POST',
+    body: { attendances }
+  });
+}
+
+/**
+ * Ver asistencia de una sesión
+ */
+async getSessionAttendance(sessionId) {
+  return this.request(`/attendance/session/${sessionId}`, {
+    method: 'GET'
+  });
+}
+
+/**
+ * Actualizar asistencia de una sesión
+ */
+async updateAttendance(sessionId, attendances) {
+  return this.request(`/attendance/session/${sessionId}`, {
+    method: 'PUT',
+    body: { attendances }
+  });
+}
+
+/**
+ * Historial de asistencia de un usuario en un taller
+ */
+async getUserAttendanceHistory(userId, workshopId) {
+  return this.request(`/attendance/user/${userId}/workshop/${workshopId}`, {
+    method: 'GET'
+  });
+}
+
+/**
+ * Reporte de asistencia de un taller
+ */
+async getWorkshopAttendanceReport(workshopId) {
+  return this.request(`/attendance/workshop/${workshopId}/report`, {
     method: 'GET'
   });
 }

@@ -46,20 +46,20 @@ export const useSessions = () => {
   const fetchWorkshopSessions = useCallback(async (workshopId) => {
     setLoading(true);
     setError(null);
-    
+
     try {
       const response = await apiService.getWorkshopSessions(workshopId);
-      
+
       if (response && response.sessions) {
         setSessions(response.sessions);
         return response;
       }
-      
+
       throw new Error('Respuesta inválida del servidor');
     } catch (err) {
-      const errorMessage = err instanceof ApiError ? 
+      const errorMessage = err instanceof ApiError ?
         err.message : MESSAGES.ERROR.FETCH_SESSIONS;
-      
+
       setError(errorMessage);
       showNotification(errorMessage, 'error');
       throw err;
@@ -68,26 +68,26 @@ export const useSessions = () => {
     }
   }, [showNotification]);
 
-  
+
   // OBTENER MIS SESIONES (PROFESIONALES)
-  
+
   const fetchMySessions = useCallback(async () => {
     setLoading(true);
     setError(null);
-    
+
     try {
       const response = await apiService.getMySessions();
-      
+
       if (response && response.sessions) {
         setSessions(response.sessions);
         return response;
       }
-      
+
       throw new Error('Respuesta inválida del servidor');
     } catch (err) {
-      const errorMessage = err instanceof ApiError ? 
+      const errorMessage = err instanceof ApiError ?
         err.message : MESSAGES.ERROR.FETCH_SESSIONS;
-      
+
       setError(errorMessage);
       showNotification(errorMessage, 'error');
       throw err;
@@ -96,29 +96,56 @@ export const useSessions = () => {
     }
   }, [showNotification]);
 
-  
+  // OBTENER MIS SESIONES INSCRITAS (CLIENTES)
+
+  const fetchMyEnrolledSessions = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+
+    try {
+      const response = await apiService.getMyEnrolledSessions();
+
+      if (response && response.sessions) {
+        setSessions(response.sessions);
+        return response;
+      }
+
+      throw new Error('Respuesta inválida del servidor');
+    } catch (err) {
+      const errorMessage = err instanceof ApiError ?
+        err.message : MESSAGES.ERROR.FETCH_SESSIONS;
+
+      setError(errorMessage);
+      showNotification(errorMessage, 'error');
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  }, [showNotification]);
+
+
   // CREAR SESIÓN
-  
+
   const createSession = useCallback(async (sessionData) => {
     setLoading(true);
     try {
       const response = await apiService.createSession(sessionData);
-      
+
       if (response && response.message) {
         showNotification(MESSAGES.SUCCESS.SESSION_CREATED, 'success');
-        
+
         // Agregar al estado local
         if (response.session) {
           setSessions(prevSessions => [...prevSessions, response.session]);
         }
-        
+
         return { success: true, data: response };
       }
-      
+
       throw new Error('Error al crear sesión');
     } catch (err) {
       let errorMessage = MESSAGES.ERROR.CREATE_SESSION;
-      
+
       if (err instanceof ApiError) {
         if (err.status === 403) {
           errorMessage = MESSAGES.ERROR.NO_PERMISSION;
@@ -128,7 +155,7 @@ export const useSessions = () => {
           errorMessage = `❌ ${err.message}`;
         }
       }
-      
+
       showNotification(errorMessage, 'error');
       throw new Error(errorMessage);
     } finally {
@@ -136,31 +163,31 @@ export const useSessions = () => {
     }
   }, [showNotification]);
 
- 
+
   // ACTUALIZAR SESIÓN
-  
+
   const updateSession = useCallback(async (sessionId, sessionData) => {
     setLoading(true);
     try {
       const response = await apiService.updateSession(sessionId, sessionData);
-      
+
       if (response && response.message) {
         showNotification(MESSAGES.SUCCESS.SESSION_UPDATED, 'success');
-        
+
         // Actualizar en el estado local
-        setSessions(prevSessions => 
-          prevSessions.map(session => 
+        setSessions(prevSessions =>
+          prevSessions.map(session =>
             session.id === sessionId ? { ...session, ...response.session } : session
           )
         );
-        
+
         return { success: true, data: response };
       }
-      
+
       throw new Error('Error al actualizar sesión');
     } catch (err) {
       let errorMessage = MESSAGES.ERROR.UPDATE_SESSION;
-      
+
       if (err instanceof ApiError) {
         if (err.status === 403) {
           errorMessage = MESSAGES.ERROR.NO_PERMISSION;
@@ -168,7 +195,7 @@ export const useSessions = () => {
           errorMessage = `❌ ${err.message}`;
         }
       }
-      
+
       showNotification(errorMessage, 'error');
       throw new Error(errorMessage);
     } finally {
@@ -176,29 +203,29 @@ export const useSessions = () => {
     }
   }, [showNotification]);
 
-  
+
   // ELIMINAR SESIÓN
-  
+
   const deleteSession = useCallback(async (sessionId) => {
     setLoading(true);
     try {
       const response = await apiService.deleteSession(sessionId);
-      
+
       if (response && response.message) {
         showNotification(MESSAGES.SUCCESS.SESSION_DELETED, 'success');
-        
+
         // Eliminar del estado local
-        setSessions(prevSessions => 
+        setSessions(prevSessions =>
           prevSessions.filter(session => session.id !== sessionId)
         );
-        
+
         return { success: true, data: response };
       }
-      
+
       throw new Error('Error al eliminar sesión');
     } catch (err) {
       let errorMessage = MESSAGES.ERROR.DELETE_SESSION;
-      
+
       if (err instanceof ApiError) {
         if (err.status === 403) {
           errorMessage = MESSAGES.ERROR.NO_PERMISSION;
@@ -208,7 +235,7 @@ export const useSessions = () => {
           errorMessage = `❌ ${err.message}`;
         }
       }
-      
+
       showNotification(errorMessage, 'error');
       throw new Error(errorMessage);
     } finally {
@@ -216,35 +243,35 @@ export const useSessions = () => {
     }
   }, [showNotification]);
 
-  
+
   // MARCAR SESIÓN COMO COMPLETADA
-  
+
   const completeSession = useCallback(async (sessionId) => {
     setLoading(true);
     try {
       const response = await apiService.completeSession(sessionId);
-      
+
       if (response && response.message) {
         showNotification(MESSAGES.SUCCESS.SESSION_COMPLETED, 'success');
-        
+
         // Actualizar status en el estado local
-        setSessions(prevSessions => 
-          prevSessions.map(session => 
+        setSessions(prevSessions =>
+          prevSessions.map(session =>
             session.id === sessionId ? { ...session, status: 'completed' } : session
           )
         );
-        
+
         return { success: true, data: response };
       }
-      
+
       throw new Error('Error al completar sesión');
     } catch (err) {
       let errorMessage = MESSAGES.ERROR.COMPLETE_SESSION;
-      
+
       if (err instanceof ApiError) {
         errorMessage = `❌ ${err.message}`;
       }
-      
+
       showNotification(errorMessage, 'error');
       throw new Error(errorMessage);
     } finally {
@@ -252,9 +279,9 @@ export const useSessions = () => {
     }
   }, [showNotification]);
 
-  
+
   // CANCELAR SESIÓN
-  
+
   const cancelSession = useCallback(async (sessionId, reason) => {
     if (!reason || reason.trim() === '') {
       const errorMsg = '⚠️ Debes proporcionar una razón para cancelar';
@@ -265,28 +292,28 @@ export const useSessions = () => {
     setLoading(true);
     try {
       const response = await apiService.cancelSession(sessionId, reason);
-      
+
       if (response && response.message) {
         showNotification(MESSAGES.SUCCESS.SESSION_CANCELLED, 'success');
-        
+
         // Actualizar status en el estado local
-        setSessions(prevSessions => 
-          prevSessions.map(session => 
+        setSessions(prevSessions =>
+          prevSessions.map(session =>
             session.id === sessionId ? { ...session, status: 'cancelled' } : session
           )
         );
-        
+
         return { success: true, data: response };
       }
-      
+
       throw new Error('Error al cancelar sesión');
     } catch (err) {
       let errorMessage = MESSAGES.ERROR.CANCEL_SESSION;
-      
+
       if (err instanceof ApiError) {
         errorMessage = `❌ ${err.message}`;
       }
-      
+
       showNotification(errorMessage, 'error');
       throw new Error(errorMessage);
     } finally {
@@ -294,16 +321,16 @@ export const useSessions = () => {
     }
   }, [showNotification]);
 
-  
+
   // OBTENER DETALLE DE SESIÓN
-  
+
   const getSessionDetails = useCallback(async (sessionId) => {
     setLoading(true);
     try {
       const response = await apiService.getSessionDetails(sessionId);
       return response;
     } catch (err) {
-      const errorMessage = err instanceof ApiError ? 
+      const errorMessage = err instanceof ApiError ?
         err.message : 'Error al obtener detalle de sesión';
       showNotification(errorMessage, 'error');
       throw err;
@@ -317,17 +344,18 @@ export const useSessions = () => {
     sessions,
     loading,
     error,
-    
+
     // Funciones principales
     fetchWorkshopSessions,
     fetchMySessions,
+    fetchMyEnrolledSessions,
     createSession,
     updateSession,
     deleteSession,
     completeSession,
     cancelSession,
     getSessionDetails,
-    
+
     // Utilidades
     clearError: () => setError(null),
     clearSessions: () => setSessions([]),

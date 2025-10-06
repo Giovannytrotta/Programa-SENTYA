@@ -12,6 +12,7 @@ import {
 import { useAuth } from '../../hooks/useAuth';
 import { useWorkshops } from '../../hooks/useWorkshops';
 import './MyWorkshopsView.css';
+import { useMemo } from 'react';
 
 const MyWorkshopsView = () => {
   const navigate = useNavigate();
@@ -36,13 +37,23 @@ const MyWorkshopsView = () => {
   }, [openDropdown]);
 
   // Filtrar solo talleres asignados al profesional actual
-  const myWorkshops = workshops.filter(workshop => {
-    if (role === 'professional') {
-      return workshop.professional_id === user.id;
-    }
-    // TODO: Para clientes, filtrar por inscripciones (PASO 2)
-    return false;
-  });
+const myWorkshops = useMemo(() => {
+  if (role === 'professional') {
+    return workshops.filter(w => w.professional_id === user.id);
+  }
+  
+  if (role === 'client') {
+    //  Clientes ven talleres donde están inscritos
+    // Por ahora mostramos todos los ACTIVOS de su CSS
+    // Después filtraremos por inscripciones reales cuando carguemos esa data
+    return workshops.filter(w => 
+      w.css_id === user.css_id && 
+      w.status === 'active'
+    );
+  }
+  
+  return [];
+}, [workshops, role, user]);
 
   // Aplicar filtros de búsqueda y status
   const filteredWorkshops = myWorkshops.filter(workshop => {

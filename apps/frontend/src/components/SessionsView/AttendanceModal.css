@@ -1,0 +1,246 @@
+.attendance-modal {
+  max-width: 800px;
+  max-height: 90vh;
+}
+
+.session-info-subtitle {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.875rem;
+  margin: 4px 0 0 0;
+}
+
+/* Stats */
+.attendance-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  padding: 24px 32px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.stat-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 16px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+}
+
+.stat-item.present {
+  border: 2px solid rgba(16, 185, 129, 0.3);
+}
+
+.stat-item.present svg {
+  color: #10b981;
+}
+
+.stat-item.absent {
+  border: 2px solid rgba(239, 68, 68, 0.3);
+}
+
+.stat-item.absent svg {
+  color: #ef4444;
+}
+
+.stat-item.total {
+  border: 2px solid rgba(59, 130, 246, 0.3);
+}
+
+.stat-item.total svg {
+  color: #3b82f6;
+}
+
+.stat-number {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: white;
+}
+
+.stat-label {
+  font-size: 0.8125rem;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+/* Form */
+.attendance-form {
+  padding: 24px 32px 32px 32px;
+}
+
+.students-attendance-list {
+  max-height: 400px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.students-attendance-list::-webkit-scrollbar {
+  width: 8px;
+}
+
+.students-attendance-list::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 10px;
+}
+
+.students-attendance-list::-webkit-scrollbar-thumb {
+  background: rgba(233, 83, 26, 0.3);
+  border-radius: 10px;
+}
+
+/* Student Card */
+.student-attendance-card {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 16px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  transition: all 0.3s ease;
+}
+
+.student-attendance-card.present {
+  border-color: rgba(16, 185, 129, 0.3);
+  background: rgba(16, 185, 129, 0.05);
+}
+
+.student-attendance-card.absent {
+  border-color: rgba(239, 68, 68, 0.3);
+  background: rgba(239, 68, 68, 0.05);
+}
+
+.student-attendance-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.student-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #E9531A, #dc2626);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 1rem;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.student-name h4 {
+  color: white;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+/* Controls */
+.attendance-controls {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.btn-toggle {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  color: white;
+  font-weight: 600;
+  font-size: 0.8125rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  flex-shrink: 0;
+}
+
+.btn-toggle:hover {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.btn-toggle.active {
+  background: rgba(16, 185, 129, 0.2);
+  border-color: rgba(16, 185, 129, 0.5);
+  color: #10b981;
+}
+
+.observations-input {
+  flex: 1;
+  padding: 8px 12px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  color: white;
+  font-size: 0.8125rem;
+  transition: all 0.3s ease;
+}
+
+.observations-input:focus {
+  outline: none;
+  border-color: rgba(233, 83, 26, 0.5);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.observations-input::placeholder {
+  color: rgba(255, 255, 255, 0.4);
+}
+
+/* No students */
+.no-students {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.no-students svg {
+  margin-bottom: 16px;
+  opacity: 0.5;
+}
+
+.no-students p {
+  font-size: 1rem;
+  margin: 0;
+}
+
+/* Loading */
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 80px 20px;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .attendance-modal {
+    max-width: 100%;
+    border-radius: 0;
+  }
+
+  .attendance-stats {
+    grid-template-columns: 1fr;
+  }
+
+  .attendance-controls {
+    flex-direction: column;
+  }
+
+  .btn-toggle {
+    width: 100%;
+    justify-content: center;
+  }
+}

@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify
-from flask_jwt_extended import get_jwt_identity
+from flask_jwt_extended import get_jwt_identity,jwt_required
 from app.utils.decorators import (
     requires_coordinator_or_admin,
     requires_staff_access,
@@ -245,7 +245,7 @@ def unenroll_user(enrollment_id):
 # ============================================
 
 @workshop_users_bp.route("/workshop/<int:workshop_id>/students", methods=["GET"])
-@requires_staff_access
+@jwt_required()#Cambiado el decorador a JWT para que los clientes vean los inscritos del taller
 def get_workshop_students(workshop_id):
     """Ver todos los usuarios inscritos en un taller (activos y en espera)"""
     workshop = Workshop.query.get(workshop_id)
