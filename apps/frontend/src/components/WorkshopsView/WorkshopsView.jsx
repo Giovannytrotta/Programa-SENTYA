@@ -309,6 +309,7 @@ const WorkshopsView = () => {
       {/* MODALES */}
 
       {/* Modal de creación - solo para admin/coordinator */}
+      
       {canCreateWorkshop && showCreateModal && (
         <CreateWorkshopModal
           onClose={() => setShowCreateModal(false)}

@@ -55,7 +55,7 @@ session_bp = Blueprint("sessions", __name__, url_prefix='/sessions')
 
 
 @session_bp.route("", methods=["POST"])                                                          
-@requires_coordinator_or_admin                                             
+@requires_professional_access                                          
 def create_session():                                         
     """Crear una nueva sesión                                         
     Body JSON:                                         
@@ -207,7 +207,7 @@ def get_session_details(session_id):
 # ============================================
 
 @session_bp.route("/<int:session_id>", methods=["PUT"])
-@requires_coordinator_or_admin
+@requires_professional_access
 def update_session(session_id):
     """Actualizar una sesión para que? 
     Modificar una clase ya programada
@@ -344,7 +344,7 @@ def complete_session(session_id):
 # ============================================
 
 @session_bp.route("/<int:session_id>/cancel", methods=["POST"])
-@requires_coordinator_or_admin
+@requires_professional_access
 def cancel_session(session_id):
     """Cancelar una sesión a diferencia de delete con esta ruta podemos cancelar la
     session por x motivo (lluvia, emergencia, etc.) nota OBLIGATORIO PEDIR LA RAZON"""

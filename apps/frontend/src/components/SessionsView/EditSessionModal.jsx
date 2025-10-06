@@ -3,9 +3,11 @@ import { X, Calendar, Clock, User } from 'lucide-react';
 import { useSessions } from '../../hooks/useSessions';
 import { apiService } from '../../services/api';
 import './CreateSessionModal.css'; // Reutilizamos los estilos
+import { useAuth } from '../../hooks/useAuth';
 
 const EditSessionModal = ({ session, onClose, onSuccess }) => {
   const { updateSession, loading } = useSessions();
+  const { user, role } = useAuth(); // ←SABER ROL
 
   const [formData, setFormData] = useState({
     date: '',
@@ -38,6 +40,17 @@ const EditSessionModal = ({ session, onClose, onSuccess }) => {
   // Cargar profesionales
   useEffect(() => {
     const loadProfessionals = async () => {
+      // Si es profesional, usar su propio ID automáticamente para editar sin ver otros monitores
+
+      if (role === 'professional') {
+        setFormData(prev => ({
+          ...prev,
+          professional_id: user.id // ← Auto-asignar
+        }));
+        return; // ← No cargar lista
+      }
+      // Si es admin/coordinator, cargar lista de profesionales
+
       try {
         const response = await apiService.getProfessionals();
         if (response?.professionals) {
@@ -49,7 +62,7 @@ const EditSessionModal = ({ session, onClose, onSuccess }) => {
     };
 
     loadProfessionals();
-  }, []);
+  }, [role, user]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -175,25 +188,43 @@ const EditSessionModal = ({ session, onClose, onSuccess }) => {
           <div className="form-section">
             <h3>
               <User size={18} />
-              Profesional
+              Monitor
             </h3>
 
-            <div className="form-group">
-              <label>Profesional a cargo *</label>
-              <select
-                name="professional_id"
-                value={formData.professional_id}
-                onChange={handleChange}
-              >
-                <option value="">Seleccionar profesional</option>
-                {professionals.map(prof => (
-                  <option key={prof.id} value={prof.id}>
-                    {prof.name}
-                  </option>
-                ))}
-              </select>
-              {errors.professional_id && <span className="error">{errors.professional_id}</span>}
-            </div>
+            {role === 'professional' ? (
+              // ✅ Si es profesional → Mostrar solo su nombre (sin dropdown)
+              <div className="form-group">
+                <label>Monitor a cargo</label>
+                <div style={{
+                  padding: '12px 16px',
+                  background: 'rgba(255, 255, 255, 0.05)',
+                  border: '1px solid rgba(255, 255, 255, 0.2)',
+                  borderRadius: '10px',
+                  color: 'rgba(255, 255, 255, 0.9)',
+                  fontSize: '0.875rem'
+                }}>
+                  {user.name} {user.last_name} (Tú)
+                </div>
+              </div>
+            ) : (
+              // ✅ Si es admin/coordinator → Mostrar dropdown
+              <div className="form-group">
+                <label>Profesional a cargo *</label>
+                <select
+                  name="professional_id"
+                  value={formData.professional_id}
+                  onChange={handleChange}
+                >
+                  <option value="">Seleccionar profesional</option>
+                  {professionals.map(prof => (
+                    <option key={prof.id} value={prof.id}>
+                      {prof.name}
+                    </option>
+                  ))}
+                </select>
+                {errors.professional_id && <span className="error">{errors.professional_id}</span>}
+              </div>
+            )}
           </div>
 
           {/* Detalles */}
@@ -228,7 +259,7 @@ const EditSessionModal = ({ session, onClose, onSuccess }) => {
                 name="status"
                 value={formData.status}
                 onChange={handleChange}
-                style={{ 
+                style={{
                   borderLeft: `4px solid ${getStatusColor(formData.status)}`,
                   fontWeight: '600'
                 }}

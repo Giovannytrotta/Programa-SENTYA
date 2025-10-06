@@ -2,7 +2,7 @@ from flask import Blueprint, jsonify, request, session,current_app
 from app.extensions import db, jwt, bcrypt
 from app.models.user import SystemUser, UserRole
 from app.models.css import Css
-from app.utils.decorators import requires_coordinator_or_admin
+from app.utils.decorators import requires_coordinator_or_admin,requires_professional_access
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity, unset_jwt_cookies, set_access_cookies,decode_token
 from app.exceptions import ValidationError, UnauthorizedError, ForbiddenError, AppError, BadRequestError,NotFoundError,ConflictError
 from app.utils.helper import build_qr_data_uri, issue_tokens_for_user,validate_international_phone
@@ -447,8 +447,9 @@ def register():
 # ===============================================================================================
 #                               Rutas para admin
 # ===============================================================================================
-@auth_bp.route('/admin/users', methods=['GET'])
-@requires_admin
+
+@auth_bp.route('/admin/users', methods=['GET']) #Reciclada para front filtrar roles para inscripcion
+@requires_professional_access
 def get_all_users():
     """Obtener lista de todos los usuarios con filtros mejorados"""
     try:

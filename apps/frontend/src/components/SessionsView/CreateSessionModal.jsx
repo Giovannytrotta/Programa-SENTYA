@@ -4,10 +4,12 @@ import React, { useState, useEffect } from 'react';
 import { X, Calendar, Clock, User } from 'lucide-react';
 import { useSessions } from '../../hooks/useSessions';
 import { apiService } from '../../services/api';
+import { useAuth } from '../../hooks/useAuth';
 import './CreateSessionModal.css';
 
 const CreateSessionModal = ({ workshopId, workshopName, onClose, onSuccess }) => {
   const { createSession, loading } = useSessions();
+  const { user, role } = useAuth(); // ← AGREGAR
 
   const [formData, setFormData] = useState({
     workshop_id: workshopId,
@@ -26,6 +28,15 @@ const CreateSessionModal = ({ workshopId, workshopName, onClose, onSuccess }) =>
   // Cargar profesionales
   useEffect(() => {
     const loadProfessionals = async () => {
+      // Si es profesional, usar su propio ID automáticamente
+      if (role === 'professional') {
+        setFormData(prev => ({
+          ...prev,
+          professional_id: user.id // ← Auto-asigna
+        }));
+        return; // ← No cargar lista
+      }
+      // Si es admin/coordinator, cargar lista de profesionales
       try {
         const response = await apiService.getProfessionals();
         if (response?.professionals) {
@@ -37,7 +48,7 @@ const CreateSessionModal = ({ workshopId, workshopName, onClose, onSuccess }) =>
     };
 
     loadProfessionals();
-  }, []);
+  }, [role, user]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -163,22 +174,41 @@ const CreateSessionModal = ({ workshopId, workshopName, onClose, onSuccess }) =>
               Profesional
             </h3>
 
-            <div className="form-group">
-              <label>Profesional a cargo *</label>
-              <select
-                name="professional_id"
-                value={formData.professional_id}
-                onChange={handleChange}
-              >
-                <option value="">Seleccionar profesional</option>
-                {professionals.map(prof => (
-                  <option key={prof.id} value={prof.id}>
-                    {prof.name}
-                  </option>
-                ))}
-              </select>
-              {errors.professional_id && <span className="error">{errors.professional_id}</span>}
-            </div>
+            {role === 'professional' ? (
+              // ✅ Si es profesional → Mostrar solo su nombre (sin dropdown)
+              <div className="form-group">
+                <label>Profesional a cargo</label>
+                <div style={{
+                  padding: '12px 16px',
+                  background: 'rgba(255, 255, 255, 0.05)',
+                  border: '1px solid rgba(255, 255, 255, 0.2)',
+                  borderRadius: '10px',
+                  color: 'rgba(255, 255, 255, 0.9)',
+                  fontSize: '0.875rem'
+                }}>
+                  {user.name} {user.last_name} (Tú)
+                </div>
+                <small>Las sesiones se asignarán automáticamente a ti</small>
+              </div>
+            ) : (
+              // ✅ Si es admin/coordinator → Mostrar dropdown
+              <div className="form-group">
+                <label>Profesional a cargo *</label>
+                <select
+                  name="professional_id"
+                  value={formData.professional_id}
+                  onChange={handleChange}
+                >
+                  <option value="">Seleccionar profesional</option>
+                  {professionals.map(prof => (
+                    <option key={prof.id} value={prof.id}>
+                      {prof.name}
+                    </option>
+                  ))}
+                </select>
+                {errors.professional_id && <span className="error">{errors.professional_id}</span>}
+              </div>
+            )}
           </div>
 
           {/* Detalles */}

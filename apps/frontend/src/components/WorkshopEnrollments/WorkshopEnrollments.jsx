@@ -35,6 +35,23 @@ const WorkshopEnrollments = () => {
 
   // Permisos
   const canManageEnrollments = ['administrator', 'coordinator'].includes(role);
+  const canEnrollUsers = canManageEnrollments || role === 'professional'
+
+//FUNCIÓN PARA DETERMINAR RUTA DE VUELTA SEGÚN ROL USAMOS LA MISMA FUNCION DE SESSION PARA DETERMINAR LA NAVEGACION
+  const getBackRoute = () => {
+    // Admin y coordinadores gestionan → /workshops
+    if (role === 'administrator' || role === 'coordinator') {
+      return '/workshops';
+    }
+    
+    // Profesionales y clientes usan → /my-workshops
+    if (role === 'professional' || role === 'client') {
+      return '/my-workshops';
+    }
+    
+    // CSS Technician (por defecto) → /workshops
+    return '/workshops';
+  };
 
   useEffect(() => {
     if (workshopId) {
@@ -84,7 +101,7 @@ const WorkshopEnrollments = () => {
       <div className="enrollments-header">
         <button
           className="btn-back"
-          onClick={() => navigate('/workshops')}
+          onClick={() => navigate(getBackRoute())}
         >
           <ArrowLeft size={20} />
           Volver a Talleres
@@ -104,7 +121,7 @@ const WorkshopEnrollments = () => {
             </p>
           </div>
 
-          {canManageEnrollments && (
+          {canEnrollUsers && (
             <button
               className="btn-enroll"
               onClick={() => setShowEnrollModal(true)}
@@ -195,7 +212,7 @@ const WorkshopEnrollments = () => {
           <div className="no-students">
             <Users size={48} />
             <p>No hay estudiantes inscritos</p>
-            {canManageEnrollments && (
+            {canEnrollUsers && (
               <button
                 className="btn-enroll-first"
                 onClick={() => setShowEnrollModal(true)}
@@ -285,7 +302,7 @@ const WorkshopEnrollments = () => {
 
       {/* Modal Inscribir */}
 
-      {showEnrollModal && (
+      {canEnrollUsers && showEnrollModal &&  (
         <EnrollUserModal
           workshopId={parseInt(workshopId)}
           workshopName={selectedWorkshop?.name}

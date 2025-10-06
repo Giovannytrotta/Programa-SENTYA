@@ -2,7 +2,8 @@ from flask import Blueprint, request, jsonify
 from flask_jwt_extended import get_jwt_identity
 from app.utils.decorators import (
     requires_coordinator_or_admin,
-    requires_staff_access
+    requires_staff_access,
+    requires_professional_access
 )
 from app.models.workshop_users import WorkshopUser
 from app.models.workshops import Workshop, WorkshopStatus
@@ -24,7 +25,7 @@ workshop_users_bp = Blueprint("workshop_users", __name__, url_prefix='/workshop-
 # ============================================
 
 @workshop_users_bp.route("/enroll", methods=["POST"])
-@requires_coordinator_or_admin
+@requires_professional_access
 def enroll_user():
     """Inscribir un usuario a un taller
     Body JSON:

@@ -36,6 +36,24 @@ const SessionsView = () => {
     // Permisos
     const canManageSessions = ['administrator', 'coordinator'].includes(role);
     const isProfessional = role === 'professional';
+    const canCreateSessions = canManageSessions || isProfessional; //NUEVO PERMISO PARA CREAR SESSIONES PARA PROFESIONAL
+
+    //FUNCIÓN PARA DETERMINAR RUTA DE VUELTA SEGÚN ROL ES IMPORTANTE PORQUE DEPENDE DE TU ROL HARAS LA NAVEGACION
+
+    const getBackRoute = () => {
+        // Admin y coordinadores gestionan → /workshops
+        if (role === 'administrator' || role === 'coordinator') {
+            return '/workshops';
+        }
+
+        // Profesionales y clientes usan → /my-workshops
+        if (role === 'professional' || role === 'client') {
+            return '/my-workshops';
+        }
+
+        // CSS Technician (por defecto) → /workshops SOLO VISTA DE INVITADO
+        return '/workshops';
+    };
 
     useEffect(() => {
         if (workshopId) {
@@ -139,7 +157,7 @@ const SessionsView = () => {
                 {workshopId && (
                     <button
                         className="btn-back"
-                        onClick={() => navigate('/workshops')}
+                        onClick={() => navigate(getBackRoute())}
                     >
                         <ArrowLeft size={20} />
                         Volver a Talleres
@@ -160,7 +178,7 @@ const SessionsView = () => {
                         </p>
                     </div>
 
-                    {canManageSessions && (
+                    {canCreateSessions && (
                         <button
                             className="btn-create-session"
                             onClick={() => setShowCreateModal(true)}  // ← Cambiar esto
@@ -304,7 +322,7 @@ const SessionsView = () => {
                                     )}
 
                                     {/* Editar (solo admin/coordinator) */}
-                                    {canManageSessions && (
+                                    {(canManageSessions || isProfessional) && (
                                         <>
                                             <button
                                                 className="btn-action edit"
@@ -315,11 +333,9 @@ const SessionsView = () => {
                                             </button>
 
                                             {/* Eliminar (solo si no está completed) */}
-                                            {session.status !== 'completed' && (
-                                                <button
-                                                    className="btn-action delete"
-                                                    onClick={() => handleDelete(session)}
-                                                >
+
+                                            {canManageSessions && session.status !== 'completed' && (
+                                                <button className="btn-action delete" onClick={() => handleDelete(session)}>
                                                     <Trash2 size={16} />
                                                     Eliminar
                                                 </button>
@@ -335,7 +351,7 @@ const SessionsView = () => {
             {/* MODALES  */}
 
             {/* Modal de creación */}
-            {canManageSessions && showCreateModal && (
+            {canCreateSessions && showCreateModal && (
                 <CreateSessionModal
                     workshopId={parseInt(workshopId)}
                     workshopName={selectedWorkshop?.name}
@@ -349,7 +365,7 @@ const SessionsView = () => {
 
             {/* Modal editar */}
 
-            {canManageSessions && showEditModal && selectedSession && (
+            {(canManageSessions || isProfessional) && showEditModal && selectedSession && (
                 <EditSessionModal
                     session={selectedSession}
                     onClose={() => {
@@ -361,7 +377,7 @@ const SessionsView = () => {
             )}
 
             {/* Modal eliminar */}
-            
+
             {canManageSessions && showDeleteModal && selectedSession && (
                 <DeleteSessionModal
                     session={selectedSession}

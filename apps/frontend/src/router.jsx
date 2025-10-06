@@ -9,6 +9,7 @@ import SentyaTutorialPage from './pages/SentyaTutorialPage';
 import WorkshopsView from './components/WorkshopsView/WorkshopsView';
 import SessionsView from './components/SessionsView/SessionsView';
 import WorkshopEnrollments from './components/WorkshopEnrollments/WorkshopEnrollments';
+import MyWorkshopsView from './components/MyWorkshopsView/MyWorkshopsView';
 import Layout from './components/Layout/Layout';
 import LoadingPage from './pages/LoadingPage';
 import NotFoundPage from './pages/NotFoundPage';
@@ -164,6 +165,18 @@ export const router = createBrowserRouter([
       <ProtectedRoute>
         <LayoutWrapper>
           <WorkshopEnrollments />
+        </LayoutWrapper>
+      </ProtectedRoute>
+    </RouteWrapper>
+  )
+},
+{
+  path: "/my-workshops/",
+  element: (
+    <RouteWrapper>
+      <ProtectedRoute>
+        <LayoutWrapper>
+          <MyWorkshopsView/>
         </LayoutWrapper>
       </ProtectedRoute>
     </RouteWrapper>
