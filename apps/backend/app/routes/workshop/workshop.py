@@ -331,7 +331,19 @@ def update_workshop(workshop_id):
         if not css:
             raise NotFoundError("Centro social no existe")
         workshop.css_id = data['css_id']
+    
+    if 'professional_id' in data:
+        professional_id = data['professional_id']
+        professional = SystemUser.query.get(professional_id)
         
+        if not professional:
+            raise NotFoundError("Profesional no encontrado")
+        
+        if professional.rol != UserRole.PROFESSIONAL:
+            raise BadRequestError("El usuario debe ser un profesional")
+        
+        workshop.professional_id = professional_id
+    
         # Actualizar capacidad
     if 'max_capacity' in data:
         if data['max_capacity'] < workshop.current_capacity:
