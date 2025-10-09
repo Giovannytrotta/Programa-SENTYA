@@ -433,3 +433,171 @@ def get_my_workshops_attendance():
         "sessions_with_attendance": sessions_data,
         "stats": stats
     }), 200
+
+
+# ============================================
+# REPORTES ADMIN/COORDINATOR
+# ============================================
+
+@attendance_bp.route("/reports/workshop/<int:workshop_id>", methods=["GET"])
+@requires_staff_access
+def get_workshop_detailed_report(workshop_id):
+    """
+    Reporte detallado de un taller con:
+    - Stats generales del taller
+    - Ranking de asistencia (top y baja)
+    - Lista completa de usuarios con sus stats individuales
+    """
+    workshop = Workshop.query.get(workshop_id)
+    
+    if not workshop:
+        raise NotFoundError(f"Taller con ID {workshop_id} no encontrado")
+    
+    # Obtener todas las sesiones completadas del taller
+    sessions = Session.query.filter_by(
+        workshop_id=workshop_id,
+        status='completed'
+    ).all()
+    
+    total_sessions = len(sessions)
+    
+    if total_sessions == 0:
+        return jsonify({
+            "workshop": {
+                "id": workshop.id,
+                "name": workshop.name,
+                "css_name": workshop.css.name if workshop.css else None,
+                "professional_name": f"{workshop.professional.name} {workshop.professional.last_name}" if workshop.professional else None,
+                "max_capacity": workshop.max_capacity,
+                "current_capacity": workshop.current_capacity
+            },
+            "stats": {
+                "total_sessions": 0,
+                "average_attendance_rate": 0,
+                "total_users": workshop.current_capacity,
+                "active_users": 0
+            },
+            "users": [],
+            "top_attendance": [],
+            "low_attendance": []
+        }), 200
+    
+    # Obtener todos los usuarios inscritos en el taller
+    enrolled_users = [assignment.user for assignment in workshop.user_assignments 
+                     if assignment.waitlist_position is None]
+    
+    # Calcular stats por usuario
+    users_stats = []
+    total_attendance_sum = 0
+    
+    for user in enrolled_users:
+        # Obtener asistencias del usuario en este taller
+        attendances = Attendance.query.join(Session).filter(
+            Session.workshop_id == workshop_id,
+            Session.status == 'completed',
+            Attendance.user_id == user.id
+        ).all()
+        
+        sessions_attended = len(attendances)
+        present_count = sum(1 for att in attendances if att.present)
+        absent_count = sessions_attended - present_count
+        
+        # Calcular porcentaje (sobre las sesiones a las que debió asistir)
+        attendance_rate = round((present_count / sessions_attended * 100), 2) if sessions_attended > 0 else 0
+        
+        total_attendance_sum += attendance_rate
+        
+        users_stats.append({
+            "user_id": user.id,
+            "user_name": f"{user.name} {user.last_name}",
+            "email": user.email,
+            "sessions_attended": sessions_attended,
+            "present": present_count,
+            "absent": absent_count,
+            "attendance_rate": attendance_rate,
+            "status": "active" if sessions_attended > 0 else "inactive"
+        })
+    
+    # Ordenar por attendance_rate
+    users_stats_sorted = sorted(users_stats, key=lambda x: x['attendance_rate'], reverse=True)
+    
+    # Top 5 asistencia
+    top_attendance = users_stats_sorted[:5]
+    
+    # Baja asistencia (menos de 60%)
+    low_attendance = [u for u in users_stats_sorted if u['attendance_rate'] < 60 and u['sessions_attended'] > 0]
+    
+    # Calcular promedio general
+    active_users = len([u for u in users_stats if u['sessions_attended'] > 0])
+    average_rate = round(total_attendance_sum / len(users_stats), 2) if users_stats else 0
+    
+    # Stats generales
+    stats = {
+        "total_sessions": total_sessions,
+        "average_attendance_rate": average_rate,
+        "total_users": len(enrolled_users),
+        "active_users": active_users,
+        "inactive_users": len(enrolled_users) - active_users
+    }
+    
+    return jsonify({
+        "workshop": {
+            "id": workshop.id,
+            "name": workshop.name,
+            "css_name": workshop.css.name if workshop.css else None,
+            "professional_name": f"{workshop.professional.name} {workshop.professional.last_name}" if workshop.professional else None,
+            "max_capacity": workshop.max_capacity,
+            "current_capacity": workshop.current_capacity,
+            "start_date": workshop.start_date.strftime('%Y-%m-%d') if workshop.start_date else None,
+            "status": workshop.status.value if workshop.status else None
+        },
+        "stats": stats,
+        "users": users_stats_sorted,
+        "top_attendance": top_attendance,
+        "low_attendance": low_attendance
+    }), 200
+
+
+# ============================================
+# LISTAR TALLERES PARA REPORTES
+# ============================================
+
+@attendance_bp.route("/reports/workshops", methods=["GET"])
+@requires_staff_access
+def get_workshops_for_reports():
+    """
+    Obtener lista de talleres disponibles para generar reportes
+    (Solo talleres con al menos una sesión completada)
+    """
+    user_id = int(get_jwt_identity())
+    user = SystemUser.query.get(user_id)
+    
+    # Admin ve todos, Coordinator solo los de su CSS
+    if user.rol == UserRole.ADMINISTRATOR:
+        workshops = Workshop.query.all()
+    elif user.rol == UserRole.COORDINATOR:
+        workshops = Workshop.query.filter_by(css_id=user.css_id).all()
+    else:
+        workshops = []
+    
+    # Filtrar solo talleres con sesiones completadas
+    workshops_with_sessions = []
+    for workshop in workshops:
+        completed_sessions = Session.query.filter_by(
+            workshop_id=workshop.id,
+            status='completed'
+        ).count()
+        
+        if completed_sessions > 0:
+            workshops_with_sessions.append({
+                "id": workshop.id,
+                "name": workshop.name,
+                "css_name": workshop.css.name if workshop.css else None,
+                "completed_sessions": completed_sessions,
+                "status": workshop.status.value if workshop.status else None
+            })
+    
+    return jsonify({
+        "workshops": workshops_with_sessions,
+        "total": len(workshops_with_sessions)
+    }), 200

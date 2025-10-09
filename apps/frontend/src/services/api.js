@@ -497,6 +497,26 @@ async getMyWorkshopsAttendance() {
   });
 }
 
+
+/**
+ * Obtener talleres disponibles para reportes
+ */
+async getWorkshopsForReports() {
+  return this.request('/attendance/reports/workshops', {
+    method: 'GET'
+  });
+}
+
+/**
+ * Obtener reporte detallado de un taller
+ */
+async getWorkshopDetailedReport(workshopId) {
+  return this.request(`/attendance/reports/workshop/${workshopId}`, {
+    method: 'GET'
+  });
+}
+
+
 }
 
 

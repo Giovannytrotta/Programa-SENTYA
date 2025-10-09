@@ -16,6 +16,7 @@ import NotFoundPage from './pages/NotFoundPage';
 import { useEffect } from 'react';
 import DashboardRouter from './components/DashboardRouter/DashBoardRouter';
 import AttendanceView from './components/AttendanceView/AttendanceView';
+import ReportsView from './components/ReportsView/ReportsView';
 
 // 🆕 Componente global para inicialización de auth
 const AuthProvider = ({ children }) => {
@@ -191,6 +192,19 @@ export const router = createBrowserRouter([
       <ProtectedRoute>
         <LayoutWrapper>
           <AttendanceView />
+        </LayoutWrapper>
+      </ProtectedRoute>
+    </RouteWrapper>
+  )
+},
+
+{
+  path: "/reports",
+  element: (
+    <RouteWrapper>
+      <ProtectedRoute>
+        <LayoutWrapper>
+          <ReportsView />
         </LayoutWrapper>
       </ProtectedRoute>
     </RouteWrapper>
