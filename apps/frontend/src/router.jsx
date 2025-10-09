@@ -15,6 +15,7 @@ import LoadingPage from './pages/LoadingPage';
 import NotFoundPage from './pages/NotFoundPage';
 import { useEffect } from 'react';
 import DashboardRouter from './components/DashboardRouter/DashBoardRouter';
+import AttendanceView from './components/AttendanceView/AttendanceView';
 
 // 🆕 Componente global para inicialización de auth
 const AuthProvider = ({ children }) => {
@@ -177,6 +178,19 @@ export const router = createBrowserRouter([
       <ProtectedRoute>
         <LayoutWrapper>
           <MyWorkshopsView/>
+        </LayoutWrapper>
+      </ProtectedRoute>
+    </RouteWrapper>
+  )
+},
+
+{
+  path: "/attendance",
+  element: (
+    <RouteWrapper>
+      <ProtectedRoute>
+        <LayoutWrapper>
+          <AttendanceView />
         </LayoutWrapper>
       </ProtectedRoute>
     </RouteWrapper>

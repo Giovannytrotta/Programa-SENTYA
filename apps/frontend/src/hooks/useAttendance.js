@@ -120,6 +120,34 @@ export const useAttendance = () => {
     }
   }, [showNotification]);
 
+
+
+  // OBTENER MIS ASISTENCIAS (PROFESIONALES)
+const fetchMyWorkshopsAttendance = useCallback(async () => {
+  setLoading(true);
+  setError(null);
+  
+  try {
+    const response = await apiService.getMyWorkshopsAttendance();
+    
+    if (response) {
+      setAttendance(response.sessions_with_attendance || []);
+      return response;
+    }
+    
+    throw new Error('Respuesta inválida del servidor');
+  } catch (err) {
+    const errorMessage = err instanceof ApiError ? 
+      err.message : MESSAGES.ERROR.FETCH_ATTENDANCE;
+    
+    setError(errorMessage);
+    showNotification(errorMessage, 'error');
+    throw err;
+  } finally {
+    setLoading(false);
+  }
+}, [showNotification]);
+
   return {
     // Estado
     attendance,
@@ -130,6 +158,7 @@ export const useAttendance = () => {
     takeAttendance,
     fetchSessionAttendance,
     updateAttendance,
+    fetchMyWorkshopsAttendance,
     
     // Utilidades
     clearError: () => setError(null),

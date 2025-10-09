@@ -338,3 +338,98 @@ def get_workshop_attendance_report(workshop_id):
         "total_students": len(enrolled_users),
         "students": user_reports
     }), 200
+
+# ============================================
+# MIS ASISTENCIAS (PROFESIONALES)
+# ============================================
+
+@attendance_bp.route("/my-workshops", methods=["GET"])
+@requires_professional_access
+def get_my_workshops_attendance():
+    """
+    Ver TODAS las asistencias de los talleres del profesional
+    Stats + Historial de todas las sesiones con asistencia registrada
+    """
+    user_id = int(get_jwt_identity())
+    user = SystemUser.query.get(user_id)
+    
+    if not user:
+        raise NotFoundError("Usuario no encontrado")
+    
+    # Obtener talleres del profesional
+    if user.rol == UserRole.PROFESSIONAL:
+        workshops = Workshop.query.filter_by(professional_id=user_id).all()
+    else:
+        # Admin/Coordinator ven todos
+        workshops = Workshop.query.all()
+    
+    workshop_ids = [w.id for w in workshops]
+    
+    if not workshop_ids:
+        return jsonify({
+            "message": "No tienes talleres asignados",
+            "workshops": [],
+            "sessions_with_attendance": [],
+            "stats": {
+                "total_sessions": 0,
+                "total_workshops": 0,
+                "total_attendances": 0,
+                "average_attendance_rate": 0
+            }
+        }), 200
+    
+    # Obtener todas las sesiones con asistencia registrada
+    sessions_with_attendance = Session.query.filter(
+        Session.workshop_id.in_(workshop_ids),
+        Session.status == 'completed'
+    ).all()
+    
+    # Construir respuesta con detalles
+    sessions_data = []
+    total_present = 0
+    total_records = 0
+    
+    for session in sessions_with_attendance:
+        # Obtener asistencias de esta sesión
+        attendances = Attendance.query.filter_by(session_id=session.id).all()
+        
+        if attendances:
+            present_count = sum(1 for att in attendances if att.present)
+            absent_count = len(attendances) - present_count
+            attendance_rate = round((present_count / len(attendances) * 100), 2) if attendances else 0
+            
+            total_present += present_count
+            total_records += len(attendances)
+            
+            sessions_data.append({
+                "session_id": session.id,
+                "workshop_id": session.workshop_id,
+                "workshop_name": session.workshop.name,
+                "date": session.date.strftime('%Y-%m-%d'),
+                "start_time": session.start_time.strftime('%H:%M'),
+                "end_time": session.end_time.strftime('%H:%M'),
+                "topic": session.topic,
+                "total_students": len(attendances),
+                "present": present_count,
+                "absent": absent_count,
+                "attendance_rate": attendance_rate,
+                "recorded_at": attendances[0].recorded_at.isoformat() if attendances else None
+            })
+    
+    # Calcular estadísticas globales
+    average_rate = round((total_present / total_records * 100), 2) if total_records > 0 else 0
+    
+    stats = {
+        "total_sessions": len(sessions_data),
+        "total_workshops": len(workshops),
+        "total_attendances": total_records,
+        "total_present": total_present,
+        "total_absent": total_records - total_present,
+        "average_attendance_rate": average_rate
+    }
+    
+    return jsonify({
+        "workshops": [{"id": w.id, "name": w.name} for w in workshops],
+        "sessions_with_attendance": sessions_data,
+        "stats": stats
+    }), 200

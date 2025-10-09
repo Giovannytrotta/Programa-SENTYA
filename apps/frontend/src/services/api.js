@@ -488,6 +488,15 @@ async getWorkshopAttendanceReport(workshopId) {
 }
 
 
+/**
+ * Obtener mis asistencias (profesionales)
+ */
+async getMyWorkshopsAttendance() {
+  return this.request('/attendance/my-workshops', {
+    method: 'GET'
+  });
+}
+
 }
 
 
