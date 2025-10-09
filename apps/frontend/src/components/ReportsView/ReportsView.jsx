@@ -13,10 +13,11 @@ import { apiService } from '../../services/api';
 import useGlobalReducer from '../../store/useGlobalReducer';
 import { ACTION_TYPES } from '../../store';
 import './ReportsView.css';
+import * as XLSX from 'xlsx';
 
 const ReportsView = () => {
   const { dispatch } = useGlobalReducer();
-  
+
   const [workshops, setWorkshops] = useState([]);
   const [selectedWorkshop, setSelectedWorkshop] = useState(null);
   const [reportData, setReportData] = useState(null);
@@ -62,6 +63,115 @@ const ReportsView = () => {
       }
     });
   };
+
+  const handleExportExcel = () => {
+  if (!reportData) {
+    showNotification('No hay datos para exportar', 'warning');
+    return;
+  }
+
+  try {
+    // Crear workbook
+    const wb = XLSX.utils.book_new();
+
+    // ===== HOJA 1: RESUMEN =====
+    const summaryData = [
+      ['REPORTE DE ASISTENCIA - ' + reportData.workshop.name],
+      [],
+      ['📍 Centro:', reportData.workshop.css_name],
+      ['👨‍🏫 Profesional:', reportData.workshop.professional_name],
+      ['📅 Fecha de Inicio:', reportData.workshop.start_date],
+      ['👥 Capacidad:', `${reportData.workshop.current_capacity}/${reportData.workshop.max_capacity}`],
+      [],
+      ['ESTADÍSTICAS GENERALES'],
+      ['Total Sesiones:', reportData.stats.total_sessions],
+      ['Promedio Asistencia:', reportData.stats.average_attendance_rate + '%'],
+      ['Usuarios Activos:', reportData.stats.active_users],
+      ['Total Inscritos:', reportData.stats.total_users],
+      ['Usuarios Inactivos:', reportData.stats.inactive_users]
+    ];
+
+    const ws1 = XLSX.utils.aoa_to_sheet(summaryData);
+    XLSX.utils.book_append_sheet(wb, ws1, 'Resumen');
+
+    // ===== HOJA 2: TOP ASISTENCIA =====
+    const topData = [
+      ['RANKING - TOP ASISTENCIA'],
+      [],
+      ['Posición', 'Nombre', 'Email', 'Presentes', 'Ausentes', '% Asistencia']
+    ];
+
+    reportData.top_attendance.forEach((user, index) => {
+      topData.push([
+        `#${index + 1}`,
+        user.user_name,
+        user.email,
+        user.present,
+        user.absent,
+        user.attendance_rate + '%'
+      ]);
+    });
+
+    const ws2 = XLSX.utils.aoa_to_sheet(topData);
+    XLSX.utils.book_append_sheet(wb, ws2, 'Top Asistencia');
+
+    // ===== HOJA 3: BAJA ASISTENCIA =====
+    const lowData = [
+      ['ALERTA - BAJA ASISTENCIA (< 60%)'],
+      [],
+      ['Usuario', 'Email', 'Presentes', 'Ausentes', '% Asistencia']
+    ];
+
+    if (reportData.low_attendance.length === 0) {
+      lowData.push(['✅ No hay usuarios con baja asistencia']);
+    } else {
+      reportData.low_attendance.forEach((user) => {
+        lowData.push([
+          user.user_name,
+          user.email,
+          user.present,
+          user.absent,
+          user.attendance_rate + '%'
+        ]);
+      });
+    }
+
+    const ws3 = XLSX.utils.aoa_to_sheet(lowData);
+    XLSX.utils.book_append_sheet(wb, ws3, 'Baja Asistencia');
+
+    // ===== HOJA 4: DETALLE COMPLETO =====
+    const detailData = [
+      ['DETALLE COMPLETO DE USUARIOS'],
+      [],
+      ['Usuario', 'Email', 'Sesiones', 'Presentes', 'Ausentes', '% Asistencia', 'Estado']
+    ];
+
+    reportData.users.forEach((user) => {
+      detailData.push([
+        user.user_name,
+        user.email,
+        user.sessions_attended,
+        user.present,
+        user.absent,
+        user.attendance_rate + '%',
+        user.status === 'active' ? 'Activo' : 'Inactivo'
+      ]);
+    });
+
+    const ws4 = XLSX.utils.aoa_to_sheet(detailData);
+    XLSX.utils.book_append_sheet(wb, ws4, 'Detalle Usuarios');
+
+    // Generar archivo
+    const fileName = `Reporte_${reportData.workshop.name.replace(/\s+/g, '_')}_${new Date().toISOString().split('T')[0]}.xlsx`;
+    XLSX.writeFile(wb, fileName);
+
+    showNotification('✅ Reporte exportado exitosamente', 'success');
+  } catch (error) {
+    console.error('Error exporting:', error);
+    showNotification('❌ Error al exportar reporte', 'error');
+  }
+};
+
 
   const filteredUsers = reportData?.users?.filter(user =>
     user.user_name.toLowerCase().includes(searchQuery.toLowerCase())
@@ -235,9 +345,9 @@ const ReportsView = () => {
           <div className="users-table-container">
             <div className="table-header">
               <h3>Detalle por Usuario</h3>
-              <button className="btn-export" disabled>
+              <button className="btn-export" onClick={handleExportExcel}>
                 <Download size={16} />
-                Exportar (Próximamente)
+                Exportar a Excel
               </button>
             </div>
 
@@ -266,11 +376,10 @@ const ReportsView = () => {
                       <span className="badge absent">{user.absent}</span>
                     </td>
                     <td className="center">
-                      <span 
-                        className={`rate-badge ${
-                          user.attendance_rate >= 80 ? 'high' :
-                          user.attendance_rate >= 60 ? 'medium' : 'low'
-                        }`}
+                      <span
+                        className={`rate-badge ${user.attendance_rate >= 80 ? 'high' :
+                            user.attendance_rate >= 60 ? 'medium' : 'low'
+                          }`}
                       >
                         {user.attendance_rate}%
                       </span>
