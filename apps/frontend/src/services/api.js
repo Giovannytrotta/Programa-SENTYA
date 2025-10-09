@@ -516,6 +516,14 @@ async getWorkshopDetailedReport(workshopId) {
   });
 }
 
+/**
+ * Obtener mi calendario/horarios (profesionales)
+ */
+async getMySchedule() {
+  return this.request('/sessions/schedule', {
+    method: 'GET'
+  });
+}
 
 }
 

@@ -446,3 +446,99 @@ def get_my_enrolled_sessions():
     return jsonify({
         "sessions": [s.serialize() for s in sessions]
     }), 200
+
+# ============================================
+# CALENDARIO/HORARIOS (PROFESIONALES)
+# ============================================
+
+@session_bp.route("/schedule", methods=["GET"])
+@requires_professional_access
+def get_my_schedule():
+    """
+    Obtener calendario/horarios del profesional
+    Devuelve todas las sesiones (pasadas y futuras) de sus talleres
+    """
+    user_id = int(get_jwt_identity())
+    user = SystemUser.query.get(user_id)
+    
+    if not user:
+        raise NotFoundError("Usuario no encontrado")
+    
+    # Obtener talleres del profesional
+    if user.rol == UserRole.PROFESSIONAL:
+        workshops = Workshop.query.filter_by(professional_id=user_id).all()
+    else:
+        # Admin/Coordinator ven todos
+        workshops = Workshop.query.all()
+    
+    workshop_ids = [w.id for w in workshops]
+    
+    if not workshop_ids:
+        return jsonify({
+            "message": "No tienes talleres asignados",
+            "workshops": [],
+            "sessions": []
+        }), 200
+    
+    # Obtener TODAS las sesiones (pasadas y futuras)
+    sessions = Session.query.filter(
+        Session.workshop_id.in_(workshop_ids)
+    ).order_by(Session.date.asc(), Session.start_time.asc()).all()
+    
+    # Separar sesiones en categorías
+    from datetime import date as date_class
+    today = date_class.today()
+    
+    upcoming_sessions = []
+    past_sessions = []
+    today_sessions = []
+    
+    for session in sessions:
+        session_data = {
+            "id": session.id,
+            "workshop_id": session.workshop_id,
+            "workshop_name": session.workshop.name,
+            "workshop_color": session.workshop.thematic_area.color if session.workshop.thematic_area else '#E9531A',
+            "date": session.date.strftime('%Y-%m-%d'),
+            "day_of_week": session.date.strftime('%A'),  # Monday, Tuesday, etc.
+            "start_time": session.start_time.strftime('%H:%M'),
+            "end_time": session.end_time.strftime('%H:%M'),
+            "topic": session.topic,
+            "status": session.status,
+            "observations": session.observations,
+            "location": session.workshop.location
+        }
+        
+        if session.date == today:
+            today_sessions.append(session_data)
+        elif session.date > today:
+            upcoming_sessions.append(session_data)
+        else:
+            past_sessions.append(session_data)
+    
+    return jsonify({
+        "workshops": [
+            {
+                "id": w.id,
+                "name": w.name,
+                "color": w.thematic_area.color if w.thematic_area else '#E9531A',
+                "week_days": w.week_days,
+                "start_time": w.start_time.strftime('%H:%M'),
+                "end_time": w.end_time.strftime('%H:%M')
+            } 
+            for w in workshops
+        ],
+        "sessions": {
+            "today": today_sessions,
+            "upcoming": upcoming_sessions,
+            "past": past_sessions,
+            "all": [s.serialize() for s in sessions]
+        },
+        "stats": {
+            "total_sessions": len(sessions),
+            "completed": len([s for s in sessions if s.status == 'completed']),
+            "scheduled": len([s for s in sessions if s.status == 'scheduled']),
+            "today": len(today_sessions),
+            "upcoming": len(upcoming_sessions)
+        }
+    }), 200

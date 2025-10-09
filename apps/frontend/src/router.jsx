@@ -17,6 +17,7 @@ import { useEffect } from 'react';
 import DashboardRouter from './components/DashboardRouter/DashBoardRouter';
 import AttendanceView from './components/AttendanceView/AttendanceView';
 import ReportsView from './components/ReportsView/ReportsView';
+import ScheduleView from './components/ScheduleView/ScheduleView';
 
 // 🆕 Componente global para inicialización de auth
 const AuthProvider = ({ children }) => {
@@ -197,7 +198,18 @@ export const router = createBrowserRouter([
     </RouteWrapper>
   )
 },
-
+{
+  path: "/schedule",
+  element: (
+    <RouteWrapper>
+      <ProtectedRoute>
+        <LayoutWrapper>
+          <ScheduleView />
+        </LayoutWrapper>
+      </ProtectedRoute>
+    </RouteWrapper>
+  )
+},
 {
   path: "/reports",
   element: (
