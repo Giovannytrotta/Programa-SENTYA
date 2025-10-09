@@ -204,7 +204,7 @@ const WorkshopEnrollments = () => {
         <div className="section-header">
           <h2>
             <Users size={20} />
-            Estudiantes Inscritos ({filteredEnrolled.length})
+           Usuarios Inscritos ({filteredEnrolled.length})
           </h2>
         </div>
 
