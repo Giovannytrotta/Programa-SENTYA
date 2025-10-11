@@ -2,6 +2,8 @@
 import React from 'react';
 import { useAuth } from '../../hooks/useAuth';
 import UserDashboard from '../Dashboards/UserDashboard/UserDashboard';
+import ProfessionalDashboard from '../Dashboards/ProfessionalDashboard/ProfessionalDashboard';
+import AdminDashboardPanel from '../Dashboards/AdminDashboard/AdminDashboardPanel';
 
 const DashboardRouter = () => {
   const { user } = useAuth();
@@ -10,33 +12,21 @@ const DashboardRouter = () => {
   // Admin
   if (role === 'administrator') {
     return (
-      <div style={{ padding: '40px', color: 'red', textAlign: 'center' }}>
-        <h1>🔧 Dashboard de Administrador</h1>
-        <p>Rol detectado: {role}</p>
-        <p>CSS ID: {user?.css_id || 'N/A'}</p>
-      </div>
+      <AdminDashboardPanel />
     );
   }
 
   // Coordinador
   if (role === 'coordinator') {
     return (
-      <div style={{ padding: '40px', color: 'red', textAlign: 'center' }}>
-        <h1>📊 Dashboard de Coordinador</h1>
-        <p>Rol detectado: {role}</p>
-        <p>CSS ID: {user?.css_id || 'N/A'}</p>
-      </div>
+      <AdminDashboardPanel />
     );
   }
 
   // Profesional
   if (role === 'professional') {
     return (
-      <div style={{ padding: '40px', color: 'red', textAlign: 'center' }}>
-        <h1>🎨 Dashboard de Profesional</h1>
-        <p>Rol detectado: {role}</p>
-        <p>CSS ID: {user?.css_id || 'N/A'}</p>
-      </div>
+      <ProfessionalDashboard />
     );
   }
 

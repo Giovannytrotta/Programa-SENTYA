@@ -188,7 +188,7 @@ const WorkshopsView = () => {
       </div>
 
       {/* Lista de talleres */}
-      <div className="workshops-grid">
+      <div className="workshops-grid-view">
         {filteredWorkshops.length === 0 ? (
           <div className="no-workshops">
             <Calendar size={48} />
@@ -268,7 +268,7 @@ const WorkshopsView = () => {
                   </button>
 
                   {/* Dropdown para más opciones */}
-                  <div className="dropdown-wrapper">
+                  <div className="workshops-dropdown-wrapper">
                     <button
                       className="btn-action dropdown"
                       onClick={(e) => {
@@ -281,7 +281,7 @@ const WorkshopsView = () => {
 
                     {openDropdown === workshop.id && (
                       <div
-                        className="dropdown-menu"
+                        className="workshops-dropdown-menu"
                         onClick={(e) => e.stopPropagation()}
                       >
                         <button onClick={() => {

@@ -10,22 +10,23 @@ import {
   Filter
 } from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth';
-import { useWorkshops } from '../../hooks/useWorkshops';
+import { useMyWorkshops } from '../../hooks/useMyWorkshops';
 import './MyWorkshopsView.css';
 import { useMemo } from 'react';
 
 const MyWorkshopsView = () => {
   const navigate = useNavigate();
   const { user, role } = useAuth();
-  const { workshops, loading, fetchWorkshops } = useWorkshops();
-  
+  const { workshops, loading, fetchMyWorkshops } = useMyWorkshops()
   const [openDropdown, setOpenDropdown] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
 
-  useEffect(() => {
-    fetchWorkshops();
-  }, [fetchWorkshops]);
+   useEffect(() => {
+    if (user && role) {
+      fetchMyWorkshops(role, user.id);
+    }
+  }, [role, user, fetchMyWorkshops]);
 
   useEffect(() => {
     const handleClickOutside = () => {
@@ -36,27 +37,9 @@ const MyWorkshopsView = () => {
     return () => document.removeEventListener('click', handleClickOutside);
   }, [openDropdown]);
 
-  // Filtrar solo talleres asignados al profesional actual
-const myWorkshops = useMemo(() => {
-  if (role === 'professional') {
-    return workshops.filter(w => w.professional_id === user.id);
-  }
-  
-  if (role === 'client') {
-    //  Clientes ven talleres donde están inscritos
-    // Por ahora mostramos todos los ACTIVOS de su CSS
-    // Después filtraremos por inscripciones reales cuando carguemos esa data
-    return workshops.filter(w => 
-      w.css_id === user.css_id && 
-      w.status === 'active'
-    );
-  }
-  
-  return [];
-}, [workshops, role, user]);
 
   // Aplicar filtros de búsqueda y status
-  const filteredWorkshops = myWorkshops.filter(workshop => {
+  const filteredWorkshops = workshops.filter(workshop => {
     const matchesSearch = workshop.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       workshop.description?.toLowerCase().includes(searchQuery.toLowerCase());
 

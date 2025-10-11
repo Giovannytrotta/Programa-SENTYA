@@ -332,7 +332,7 @@
 }
 
 /* ============================================
-   SESSION CARD - REDISEÑADA Y LIMPIA 🔥
+   SESSION CARD - REDISEÑADA Y LIMPIA 
    ============================================ */
 .session-card {
   padding: 18px;
@@ -440,6 +440,7 @@
   overflow: hidden;
   text-overflow: ellipsis;
   display: -webkit-box;
+  line-clamp: 2;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
 }
@@ -453,6 +454,7 @@
   overflow: hidden;
   text-overflow: ellipsis;
   display: -webkit-box;
+  line-clamp: 2;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
 }
@@ -477,12 +479,13 @@
   overflow: hidden;
   text-overflow: ellipsis;
   display: -webkit-box;
+  line-clamp: 2;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
 }
 
 /* ============================================
-   MONTH VIEW - CON INDICADORES GRANDES 🎯
+   MONTH VIEW - CON INDICADORES GRANDES 
    ============================================ */
 .month-view {
   background: rgba(255, 255, 255, 0.05);
@@ -514,8 +517,8 @@
 
 .month-day {
   aspect-ratio: 1;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
   border-radius: 12px;
   padding: 12px;
   cursor: pointer;
@@ -526,25 +529,23 @@
 }
 
 .month-day:hover {
-  background: rgba(255, 255, 255, 0.1);
-  border-color: rgba(255, 255, 255, 0.2);
-  transform: scale(1.05);
-}
-
-.month-day-has-sessions {
-  cursor: pointer;
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.25);
+  transform: scale(1.02);
 }
 
 .month-day-has-sessions:hover {
-  background: rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.15);
 }
 
+/* Días de otros meses - MÁS OSCUROS */
 .month-day-other {
   opacity: 0.3;
+  background: rgba(255, 255, 255, 0.02) !important;
 }
 
-.month-day-other:hover {
-  opacity: 0.5;
+.month-day-other .month-day-number {
+  color: rgba(255, 255, 255, 0.25) !important;
 }
 
 .month-day-today {
@@ -556,42 +557,41 @@
 .month-day-number {
   font-size: 1.125rem;
   font-weight: 700;
-  color: white;
+  color: rgba(255, 255, 255, 0.95);
   margin-bottom: 10px;
 }
 
-/* Indicadores de sesiones - MÁS GRANDES Y VISIBLES 🔥 */
+/* Indicadores - VISIBLES */
 .month-day-indicators {
   display: flex;
   flex-wrap: wrap;
-  gap: 6px;
+  gap: 4px;
   margin-top: auto;
   align-items: center;
+  min-height: 14px;
 }
 
 .session-indicator {
-  width: 12px;
-  height: 12px;
+  width: 10px;
+  height: 10px;
   border-radius: 50%;
-  opacity: 1;
   transition: all 0.2s ease;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
-  border: 2px solid rgba(0, 0, 0, 0.2);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
+  border: 1.5px solid rgba(0, 0, 0, 0.5);
+  flex-shrink: 0;
+  cursor: pointer;
 }
 
-.month-day:hover .session-indicator {
-  transform: scale(1.3);
-  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.4);
+.session-indicator:hover {
+  transform: scale(1.4);
 }
 
 .session-indicator-completed {
-  opacity: 0.5;
-  filter: grayscale(0.3);
+  opacity: 0.6;
 }
 
 .session-indicator-cancelled {
-  opacity: 0.4;
-  filter: grayscale(0.6);
+  opacity: 0.5;
 }
 
 .more-indicator {
@@ -689,6 +689,7 @@
   overflow: hidden;
   text-overflow: ellipsis;
   display: -webkit-box;
+  line-clamp: 2;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
 }
@@ -944,6 +945,7 @@
 }
 
 /* Tablets */
+
 @media (max-width: 992px) {
   .schedule-view {
     padding: 20px;
@@ -951,109 +953,17 @@
 
   .schedule-stats {
     grid-template-columns: repeat(2, 1fr);
-  }
-
-  .week-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
-  .month-day {
-    min-height: 70px;
-    padding: 10px;
-  }
-
-  .session-indicator {
-    width: 10px;
-    height: 10px;
-  }
-}
-
-/* Móviles grandes */
-@media (max-width: 768px) {
-  .schedule-view {
-    padding: 16px;
-  }
-
-  .schedule-stats {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 12px;
-  }
-
-  .stat-card {
-    padding: 16px;
-    gap: 12px;
-  }
-
-  .stat-icon {
-    width: 48px;
-    height: 48px;
-  }
-
-  .stat-value {
-    font-size: 1.5rem;
-  }
-
-  .schedule-controls {
-    flex-direction: column;
-    align-items: stretch;
-  }
-
-  .view-toggles {
-    width: 100%;
-    justify-content: space-between;
-  }
-
-  .view-btn span {
-    display: none;
-  }
-
-  .filter-group {
-    max-width: 100%;
-  }
-
-  .btn-today {
-    width: 100%;
-  }
-
-  .week-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .calendar-navigation {
-    gap: 12px;
-  }
-
-  .current-period {
-    font-size: 1.125rem;
-  }
-
-  .session-list-item {
-    flex-direction: column;
-    padding: 16px;
     gap: 16px;
   }
 
-  .list-date-badge {
-    width: 60px;
-    height: 60px;
-  }
-
-  .list-date-day {
-    font-size: 1.5rem;
-  }
-
-  .list-title {
-    font-size: 1.125rem;
-    white-space: normal;
-  }
-
-  .month-grid {
-    gap: 6px;
+  .week-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
   }
 
   .month-day {
-    min-height: 60px;
-    padding: 8px;
+    min-height: 85px;
+    padding: 10px 8px;
   }
 
   .month-day-number {
@@ -1061,50 +971,42 @@
   }
 
   .session-indicator {
-    width: 10px;
-    height: 10px;
+    width: 9px;
+    height: 9px;
   }
 
-  .modal {
-    margin: 0 16px;
-  }
-
-  .modal-title {
-    font-size: 1.25rem;
+  .month-day-indicators {
+    gap: 3px;
   }
 }
 
-/* Móviles pequeños */
-@media (max-width: 480px) {
+/* Móviles grandes */
+
+
+@media (max-width: 768px) {
   .schedule-view {
+    padding: 14px;
+    max-width: 100vw;
+    overflow-x: hidden;
+  }
+
+  .month-view {
     padding: 12px;
+    overflow-x: hidden;
   }
 
-  .schedule-stats {
-    grid-template-columns: 1fr;
-  }
-
-  .schedule-title {
-    font-size: 1.5rem;
-  }
-
-  .view-btn {
-    font-size: 0.8125rem;
-    padding: 8px 12px;
-  }
-
-  .weekday-label {
-    font-size: 0.75rem;
-    padding: 4px;
+  .month-grid {
+    gap: 5px;
   }
 
   .month-day {
-    min-height: 50px;
-    padding: 6px;
+    min-height: 65px;
+    padding: 6px 5px;
   }
 
   .month-day-number {
     font-size: 0.875rem;
+    margin-bottom: 4px;
   }
 
   .session-indicator {
@@ -1112,13 +1014,235 @@
     height: 8px;
   }
 
+  /* Controls más compactos */
+  .schedule-controls {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .view-toggles,
+  .filter-group,
+  .btn-today {
+    width: 100%;
+  }
+
+  .view-btn {
+    flex: 1;
+    padding: 10px;
+  }
+
+  /* MONTH VIEW - MÁS COMPACTO */
+.month-view {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  padding: 24px;
+  overflow-x: auto; /* ← IMPORTANTE */
+}
+
+.month-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 10px;
+  width: 100%; /* ← IMPORTANTE */
+  min-width: 0; /* ← IMPORTANTE */
+}
+
+  .month-day {
+    min-height: 55px;
+    padding: 6px 5px;
+  }
+
+  .month-day-number {
+    font-size: 0.875rem;
+    margin-bottom: 4px;
+  }
+
+  .session-indicator {
+    width: 8px;
+    height: 8px;
+    border: 1px solid rgba(0, 0, 0, 0.5);
+  }
+
+  .month-day-indicators {
+    gap: 3px;
+    min-height: 12px;
+  }
+
+  .more-indicator {
+    font-size: 0.5625rem;
+    padding: 2px 4px;
+  }
+
+  /* WEEK VIEW */
+  .week-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
   .day-sessions {
-    min-height: 250px;
+    min-height: 180px;
+  }
+
+  /* LIST VIEW */
+  .list-view {
+    padding: 12px;
+  }
+
+  .session-list-item {
+    padding: 14px;
+    gap: 12px;
+  }
+
+  .list-date-badge {
+    width: 52px;
+    height: 52px;
+  }
+
+  .list-date-day {
+    font-size: 1.375rem;
+  }
+}
+
+/* Móviles pequeños */
+
+@media (max-width: 480px) {
+  .schedule-view {
+    padding: 10px;
+    max-width: 100vw;
+    overflow-x: hidden;
+  }
+
+  .schedule-title {
+    font-size: 1.375rem;
+  }
+
+  .schedule-stats {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  .stat-card {
+    padding: 12px;
+  }
+
+  .stat-icon {
+    width: 40px;
+    height: 40px;
+  }
+
+  .stat-value {
+    font-size: 1.25rem;
+  }
+
+  /* MONTH VIEW SUPER COMPACTO */
+  .month-view {
+    padding: 8px;
+  }
+
+  .month-weekdays {
+    margin-bottom: 6px;
+    gap: 2px;
+  }
+
+  .weekday-label {
+    font-size: 0.625rem;
+    padding: 3px 1px;
+  }
+
+  .month-grid {
+    gap: 3px;
+  }
+
+  .month-day {
+    min-height: 55px;
+    padding: 4px 3px;
+    border-radius: 8px;
+  }
+
+  .month-day-number {
+    font-size: 0.75rem
+  }
+
+  .session-indicator {
+    width: 6px;
+    height: 6px;
+    border-width: 1px;
+  }
+
+  .month-day-indicators {
+    gap: 2px;
+    min-height: 10px;
+  }
+
+  .more-indicator {
+    font-size: 0.5rem;
+    padding: 1px 3px;
+  }
+
+  /* WEEK VIEW MOBILE */
+  .day-header {
+    padding: 12px;
+  }
+
+  .day-name {
+    font-size: 0.6875rem;
+  }
+
+  .day-number {
+    font-size: 1.375rem;
+  }
+
+  .day-sessions {
+    min-height: 160px;
+    padding: 8px;
+    gap: 8px;
+  }
+
+  .session-card {
+    padding: 10px;
+  }
+
+  /* LIST VIEW MOBILE */
+  .session-list-item {
+    flex-direction: column;
+    padding: 12px;
+    gap: 10px;
+  }
+
+  .list-date-badge {
+    width: 100%;
+    height: 42px;
+    flex-direction: row;
+    gap: 6px;
+  }
+
+  .list-date-day {
+    font-size: 1.25rem;
+  }
+
+  .list-date-month {
+    font-size: 0.6875rem;
+  }
+
+  .list-title {
+    font-size: 1rem;
   }
 
   .list-meta {
     flex-direction: column;
-    gap: 8px;
+    gap: 6px;
+    font-size: 0.75rem;
+  }
+
+  /* NAVIGATION */
+  .nav-btn {
+    width: 32px;
+    height: 32px;
+  }
+
+  .current-period {
+    font-size: 0.9375rem;
   }
 }
 
