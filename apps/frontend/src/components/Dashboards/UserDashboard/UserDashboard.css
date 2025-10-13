@@ -385,19 +385,68 @@
   }
 }
 
-/* Responsive */
-@media (max-width: 768px) {
+/* ============================================
+   RESPONSIVE 
+   ============================================ */
+
+/* Tablets */
+@media (max-width: 992px) {
+  .dashboard-header h1 {
+    font-size: 1.75rem;
+  }
+
   .stats-grid {
     grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
   }
 
   .workshops-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 16px;
   }
 
-  .session-item {
-    flex-direction: column;
-    align-items: flex-start;
+  .content-section {
+    padding: 24px;
+  }
+}
+
+/* Móviles grandes */
+@media (max-width: 768px) {
+  .dashboard-header h1 {
+    font-size: 1.5rem;
+  }
+
+  .dashboard-header p {
+    font-size: 0.875rem;
+  }
+
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    margin-bottom: 32px;
+  }
+
+  .stat-card {
+    padding: 16px;
+    gap: 12px;
+  }
+
+  .stat-icon {
+    width: 48px;
+    height: 48px;
+  }
+
+  .stat-number {
+    font-size: 1.5rem;
+  }
+
+  .stat-content h3 {
+    font-size: 0.8125rem;
+  }
+
+  .content-section {
+    padding: 20px;
+    margin-bottom: 20px;
   }
 
   .section-header {
@@ -406,22 +455,155 @@
     gap: 12px;
   }
 
+  .section-header h2 {
+    font-size: 1.25rem;
+  }
+
   .btn-view-all {
     width: 100%;
     justify-content: center;
   }
-}
 
-@media (max-width: 480px) {
-  .stats-grid {
+  .workshops-grid {
     grid-template-columns: 1fr;
+    gap: 16px;
   }
 
-  .dashboard-header h1 {
+  .session-item {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 16px;
+    gap: 12px;
+  }
+
+  .session-date {
+    width: 100%;
+    min-width: auto;
+    flex-direction: row;
+    justify-content: center;
+    gap: 8px;
+    padding: 10px;
+  }
+
+  .date-day {
     font-size: 1.5rem;
   }
 
+  .date-month {
+    font-size: 0.8125rem;
+    margin-top: 0;
+  }
+
+  .session-info h3 {
+    font-size: 1rem;
+  }
+
+  .session-meta {
+    flex-direction: column;
+    gap: 8px;
+    font-size: 0.8125rem;
+  }
+}
+
+/* Móviles pequeños */
+@media (max-width: 480px) {
+  .client-dashboard {
+    padding: 0;
+  }
+
+  .dashboard-header {
+    margin-bottom: 24px;
+  }
+
+  .dashboard-header h1 {
+    font-size: 1.375rem;
+  }
+
+  .dashboard-header p {
+    font-size: 0.8125rem;
+  }
+
+  .stats-grid {
+    grid-template-columns: 1fr;
+    gap: 10px;
+    margin-bottom: 24px;
+  }
+
+  .stat-card {
+    padding: 14px;
+  }
+
+  .stat-icon {
+    width: 44px;
+    height: 44px;
+  }
+
+  .stat-number {
+    font-size: 1.375rem;
+  }
+
+  .stat-content h3 {
+    font-size: 0.75rem;
+  }
+
   .content-section {
-    padding: 20px;
+    padding: 16px;
+    border-radius: 12px;
+  }
+
+  .section-header {
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+  }
+
+  .section-header h2 {
+    font-size: 1.125rem;
+  }
+
+  .btn-view-all {
+    font-size: 0.8125rem;
+    padding: 6px 12px;
+  }
+
+  .session-item {
+    padding: 14px;
+    gap: 10px;
+  }
+
+  .session-date {
+    padding: 8px;
+  }
+
+  .session-info h3 {
+    font-size: 0.9375rem;
+  }
+
+  .session-topic {
+    font-size: 0.8125rem;
+  }
+
+  .workshop-card {
+    padding: 16px;
+  }
+
+  .workshop-header h3 {
+    font-size: 1rem;
+  }
+
+  .workshop-description {
+    font-size: 0.8125rem;
+  }
+
+  .empty-state {
+    padding: 40px 16px;
+  }
+
+  .empty-state p {
+    font-size: 0.9375rem;
+  }
+
+  .btn-primary {
+    width: 100%;
+    padding: 10px 20px;
   }
 }

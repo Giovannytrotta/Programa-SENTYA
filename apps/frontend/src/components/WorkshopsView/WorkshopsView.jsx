@@ -31,6 +31,7 @@ const WorkshopsView = () => {
 
   useEffect(() => {
   const handleClickOutside = () => {
+    
     if (openDropdown) setOpenDropdown(null);
   };
   
@@ -196,7 +197,7 @@ const WorkshopsView = () => {
           </div>
         ) : (
           filteredWorkshops.map(workshop => (
-            <div key={workshop.id} className="workshop-card">
+            <div key={workshop.id} className={`workshop-card ${openDropdown === workshop.id ? "card-active" : ""}`}>
               {/* Status badge */}
               <div className={`workshop-status ${getStatusColor(workshop.status)}`}>
                 {getStatusLabel(workshop.status)}

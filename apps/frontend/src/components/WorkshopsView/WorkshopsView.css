@@ -1,5 +1,3 @@
-/* apps/frontend/src/components/Workshops/WorkshopsView.css */
-
 .workshops-view {
   padding: 32px;
   max-width: 1400px;
@@ -56,7 +54,6 @@
   margin-bottom: 32px;
   flex-wrap: wrap;
 }
-
 
 .search-box {
   flex: 1;
@@ -202,6 +199,11 @@
   border-color: rgba(233, 83, 26, 0.3);
 }
 
+.workshop-card.card-active {
+  z-index: 100;
+  position: relative;
+}
+
 .workshop-status {
   position: absolute;
   top: 16px;
@@ -331,6 +333,10 @@
   background: rgba(59, 130, 246, 0.2);
   color: #3b82f6;
   border: 1px solid rgba(59, 130, 246, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
 }
 
 .btn-action.edit:hover {
@@ -344,6 +350,31 @@
 }
 
 .btn-action.view:hover {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.btn-action.delete {
+  background: rgba(239, 68, 68, 0.2);
+  color: #ef4444;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.btn-action.delete:hover {
+  background: rgba(239, 68, 68, 0.3);
+  border-color: rgba(239, 68, 68, 0.5);
+}
+
+.btn-action.dropdown {
+  background: rgba(255, 255, 255, 0.08);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.btn-action.dropdown:hover {
   background: rgba(255, 255, 255, 0.12);
 }
 
@@ -392,90 +423,11 @@
   to { transform: rotate(360deg); }
 }
 
-/* ===== RESPONSIVE ===== */
-
-@media (max-width: 768px) {
-  .workshops-view {
-    padding: 20px;
-  }
-
-  .workshops-header {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
-  .btn-create-workshop {
-    width: 100%;
-    justify-content: center;
-  }
-
-  .workshops-filters {
-    flex-direction: column;
-  }
-
-  .search-box {
-    min-width: 100%;
-  }
-
-  .workshops-grid {
-    grid-template-columns: 1fr;
-  }
-}
-
-/* ===== BOTÓN DE ELIMINAR ===== */
-
-.btn-action.delete {
-  background: rgba(239, 68, 68, 0.2);
-  color: #ef4444;
-  border: 1px solid rgba(239, 68, 68, 0.3);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-}
-
-.btn-action.delete:hover {
-  background: rgba(239, 68, 68, 0.3);
-  border-color: rgba(239, 68, 68, 0.5);
-}
-
-/* ===== AJUSTES A BOTÓN EDITAR ===== */
-
-.btn-action.edit {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-}
-
-/* ===== RESPONSIVE ACTIONS ===== */
-
-@media (max-width: 768px) {
-  .workshop-actions {
-    flex-direction: column;
-  }
-  
-  .btn-action {
-    width: 100%;
-  }
-}
-
-/* ===== DROPDOWN SOLO WORKSHOPS===== */
-
+/* ===== DROPDOWN SOLO WORKSHOPS ===== */
 .workshops-dropdown-wrapper {
   position: relative;
-  z-index: 3000; /* ← AGREGAR */
+  z-index: 3000;
   overflow: visible;
-}
-
-.btn-action.dropdown {
-  background: rgba(255, 255, 255, 0.08);
-  color: white;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-}
-
-.btn-action.dropdown:hover {
-  background: rgba(255, 255, 255, 0.12);
 }
 
 .workshops-dropdown-menu {
@@ -491,7 +443,6 @@
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
   backdrop-filter: blur(10px);
   animation: workshopsSlideDown 0.2s ease-out;
-  
 }
 
 @keyframes workshopsSlideDown {
@@ -527,12 +478,218 @@
   transform: translateX(4px);
 }
 
-/* Responsive */
+/* ============================================
+   RESPONSIVE MEJORADO
+   ============================================ */
+
+/* Tablets grandes */
+@media (max-width: 1200px) {
+  .workshops-grid-view {
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+  }
+}
+
+/* Tablets */
+@media (max-width: 992px) {
+  .workshops-view {
+    padding: 24px;
+  }
+
+  .workshops-header h1 {
+    font-size: 1.75rem;
+  }
+
+  .workshops-stats {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
+
+  .workshops-grid-view {
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+  }
+}
+
+/* Móviles grandes */
 @media (max-width: 768px) {
-  .workshops-dropdown-menu  {
+  .workshops-view {
+    padding: 20px;
+  }
+
+  .workshops-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .header-title h1 {
+    font-size: 1.5rem;
+  }
+
+  .header-title .subtitle {
+    font-size: 0.875rem;
+  }
+
+  .btn-create-workshop {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .workshops-filters {
+    flex-direction: column;
+  }
+
+  .search-box {
+    min-width: 100%;
+  }
+
+  .workshops-stats {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+
+  .stat-card {
+    padding: 16px;
+    gap: 12px;
+  }
+
+  .stat-icon {
+    width: 48px;
+    height: 48px;
+  }
+
+  .stat-value {
+    font-size: 1.5rem;
+  }
+
+  .stat-label {
+    font-size: 0.8125rem;
+  }
+
+  .workshops-grid-view {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .workshop-card {
+    padding: 20px;
+  }
+
+  .workshop-actions {
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .btn-action {
+    width: 100%;
+  }
+
+  .workshops-dropdown-menu {
     right: auto;
     left: 50%;
     transform: translateX(-50%);
     min-width: 160px;
+  }
+}
+
+/* Móviles pequeños */
+@media (max-width: 480px) {
+  .workshops-view {
+    padding: 16px;
+  }
+
+  .workshops-header {
+    margin-bottom: 24px;
+  }
+
+  .header-title h1 {
+    font-size: 1.375rem;
+  }
+
+  .header-title .subtitle {
+    font-size: 0.8125rem;
+  }
+
+  .btn-create-workshop {
+    padding: 10px 20px;
+    font-size: 0.9375rem;
+  }
+
+  .workshops-filters {
+    gap: 10px;
+  }
+
+  .search-box {
+    padding: 10px 14px;
+  }
+
+  .filter-group {
+    padding: 10px 14px;
+  }
+
+  .workshops-stats {
+    grid-template-columns: 1fr;
+    gap: 10px;
+    margin-bottom: 24px;
+  }
+
+  .stat-card {
+    padding: 14px;
+  }
+
+  .stat-icon {
+    width: 44px;
+    height: 44px;
+  }
+
+  .stat-value {
+    font-size: 1.375rem;
+  }
+
+  .stat-label {
+    font-size: 0.75rem;
+  }
+
+  .workshop-card {
+    padding: 16px;
+  }
+
+  .workshop-content {
+    margin-top: 28px;
+  }
+
+  .workshop-name {
+    font-size: 1.125rem;
+  }
+
+  .workshop-description {
+    font-size: 0.8125rem;
+  }
+
+  .workshop-info {
+    gap: 10px;
+  }
+
+  .info-item {
+    font-size: 0.8125rem;
+  }
+
+  .workshop-actions {
+    gap: 8px;
+    margin-top: 16px;
+    padding-top: 16px;
+  }
+
+  .btn-action {
+    padding: 8px;
+    font-size: 0.8125rem;
+  }
+
+  .no-workshops {
+    padding: 60px 16px;
+  }
+
+  .no-workshops p {
+    font-size: 1rem;
   }
 }

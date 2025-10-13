@@ -172,7 +172,7 @@ const SessionsView = () => {
                     </button>
                 )}
 
-                <div className="header-content">
+                <div className="sessions-header-content">
                     <div className="header-title">
                         <h1>
                             {selectedWorkshop

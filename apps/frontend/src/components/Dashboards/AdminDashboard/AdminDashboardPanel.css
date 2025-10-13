@@ -326,6 +326,17 @@
   transform: translateY(-2px);
 }
 
+.action-btn.admin-panel {
+  background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+  color: white;
+  border: 2px solid rgba(139, 92, 246, 0.5);
+}
+
+.action-btn.admin-panel:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(139, 92, 246, 0.4);
+}
+
 /* Empty State */
 .empty-state {
   display: flex;
@@ -382,14 +393,121 @@
   }
 }
 
-/* Responsive */
-@media (max-width: 768px) {
+/* ============================================
+   RESPONSIVE MEJORADO
+   ============================================ */
+
+/* Tablets */
+@media (max-width: 992px) {
+  .dashboard-header h1 {
+    font-size: 1.75rem;
+  }
+
   .stats-grid {
     grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
   }
 
   .status-grid {
     grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
+
+  .content-section {
+    padding: 24px;
+  }
+
+  .action-btn {
+    min-width: 180px;
+  }
+}
+
+/* Móviles grandes */
+@media (max-width: 768px) {
+  .dashboard-header h1 {
+    font-size: 1.5rem;
+  }
+
+  .dashboard-header p {
+    font-size: 0.875rem;
+  }
+
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    margin-bottom: 32px;
+  }
+
+  .stat-card {
+    padding: 16px;
+    gap: 12px;
+  }
+
+  .stat-icon {
+    width: 52px;
+    height: 52px;
+  }
+
+  .stat-number {
+    font-size: 1.75rem;
+  }
+
+  .stat-content h3 {
+    font-size: 0.8125rem;
+  }
+
+  .content-section {
+    padding: 20px;
+    margin-bottom: 20px;
+  }
+
+  .section-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .section-header h2 {
+    font-size: 1.25rem;
+  }
+
+  .btn-view-all {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .status-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+
+  .status-card {
+    padding: 16px;
+  }
+
+  .status-count {
+    font-size: 1.5rem;
+  }
+
+  .activity-item {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 16px;
+  }
+
+  .activity-icon {
+    width: 44px;
+    height: 44px;
+  }
+
+  .activity-content h3 {
+    font-size: 1rem;
+  }
+
+  .activity-meta {
+    flex-direction: column;
+    gap: 8px;
+    font-size: 0.8125rem;
   }
 
   .quick-actions {
@@ -398,29 +516,144 @@
 
   .action-btn {
     min-width: auto;
+    width: 100%;
   }
 }
-.action-btn.admin-panel {
-  background: linear-gradient(135deg, #8b5cf6, #7c3aed);
-  color: white;
-  border: 2px solid rgba(139, 92, 246, 0.5);
-}
 
-.action-btn.admin-panel:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(139, 92, 246, 0.4);
-}
-
+/* Móviles pequeños */
 @media (max-width: 480px) {
+  .admin-dashboard {
+    padding: 0;
+  }
+
+  .dashboard-header {
+    margin-bottom: 24px;
+  }
+
+  .dashboard-header h1 {
+    font-size: 1.375rem;
+  }
+
+  .dashboard-header p {
+    font-size: 0.8125rem;
+  }
+
   .stats-grid {
     grid-template-columns: 1fr;
+    gap: 10px;
+    margin-bottom: 24px;
+  }
+
+  .stat-card {
+    padding: 14px;
+  }
+
+  .stat-icon {
+    width: 48px;
+    height: 48px;
+  }
+
+  .stat-number {
+    font-size: 1.5rem;
+  }
+
+  .stat-content h3 {
+    font-size: 0.75rem;
+  }
+
+  .content-section {
+    padding: 16px;
+    border-radius: 12px;
+  }
+
+  .section-header {
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+  }
+
+  .section-header h2 {
+    font-size: 1.125rem;
+  }
+
+  .btn-view-all {
+    font-size: 0.8125rem;
+    padding: 6px 12px;
   }
 
   .status-grid {
     grid-template-columns: 1fr;
+    gap: 10px;
   }
 
-  .content-section {
-    padding: 20px;
+  .status-card {
+    padding: 14px;
+  }
+
+  .status-indicator {
+    height: 50px;
+  }
+
+  .status-count {
+    font-size: 1.375rem;
+  }
+
+  .activity-item {
+    padding: 14px;
+    gap: 12px;
+  }
+
+  .activity-icon {
+    width: 40px;
+    height: 40px;
+  }
+
+  .activity-content h3 {
+    font-size: 0.9375rem;
+  }
+
+  .empty-state {
+    padding: 40px 16px;
+  }
+
+  .empty-state p {
+    font-size: 0.9375rem;
+  }
+
+  .action-btn {
+    padding: 12px 20px;
+    font-size: 0.9375rem;
+  }
+}
+
+/* ============================================
+   FIX CRÍTICO PARA QUICK ACTIONS EN MOBILE
+   ============================================ */
+@media (max-width: 768px) {
+  .admin-dashboard .quick-actions {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 12px !important;
+  }
+
+  .admin-dashboard .action-btn {
+    flex: none !important;
+    min-width: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .admin-dashboard .quick-actions {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 12px !important;
+  }
+
+  .admin-dashboard .action-btn {
+    flex: none !important;
+    min-width: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
   }
 }
