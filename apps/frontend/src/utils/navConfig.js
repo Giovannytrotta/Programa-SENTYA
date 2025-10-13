@@ -13,7 +13,7 @@ import {
 export const getNavLinks = (role) => {
   const links = {
     administrator: [
-      { path: '/dashboard', icon: Home, label: 'Panel Admin' },
+      { path: '/dashboard', icon: Home, label: 'Inicio' },
       { path: '/users', icon: Users, label: 'Usuarios' },
       { path: '/workshops', icon: BookOpen, label: 'Talleres' }, // ← NUEVO
       { path: '/css', icon: Building2, label: 'Centros' },

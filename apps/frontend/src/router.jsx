@@ -18,6 +18,8 @@ import DashboardRouter from './components/DashboardRouter/DashBoardRouter';
 import AttendanceView from './components/AttendanceView/AttendanceView';
 import ReportsView from './components/ReportsView/ReportsView';
 import ScheduleView from './components/ScheduleView/ScheduleView';
+import UsersView from './components/UsersView/UsersView';
+import CSSView from './components/CSSView/CSSView';
 
 // 🆕 Componente global para inicialización de auth
 const AuthProvider = ({ children }) => {
@@ -217,6 +219,33 @@ export const router = createBrowserRouter([
       <ProtectedRoute>
         <LayoutWrapper>
           <ReportsView />
+        </LayoutWrapper>
+      </ProtectedRoute>
+    </RouteWrapper>
+  )
+},
+
+            //RUTA PARA Users
+  {
+  path: "/users",
+  element: (
+    <RouteWrapper>
+      <ProtectedRoute>
+        <LayoutWrapper>
+          <UsersView />
+        </LayoutWrapper>
+      </ProtectedRoute>
+    </RouteWrapper>
+  )
+},
+            //RUTA PARA CSS
+  {
+  path: "/css",
+  element: (
+    <RouteWrapper>
+      <ProtectedRoute>
+        <LayoutWrapper>
+          <CSSView />
         </LayoutWrapper>
       </ProtectedRoute>
     </RouteWrapper>

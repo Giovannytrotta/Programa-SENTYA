@@ -525,6 +525,14 @@ async getMySchedule() {
   });
 }
 
+// Obtener usuarios de un centro de servicio social 
+
+async getActiveCSSCenters(){
+  return this.request('/css/active', {
+    method: 'GET'
+  });
+}
+
 }
 
 

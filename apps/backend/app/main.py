@@ -41,6 +41,7 @@ def create_app():
     from app.routes.attendance.attendance import attendance_bp
     from app.routes.worshopUser.worshop_user import workshop_users_bp
     from app.routes.thematicArea.thematic_areas import thematic_areas_bp
+    from app.routes.css.css import css_bp
     app.register_blueprint(auth_bp)
     app.register_blueprint(user_bp)
     app.register_blueprint(workshop_bp)
@@ -48,6 +49,7 @@ def create_app():
     app.register_blueprint(attendance_bp)
     app.register_blueprint(workshop_users_bp)
     app.register_blueprint(thematic_areas_bp)
+    app.register_blueprint(css_bp)
     
     # 4) Error handler global
     # Manejador de AppError personalizados (400, 401, 403, 404, 409, 422 de negocio, etc.)
