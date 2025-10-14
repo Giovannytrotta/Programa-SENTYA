@@ -124,7 +124,7 @@
 }
 
 /* ========================================
-   LOGO PREMIUM
+   LOGO 
    ======================================== */
 
 .navbar-logo {
@@ -152,13 +152,9 @@
   color: white;
   position: relative;
   box-shadow: 0 8px 24px rgba(233, 83, 26, 0.4);
-  animation: float 3s ease-in-out infinite;
 }
 
-@keyframes float {
-  0%, 100% { transform: translateY(0px) rotate(0deg); }
-  50% { transform: translateY(-5px) rotate(5deg); }
-}
+
 
 .logo-icon::before {
   content: '';
@@ -239,7 +235,7 @@
 }
 
 /* ========================================
-   NAVIGATION LINKS - ULTRA PREMIUM
+   NAVIGATION LINKS 
    ======================================== */
 
 .navbar-links {
@@ -557,13 +553,9 @@
   inset: -3px;
   border: 2px solid rgba(233, 83, 26, 0.4);
   border-radius: 12px;
-  animation: rotateRing 3s linear infinite;
 }
 
-@keyframes rotateRing {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
-}
+
 
 .user-info {
   display: flex;

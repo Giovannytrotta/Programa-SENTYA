@@ -15,13 +15,13 @@ export const getNavLinks = (role) => {
     administrator: [
       { path: '/dashboard', icon: Home, label: 'Inicio' },
       { path: '/users', icon: Users, label: 'Usuarios' },
-      { path: '/workshops', icon: BookOpen, label: 'Talleres' }, // ← NUEVO
+      { path: '/workshops', icon: BookOpen, label: 'Talleres' }, 
       { path: '/css', icon: Building2, label: 'Centros' },
       { path: '/reports', icon: BarChart3, label: 'Reportes' }
     ],
     coordinator: [
       { path: '/dashboard', icon: Home, label: 'Inicio' },
-      { path: '/workshops', icon: BookOpen, label: 'Talleres' }, // ← NUEVO
+      { path: '/workshops', icon: BookOpen, label: 'Talleres' }, 
       { path: '/users', icon: Users, label: 'Usuarios' },
       { path: '/css', icon: Building2, label: 'Centros' },
       { path: '/reports', icon: BarChart3, label: 'Reportes' }
@@ -39,7 +39,7 @@ export const getNavLinks = (role) => {
     ],
     css_technician: [
       { path: '/dashboard', icon: Home, label: 'Inicio' },
-      { path: '/workshops', icon: BookOpen, label: 'Ver Talleres' }, // ← NUEVO
+      { path: '/workshops', icon: BookOpen, label: 'Ver Talleres' }, 
       { path: '/css', icon: Building2, label: 'Centros' },
       { path: '/reports', icon: BarChart3, label: 'Reportes' }
     ]

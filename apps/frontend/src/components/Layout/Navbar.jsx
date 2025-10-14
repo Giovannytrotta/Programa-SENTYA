@@ -63,22 +63,6 @@ const Navbar = () => {
   return (
     <>
       <nav className={`navbar ${isScrolled ? 'scrolled' : ''}`}>
-        {/* Partículas flotantes */}
-        <div className="navbar-particles">
-          {[...Array(8)].map((_, i) => (
-            <div 
-              key={i}
-              className="particle"
-              style={{
-                left: `${Math.random() * 100}%`,
-                '--duration': `${3 + Math.random() * 4}s`,
-                '--delay': `${Math.random() * 2}s`,
-                '--x': `${(Math.random() - 0.5) * 100}px`,
-                '--y': `${(Math.random() - 0.5) * 100}px`
-              }}
-            />
-          ))}
-        </div>
 
         {/* Gradient Orb que sigue al mouse */}
         {!isScrolled && (
