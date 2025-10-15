@@ -21,7 +21,7 @@ const AttendanceView = () => {
   const [attendanceData, setAttendanceData] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [workshopFilter, setWorkshopFilter] = useState('all');
-  const [dateFilter, setDateFilter] = useState('all'); // all, today, week, month
+  const [dateFilter, setDateFilter] = useState('all');
 
   useEffect(() => {
     loadAttendance();
@@ -36,18 +36,15 @@ const AttendanceView = () => {
     }
   };
 
-  // Filtrar sesiones
   const filteredSessions = useMemo(() => {
     if (!attendanceData?.sessions_with_attendance) return [];
     
     let filtered = attendanceData.sessions_with_attendance;
     
-    // Filtro por taller
     if (workshopFilter !== 'all') {
       filtered = filtered.filter(s => s.workshop_id === parseInt(workshopFilter));
     }
     
-    // Filtro por búsqueda
     if (searchQuery) {
       filtered = filtered.filter(s =>
         s.workshop_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -55,7 +52,6 @@ const AttendanceView = () => {
       );
     }
     
-    // Filtro por fecha
     if (dateFilter !== 'all') {
       const now = new Date();
       filtered = filtered.filter(s => {
@@ -91,6 +87,179 @@ const AttendanceView = () => {
     total_workshops: 0,
     total_attendances: 0,
     average_attendance_rate: 0
+  };
+
+  // 🆕 FUNCIÓN PARA RENDERIZAR CARDS (MÓVIL)
+  const renderMobileCards = () => {
+    if (filteredSessions.length === 0) {
+      return (
+        <div className="no-attendance">
+          <ClipboardCheck size={48} />
+          <p>No se encontraron registros de asistencia</p>
+        </div>
+      );
+    }
+
+    return (
+      <div className="attendance-cards">
+        {filteredSessions.map((session) => (
+          <div key={session.session_id} className="attendance-card">
+            <div className="attendance-card-header">
+              <div className="attendance-card-date">
+                <Calendar size={16} />
+                {new Date(session.date).toLocaleDateString('es-ES', {
+                  day: '2-digit',
+                  month: 'short',
+                  year: 'numeric'
+                })}
+              </div>
+              <span 
+                className={`rate-badge ${
+                  session.attendance_rate >= 80 ? 'high' :
+                  session.attendance_rate >= 60 ? 'medium' : 'low'
+                }`}
+              >
+                {session.attendance_rate}%
+              </span>
+            </div>
+
+            <div className="attendance-card-workshop">
+              {session.workshop_name}
+            </div>
+
+            {session.topic && (
+              <div className="attendance-card-topic">
+                {session.topic}
+              </div>
+            )}
+
+            <div className="attendance-card-time">
+              {session.start_time} - {session.end_time}
+            </div>
+
+            <div className="attendance-card-stats">
+              <div className="attendance-card-stat">
+                <span className="attendance-card-stat-label">Total</span>
+                <span className="badge total">{session.total_students}</span>
+              </div>
+
+              <div className="attendance-card-stat">
+                <span className="attendance-card-stat-label">Presentes</span>
+                <span className="badge present">
+                  <CheckCircle size={14} />
+                  {session.present}
+                </span>
+              </div>
+
+              <div className="attendance-card-stat">
+                <span className="attendance-card-stat-label">Ausentes</span>
+                <span className="badge absent">
+                  <XCircle size={14} />
+                  {session.absent}
+                </span>
+              </div>
+            </div>
+
+            <div className="attendance-card-footer">
+              <button
+                className="btn-view"
+                onClick={() => navigate(`/workshops/${session.workshop_id}/sessions`)}
+                title="Ver sesiones del taller"
+              >
+                <Eye size={16} />
+                Ver Taller
+              </button>
+            </div>
+          </div>
+        ))}
+      </div>
+    );
+  };
+
+  // 🆕 FUNCIÓN PARA RENDERIZAR TABLA (DESKTOP/TABLET)
+  const renderDesktopTable = () => {
+    if (filteredSessions.length === 0) {
+      return (
+        <div className="no-attendance">
+          <ClipboardCheck size={48} />
+          <p>No se encontraron registros de asistencia</p>
+        </div>
+      );
+    }
+
+    return (
+      <table className="attendance-table">
+        <thead>
+          <tr>
+            <th>Fecha</th>
+            <th>Taller</th>
+            <th>Tema</th>
+            <th>Horario</th>
+            <th className="center">Total</th>
+            <th className="center">Presentes</th>
+            <th className="center">Ausentes</th>
+            <th className="center">% Asist.</th>
+            <th className="center">Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          {filteredSessions.map((session) => (
+            <tr key={session.session_id}>
+              <td>
+                <div className="date-cell">
+                  <Calendar size={16} />
+                  {new Date(session.date).toLocaleDateString('es-ES', {
+                    day: '2-digit',
+                    month: 'short',
+                    year: 'numeric'
+                  })}
+                </div>
+              </td>
+              <td className="workshop-name">{session.workshop_name}</td>
+              <td className="topic">{session.topic || '-'}</td>
+              <td className="time">
+                {session.start_time} - {session.end_time}
+              </td>
+              <td className="center">
+                <span className="badge total">{session.total_students}</span>
+              </td>
+              <td className="center">
+                <span className="badge present">
+                  <CheckCircle size={14} />
+                  {session.present}
+                </span>
+              </td>
+              <td className="center">
+                <span className="badge absent">
+                  <XCircle size={14} />
+                  {session.absent}
+                </span>
+              </td>
+              <td className="center">
+                <span 
+                  className={`rate-badge ${
+                    session.attendance_rate >= 80 ? 'high' :
+                    session.attendance_rate >= 60 ? 'medium' : 'low'
+                  }`}
+                >
+                  {session.attendance_rate}%
+                </span>
+              </td>
+              <td className="center">
+                <button
+                  className="btn-view"
+                  onClick={() => navigate(`/workshops/${session.workshop_id}/sessions`)}
+                  title="Ver sesiones del taller"
+                >
+                  <Eye size={16} />
+                  Ver
+                </button>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    );
   };
 
   return (
@@ -189,86 +358,12 @@ const AttendanceView = () => {
         </div>
       </div>
 
-      {/* Tabla de Asistencias */}
+      {/* 🆕 CARDS PARA MÓVIL (se muestran en <768px) */}
+      {renderMobileCards()}
+
+      {/* 🆕 TABLA PARA DESKTOP (se oculta en <768px) */}
       <div className="attendance-table-container">
-        {filteredSessions.length === 0 ? (
-          <div className="no-attendance">
-            <ClipboardCheck size={48} />
-            <p>No se encontraron registros de asistencia</p>
-          </div>
-        ) : (
-          <table className="attendance-table">
-            <thead>
-              <tr>
-                <th>Fecha</th>
-                <th>Taller</th>
-                <th>Tema</th>
-                <th>Horario</th>
-                <th className="center">Total</th>
-                <th className="center">Presentes</th>
-                <th className="center">Ausentes</th>
-                <th className="center">% Asist.</th>
-                <th className="center">Acciones</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filteredSessions.map((session) => (
-                <tr key={session.session_id}>
-                  <td>
-                    <div className="date-cell">
-                      <Calendar size={16} />
-                      {new Date(session.date).toLocaleDateString('es-ES', {
-                        day: '2-digit',
-                        month: 'short',
-                        year: 'numeric'
-                      })}
-                    </div>
-                  </td>
-                  <td className="workshop-name">{session.workshop_name}</td>
-                  <td className="topic">{session.topic || '-'}</td>
-                  <td className="time">
-                    {session.start_time} - {session.end_time}
-                  </td>
-                  <td className="center">
-                    <span className="badge total">{session.total_students}</span>
-                  </td>
-                  <td className="center">
-                    <span className="badge present">
-                      <CheckCircle size={14} />
-                      {session.present}
-                    </span>
-                  </td>
-                  <td className="center">
-                    <span className="badge absent">
-                      <XCircle size={14} />
-                      {session.absent}
-                    </span>
-                  </td>
-                  <td className="center">
-                    <span 
-                      className={`rate-badge ${
-                        session.attendance_rate >= 80 ? 'high' :
-                        session.attendance_rate >= 60 ? 'medium' : 'low'
-                      }`}
-                    >
-                      {session.attendance_rate}%
-                    </span>
-                  </td>
-                  <td className="center">
-                    <button
-                      className="btn-view"
-                      onClick={() => navigate(`/workshops/${session.workshop_id}/sessions`)}
-                      title="Ver sesiones del taller"
-                    >
-                      <Eye size={16} />
-                      Ver
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        )}
+        {renderDesktopTable()}
       </div>
     </div>
   );

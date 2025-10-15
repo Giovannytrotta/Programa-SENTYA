@@ -54,6 +54,7 @@
   justify-content: center;
   border-radius: 12px;
   color: white;
+  flex-shrink: 0; /* NUEVO: Evita que el icono se comprima */
 }
 
 .stat-icon.sessions {
@@ -75,6 +76,7 @@
 .stat-info {
   display: flex;
   flex-direction: column;
+  min-width: 0; /* NUEVO: Permite que el texto se trunque si es necesario */
 }
 
 .stat-value {
@@ -210,6 +212,7 @@
 
 .date-cell svg {
   color: #E9531A;
+  flex-shrink: 0; /* NUEVO: Evita que el icono se comprima */
 }
 
 .workshop-name {
@@ -320,6 +323,7 @@
 .no-attendance p {
   font-size: 1.125rem;
   margin: 0;
+  text-align: center; /* NUEVO: Centra el texto en móvil */
 }
 
 /* Loading */
@@ -346,25 +350,415 @@
   to { transform: rotate(360deg); }
 }
 
-/* Responsive */
-@media (max-width: 768px) {
+/* ============================================
+   🎨 MOBILE CARDS STYLE (NUEVO)
+   Se muestra SOLO en móvil reemplazando la tabla
+   ============================================ */
+.attendance-cards {
+  display: none; /* Oculto por defecto, se muestra en móvil */
+  flex-direction: column;
+  gap: 16px;
+}
+
+.attendance-card {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 20px;
+  transition: all 0.3s ease;
+}
+
+.attendance-card:active {
+  background: rgba(255, 255, 255, 0.08);
+  transform: scale(0.98);
+}
+
+.attendance-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 16px;
+  gap: 12px;
+}
+
+.attendance-card-date {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.attendance-card-date svg {
+  color: #E9531A;
+  flex-shrink: 0;
+}
+
+.attendance-card-workshop {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: white;
+  margin-bottom: 4px;
+}
+
+.attendance-card-topic {
+  color: rgba(255, 255, 255, 0.6);
+  font-style: italic;
+  font-size: 0.875rem;
+  margin-bottom: 12px;
+}
+
+.attendance-card-time {
+  display: inline-block;
+  background: rgba(255, 255, 255, 0.08);
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-family: 'Courier New', monospace;
+  font-size: 0.8125rem;
+  color: rgba(255, 255, 255, 0.7);
+  margin-bottom: 16px;
+}
+
+.attendance-card-stats {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.attendance-card-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.attendance-card-stat-label {
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.5);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.attendance-card-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 16px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* ============================================
+   📱 RESPONSIVE - MOBILE FIRST
+   ============================================ */
+
+/* 📱 Móviles pequeños (< 480px) */
+@media (max-width: 480px) {
   .attendance-view {
+    padding: 16px;
+  }
+
+  /* Header */
+  .attendance-header {
+    margin-bottom: 24px;
+  }
+
+  .header-title h1 {
+    font-size: 1.5rem;
+  }
+
+  .header-title .subtitle {
+    font-size: 0.875rem;
+  }
+
+  /* Stats Cards - 1 columna en móvil pequeño */
+  .attendance-stats {
+    grid-template-columns: 1fr;
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+
+  .stat-card {
+    padding: 16px;
+    gap: 12px;
+  }
+
+  .stat-icon {
+    width: 48px;
+    height: 48px;
+  }
+
+  .stat-icon svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  .stat-value {
+    font-size: 1.75rem;
+  }
+
+  .stat-label {
+    font-size: 0.8125rem;
+  }
+
+  /* Filtros - Todo apilado */
+  .attendance-filters {
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+
+  .search-box {
+    min-width: 100%;
+    padding: 12px;
+  }
+
+  .filter-group {
+    width: 100%;
+    padding: 12px;
+  }
+
+  .filter-group select {
+    flex: 1;
+    width: 100%;
+  }
+
+  /* OCULTAR tabla y MOSTRAR cards */
+  .attendance-table-container {
+    display: none;
+  }
+
+  .attendance-cards {
+    display: flex;
+  }
+
+  /* Ajustar badges en cards para móvil */
+  .badge {
+    font-size: 0.75rem;
+    padding: 4px 8px;
+  }
+
+  .badge svg {
+    width: 12px;
+    height: 12px;
+  }
+
+  .rate-badge {
+    font-size: 0.875rem;
+    padding: 6px 10px;
+  }
+
+  .btn-view {
+    font-size: 0.75rem;
+    padding: 8px 12px;
+  }
+
+  .btn-view svg {
+    width: 14px;
+    height: 14px;
+  }
+
+  /* No attendance */
+  .no-attendance {
+    padding: 40px 20px;
+  }
+
+  .no-attendance svg {
+    width: 36px;
+    height: 36px;
+  }
+
+  .no-attendance p {
+    font-size: 1rem;
+  }
+
+  /* Loading */
+  .attendance-loading {
+    min-height: 300px;
+  }
+
+  .loading-spinner {
+    width: 40px;
+    height: 40px;
+    border-width: 3px;
+  }
+}
+
+/* 📱 Móviles grandes y Tablets pequeños (481px - 768px) */
+@media (min-width: 481px) and (max-width: 768px) {
+  .attendance-view {
+    padding: 24px;
+  }
+
+  /* Stats Cards - 2 columnas */
+  .attendance-stats {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
+
+  .stat-card {
     padding: 20px;
   }
 
+  /* Filtros */
   .attendance-filters {
     flex-direction: column;
+    gap: 12px;
   }
 
   .search-box {
     min-width: 100%;
   }
 
+  .filter-group {
+    width: 100%;
+  }
+
+  /* OCULTAR tabla y MOSTRAR cards */
+  .attendance-table-container {
+    display: none;
+  }
+
+  .attendance-cards {
+    display: flex;
+  }
+}
+
+/* 💻 Tablets en landscape (769px - 1024px) */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .attendance-view {
+    padding: 28px;
+  }
+
+  /* Stats Cards - 2 columnas */
+  .attendance-stats {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
+
+  /* Filtros - Se mantienen en fila pero más compactos */
+  .attendance-filters {
+    gap: 12px;
+  }
+
+  .search-box {
+    min-width: 250px;
+  }
+
+  /* Tabla con scroll horizontal */
   .attendance-table-container {
     overflow-x: auto;
   }
 
   .attendance-table {
     min-width: 900px;
+  }
+
+  /* Ajustar columnas de la tabla */
+  .attendance-table th,
+  .attendance-table td {
+    padding: 12px;
+    font-size: 0.8125rem;
+  }
+
+  .badge,
+  .rate-badge {
+    font-size: 0.75rem;
+    padding: 5px 10px;
+  }
+}
+
+/* 🖥️ Desktop pequeño (1025px - 1280px) */
+@media (min-width: 1025px) and (max-width: 1280px) {
+  .attendance-stats {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+  }
+
+  .stat-card {
+    padding: 20px;
+  }
+}
+
+/* 📱 Landscape mode para móviles */
+@media (max-height: 500px) and (orientation: landscape) {
+  .attendance-view {
+    padding: 16px;
+  }
+
+  .attendance-header {
+    margin-bottom: 16px;
+  }
+
+  .header-title h1 {
+    font-size: 1.25rem;
+  }
+
+  .header-title .subtitle {
+    font-size: 0.8125rem;
+  }
+
+  .attendance-stats {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+
+  .stat-card {
+    padding: 12px;
+    gap: 8px;
+  }
+
+  .stat-icon {
+    width: 40px;
+    height: 40px;
+  }
+
+  .stat-value {
+    font-size: 1.25rem;
+  }
+
+  .stat-label {
+    font-size: 0.75rem;
+  }
+
+  .attendance-filters {
+    margin-bottom: 16px;
+  }
+}
+
+/* 🎨 Modo oscuro mejorado para pantallas OLED */
+@media (prefers-color-scheme: dark) {
+  .stat-card:hover {
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+  }
+}
+
+/* ♿ Mejoras de accesibilidad */
+@media (prefers-reduced-motion: reduce) {
+  .stat-card,
+  .attendance-card,
+  .btn-view,
+  .attendance-table tbody tr {
+    transition: none;
+  }
+
+  .stat-card:hover,
+  .btn-view:hover {
+    transform: none;
+  }
+
+  .loading-spinner {
+    animation: none;
+    border-top-color: rgba(233, 83, 26, 0.5);
+  }
+}
+
+/* 🔍 Mejora para usuarios con zoom alto */
+@media (min-width: 1px) {
+  .attendance-table th,
+  .attendance-table td {
+    word-wrap: break-word;
+    overflow-wrap: break-word;
   }
 }

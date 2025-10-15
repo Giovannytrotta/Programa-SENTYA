@@ -5,7 +5,7 @@ export const initialStore = () => {
       user: null,
       role: null,
       isLoading: false,
-      isInitializing: true, // 🆕 Nuevo campo para controlar la carga inicial
+      isInitializing: true, 
       error: null,
       requires2FA: false,
       requires2FASetup: false
@@ -25,7 +25,7 @@ export const ACTION_TYPES = {
   LOGIN_REQUIRES_2FA_SETUP: 'LOGIN_REQUIRES_2FA_SETUP',
   LOGOUT: 'LOGOUT',
   SET_USER: 'SET_USER',
-  AUTH_INIT_COMPLETE: 'AUTH_INIT_COMPLETE', // 🆕 Para marcar fin de inicialización
+  AUTH_INIT_COMPLETE: 'AUTH_INIT_COMPLETE', 
   
   // UI actions
   ADD_NOTIFICATION: 'ADD_NOTIFICATION',
