@@ -11,11 +11,11 @@ const UsersView = () => {
     const [searchQuery, setSearchQuery] = useState('');
     const [roleFilter, setRoleFilter] = useState('all');
     const [statusFilter, setStatusFilter] = useState('all');
-    const [cssFilter, setCssFilter] = useState('all'); // 🆕 NUEVO
+    const [cssFilter, setCssFilter] = useState('all');
 
     useEffect(() => {
         fetchUsers();
-        fetchCenters(); // 🆕 Cargar centros para el filtro
+        fetchCenters();
     }, [fetchUsers, fetchCenters]);
 
     const getRoleLabel = (role) => {
@@ -47,8 +47,8 @@ const UsersView = () => {
                 <p>Cargando usuarios...</p>
             </div>
         );
-
     }
+
     const filteredUsers = users.filter(user => {
         const matchesSearch =
             user.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -59,7 +59,7 @@ const UsersView = () => {
         const matchesStatus = statusFilter === 'all' ||
             (statusFilter === 'active' ? user.is_active : !user.is_active);
         const matchesCSS = cssFilter === 'all' ||
-            (user.css_info && user.css_info.id === parseInt(cssFilter)); // 🆕 Filtro CSS
+            (user.css_info && user.css_info.id === parseInt(cssFilter));
 
         return matchesSearch && matchesRole && matchesStatus && matchesCSS;
     });
@@ -107,7 +107,6 @@ const UsersView = () => {
                     </select>
                 </div>
 
-                {/* 🆕 NUEVO FILTRO CSS */}
                 <div className="filter-group">
                     <Building2 size={18} />
                     <select value={cssFilter} onChange={(e) => setCssFilter(e.target.value)}>
@@ -121,8 +120,7 @@ const UsersView = () => {
                 </div>
             </div>
 
-            {/* Stats PARA CARGA DEL HOOKS */}
-
+            {/* Stats */}
             <div className="users-stats">
                 <div className="stat-card">
                     <div className="stat-icon total">
@@ -155,7 +153,7 @@ const UsersView = () => {
                 </div>
             </div>
 
-            {/* Tabla */}
+            {/* Vista de Tabla (Desktop) */}
             <div className="users-table-container">
                 <table className="users-table">
                     <thead>
@@ -233,6 +231,79 @@ const UsersView = () => {
                         )}
                     </tbody>
                 </table>
+            </div>
+
+            {/* Vista de Cards (Móvil) */}
+            <div className="users-cards">
+                {filteredUsers.length === 0 ? (
+                    <div className="no-users">
+                        <Users size={48} />
+                        <p>No se encontraron usuarios</p>
+                    </div>
+                ) : (
+                    filteredUsers.map(user => (
+                        <div key={user.id} className="user-card">
+                            <div className="user-card-header">
+                                <div className="user-card-avatar">
+                                    {user.name?.charAt(0)}{user.last_name?.charAt(0)}
+                                </div>
+                                <div className="user-card-info">
+                                    <div className="user-card-name">
+                                        {user.name} {user.last_name}
+                                    </div>
+                                    <div className="user-card-email">
+                                        <Mail size={14} />
+                                        {user.email}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="user-card-details">
+                                <div className="user-card-row">
+                                    <span className="user-card-label">Rol</span>
+                                    <div className="user-card-value">
+                                        <span className={`role-badge ${getRoleBadgeColor(user.rol)}`}>
+                                            {getRoleLabel(user.rol)}
+                                        </span>
+                                    </div>
+                                </div>
+
+                                <div className="user-card-row">
+                                    <span className="user-card-label">Centro</span>
+                                    <div className="user-card-value">
+                                        {user.css_info ? (
+                                            <div className="css-info">
+                                                <Building2 size={14} />
+                                                {user.css_info.name}
+                                            </div>
+                                        ) : (
+                                            <span className="no-css">Sin asignar</span>
+                                        )}
+                                    </div>
+                                </div>
+
+                                <div className="user-card-row">
+                                    <span className="user-card-label">Estado</span>
+                                    <div className="user-card-value">
+                                        <span className={`status-badge ${user.is_active ? 'active' : 'inactive'}`}>
+                                            {user.is_active ? (
+                                                <>
+                                                    <Check size={14} />
+                                                    Activo
+                                                </>
+                                            ) : (
+                                                <>
+                                                    <X size={14} />
+                                                    Inactivo
+                                                </>
+                                            )}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    ))
+                )}
             </div>
         </div>
     );

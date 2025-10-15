@@ -1,28 +1,30 @@
+/* ============================================
+   🎯 WORKSHOP ENROLLMENTS - RESPONSIVE CLEAN
+   ============================================ */
+
 .enrollments-view {
-  padding: 32px;
+  padding: 2rem;
   max-width: 1200px;
   margin: 0 auto;
 }
 
-/* Header */
-
-.enrollments-header {
-  margin-bottom: 32px;
-}
-
+/* ============================================
+   🔙 BOTÓN VOLVER
+   ============================================ */
 .btn-back {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  padding: 10px 16px;
+  gap: 0.5rem;
+  padding: 0.625rem 1rem;
   background: rgba(255, 255, 255, 0.08);
   border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 10px;
+  border-radius: 0.625rem;
   color: white;
   font-weight: 500;
+  font-size: 0.9375rem;
   cursor: pointer;
   transition: all 0.3s ease;
-  margin-bottom: 20px;
+  margin-bottom: 1.5rem;
 }
 
 .btn-back:hover {
@@ -30,19 +32,33 @@
   transform: translateX(-4px);
 }
 
-.header-content {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 20px;
+.btn-back svg {
+  flex-shrink: 0;
 }
 
-.header-title h1 {
+/* ============================================
+   📋 HEADER
+   ============================================ */
+.enrollments-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+}
+
+.header-info {
+  flex: 1;
+  min-width: 250px;
+}
+
+.header-info h1 {
   font-size: 2rem;
   font-weight: 700;
   color: white;
-  margin: 0 0 8px 0;
+  margin: 0 0 0.5rem 0;
+  line-height: 1.2;
 }
 
 .subtitle {
@@ -52,15 +68,16 @@
 }
 
 .btn-enroll {
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  gap: 8px;
-  padding: 12px 24px;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
   background: linear-gradient(135deg, #E9531A, #dc2626);
   color: white;
   border: none;
-  border-radius: 12px;
+  border-radius: 0.75rem;
   font-weight: 600;
+  font-size: 0.9375rem;
   cursor: pointer;
   transition: all 0.3s ease;
   box-shadow: 0 4px 12px rgba(233, 83, 26, 0.3);
@@ -71,21 +88,27 @@
   box-shadow: 0 6px 20px rgba(233, 83, 26, 0.4);
 }
 
-/* Barra de capacidad */
+.btn-enroll svg {
+  flex-shrink: 0;
+}
 
-.capacity-bar {
+/* ============================================
+   📊 BARRA DE CAPACIDAD
+   ============================================ */
+.capacity-section {
   background: rgba(255, 255, 255, 0.08);
   border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 16px;
-  padding: 24px;
-  margin-bottom: 32px;
+  border-radius: 1rem;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
 }
 
 .capacity-info {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 12px;
+  margin-bottom: 0.75rem;
+  gap: 1rem;
 }
 
 .capacity-label {
@@ -102,11 +125,11 @@
 
 .capacity-progress {
   width: 100%;
-  height: 12px;
+  height: 0.75rem;
   background: rgba(255, 255, 255, 0.1);
   border-radius: 999px;
   overflow: hidden;
-  margin-bottom: 12px;
+  margin-bottom: 0.75rem;
 }
 
 .capacity-fill {
@@ -117,24 +140,53 @@
 
 .capacity-status {
   text-align: center;
+  font-size: 0.9375rem;
+  font-weight: 600;
 }
 
 .status-full {
   color: #ef4444;
-  font-weight: 600;
 }
 
 .status-available {
   color: #10b981;
-  font-weight: 600;
 }
 
-/* Stats */
+/* ============================================
+   📈 STATS CARDS
+   ============================================ */
 .enrollments-stats {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 20px;
-  margin-bottom: 32px;
+  gap: 1.25rem;
+  margin-bottom: 2rem;
+}
+
+.stat-card {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.5rem;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 1rem;
+  transition: all 0.3s ease;
+}
+
+.stat-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+}
+
+.stat-icon {
+  width: 3.5rem;
+  height: 3.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.75rem;
+  color: white;
+  flex-shrink: 0;
 }
 
 .stat-icon.enrolled {
@@ -145,48 +197,71 @@
   background: linear-gradient(135deg, #f59e0b, #d97706);
 }
 
-/* Búsqueda */
-
-.enrollments-search {
+.stat-info {
   display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 12px 16px;
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 12px;
-  color: rgba(255, 255, 255, 0.7);
-  margin-bottom: 32px;
+  flex-direction: column;
 }
 
-.enrollments-search input {
+.stat-value {
+  font-size: 2rem;
+  font-weight: 700;
+  color: white;
+  line-height: 1;
+}
+
+.stat-label {
+  font-size: 0.875rem;
+  color: rgba(255, 255, 255, 0.7);
+  margin-top: 0.25rem;
+}
+
+/* ============================================
+   🔍 BÚSQUEDA
+   ============================================ */
+.search-container {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 0.75rem;
+  margin-bottom: 2rem;
+}
+
+.search-container svg {
+  color: rgba(255, 255, 255, 0.7);
+  flex-shrink: 0;
+}
+
+.search-container input {
   flex: 1;
   background: none;
   border: none;
   color: white;
-  font-size: 14px;
+  font-size: 0.875rem;
   outline: none;
 }
 
-.enrollments-search input::placeholder {
+.search-container input::placeholder {
   color: rgba(255, 255, 255, 0.5);
 }
 
-/* Secciones */
-
-.section-enrolled,
-.section-waitlist {
-  margin-bottom: 40px;
+/* ============================================
+   📋 SECCIONES
+   ============================================ */
+.enrollments-section {
+  margin-bottom: 2.5rem;
 }
 
 .section-header {
-  margin-bottom: 20px;
+  margin-bottom: 1.25rem;
 }
 
 .section-header h2 {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 0.625rem;
   color: white;
   font-size: 1.5rem;
   font-weight: 600;
@@ -195,60 +270,60 @@
 
 .section-header svg {
   color: #E9531A;
+  flex-shrink: 0;
 }
 
-/* Lista de estudiantes */
-
-.students-list {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
+/* ============================================
+   👥 GRID DE ESTUDIANTES
+   ============================================ */
+.students-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1rem;
 }
 
 .student-card {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  padding: 20px;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 1.25rem;
   background: rgba(255, 255, 255, 0.08);
   border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 12px;
+  border-radius: 0.75rem;
   transition: all 0.3s ease;
   position: relative;
 }
 
 .student-card:hover {
   background: rgba(255, 255, 255, 0.10);
-  transform: translateX(4px);
+  transform: translateY(-2px);
 }
 
-.student-card.waitlist {
+.student-card-waitlist {
   border-left: 3px solid #f59e0b;
 }
 
-.waitlist-position {
+.waitlist-badge {
   position: absolute;
-  top: 10px;
-  left: 10px;
+  top: 0.625rem;
+  right: 0.625rem;
   background: rgba(245, 158, 11, 0.2);
   color: #f59e0b;
-  padding: 4px 8px;
-  border-radius: 6px;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.375rem;
   font-size: 0.75rem;
   font-weight: 700;
 }
 
-.student-info {
+.student-main {
   display: flex;
   align-items: center;
-  gap: 16px;
-  flex: 1;
+  gap: 1rem;
 }
 
 .student-avatar {
-  width: 48px;
-  height: 48px;
+  width: 3rem;
+  height: 3rem;
   border-radius: 50%;
   background: linear-gradient(135deg, #E9531A, #dc2626);
   display: flex;
@@ -257,34 +332,47 @@
   color: white;
   font-size: 1.25rem;
   font-weight: 700;
+  flex-shrink: 0;
 }
 
-.student-avatar.waitlist {
+.student-avatar-waitlist {
   background: linear-gradient(135deg, #f59e0b, #d97706);
 }
 
-.student-details h3 {
+.student-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.student-content h3 {
   color: white;
   font-size: 1rem;
   font-weight: 600;
-  margin: 0 0 4px 0;
+  margin: 0 0 0.25rem 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
-.enrollment-date {
+.student-content p {
   color: rgba(255, 255, 255, 0.6);
   font-size: 0.8125rem;
   margin: 0;
 }
 
+/* ============================================
+   🗑️ BOTONES DE ACCIÓN
+   ============================================ */
 .btn-unenroll {
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  gap: 6px;
-  padding: 8px 12px;
+  justify-content: center;
+  gap: 0.375rem;
+  padding: 0.5rem 0.75rem;
   background: rgba(239, 68, 68, 0.2);
   color: #ef4444;
   border: 1px solid rgba(239, 68, 68, 0.3);
-  border-radius: 8px;
+  border-radius: 0.5rem;
   font-weight: 600;
   font-size: 0.8125rem;
   cursor: pointer;
@@ -295,48 +383,62 @@
   background: rgba(239, 68, 68, 0.3);
 }
 
-/* No students */
-.no-students {
+.btn-unenroll svg {
+  flex-shrink: 0;
+}
+
+/* ============================================
+   📭 ESTADO VACÍO
+   ============================================ */
+.empty-state {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 60px 20px;
-  color: rgba(255, 255, 255, 0.5);
+  padding: 4rem 2rem;
   background: rgba(255, 255, 255, 0.03);
-  border-radius: 12px;
+  border-radius: 0.75rem;
+  text-align: center;
 }
 
-.no-students svg {
-  margin-bottom: 16px;
-  opacity: 0.5;
+.empty-state svg {
+  color: rgba(255, 255, 255, 0.3);
+  margin-bottom: 1rem;
 }
 
-.no-students p {
+.empty-state p {
+  color: rgba(255, 255, 255, 0.5);
   font-size: 1rem;
-  margin: 0 0 20px 0;
+  margin: 0 0 1.25rem 0;
 }
 
-.btn-enroll-first {
-  display: flex;
+.btn-enroll-empty {
+  display: inline-flex;
   align-items: center;
-  gap: 8px;
-  padding: 10px 20px;
+  gap: 0.5rem;
+  padding: 0.625rem 1.25rem;
   background: linear-gradient(135deg, #E9531A, #dc2626);
   color: white;
   border: none;
-  border-radius: 10px;
+  border-radius: 0.625rem;
   font-weight: 600;
+  font-size: 0.9375rem;
   cursor: pointer;
   transition: all 0.3s ease;
 }
 
-.btn-enroll-first:hover {
+.btn-enroll-empty:hover {
   transform: translateY(-2px);
   box-shadow: 0 6px 20px rgba(233, 83, 26, 0.4);
 }
 
-/* Loading */
+.btn-enroll-empty svg {
+  flex-shrink: 0;
+}
+
+/* ============================================
+   ⏳ LOADING
+   ============================================ */
 .enrollments-loading {
   display: flex;
   flex-direction: column;
@@ -346,16 +448,47 @@
   color: rgba(255, 255, 255, 0.7);
 }
 
-/* Responsive */
+.loading-spinner {
+  width: 3rem;
+  height: 3rem;
+  border: 4px solid rgba(255, 255, 255, 0.1);
+  border-top-color: #E9531A;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 1rem;
+}
 
-@media (max-width: 768px) {
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ============================================
+   📱 RESPONSIVE - MOBILE FIRST
+   ============================================ */
+
+/* 📱 Móviles pequeños (< 480px) */
+@media (max-width: 480px) {
   .enrollments-view {
-    padding: 20px;
+    padding: 1rem;
   }
 
-  .header-content {
+  .btn-back {
+    width: 100%;
+    justify-content: center;
+    margin-bottom: 1rem;
+  }
+
+  .enrollments-header {
     flex-direction: column;
-    align-items: flex-start;
+    align-items: stretch;
+  }
+
+  .header-info h1 {
+    font-size: 1.5rem;
+  }
+
+  .subtitle {
+    font-size: 0.875rem;
   }
 
   .btn-enroll {
@@ -363,13 +496,205 @@
     justify-content: center;
   }
 
-  .student-card {
+  .capacity-section {
+    padding: 1rem;
+  }
+
+  .capacity-info {
     flex-direction: column;
     align-items: flex-start;
+    gap: 0.5rem;
+  }
+
+  .enrollments-stats {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+
+  .stat-card {
+    padding: 1rem;
+  }
+
+  .stat-icon {
+    width: 3rem;
+    height: 3rem;
+  }
+
+  .stat-value {
+    font-size: 1.75rem;
+  }
+
+  .section-header h2 {
+    font-size: 1.25rem;
+  }
+
+  .students-grid {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+
+  .student-card {
+    padding: 1rem;
   }
 
   .btn-unenroll {
     width: 100%;
+  }
+
+  .empty-state {
+    padding: 2.5rem 1rem;
+  }
+
+  .empty-state svg {
+    width: 2.5rem;
+    height: 2.5rem;
+  }
+
+  .btn-enroll-empty {
+    width: 100%;
     justify-content: center;
+  }
+}
+
+/* 📱 Móviles grandes y Tablets pequeños (481px - 768px) */
+@media (min-width: 481px) and (max-width: 768px) {
+  .enrollments-view {
+    padding: 1.5rem;
+  }
+
+  .enrollments-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .header-info h1 {
+    font-size: 1.75rem;
+  }
+
+  .btn-enroll {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .enrollments-stats {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .students-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* 💻 Tablets (769px - 1024px) */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .students-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* 📱 Landscape mode para móviles */
+@media (max-height: 500px) and (orientation: landscape) {
+  .enrollments-view {
+    padding: 1rem;
+  }
+
+  .btn-back {
+    padding: 0.5rem 0.875rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .enrollments-header {
+    margin-bottom: 1rem;
+  }
+
+  .header-info h1 {
+    font-size: 1.25rem;
+  }
+
+  .capacity-section {
+    padding: 1rem;
+    margin-bottom: 1rem;
+  }
+
+  .enrollments-stats {
+    grid-template-columns: repeat(2, 1fr);
+    margin-bottom: 1rem;
+  }
+
+  .stat-card {
+    padding: 0.75rem;
+  }
+
+  .stat-icon {
+    width: 2.5rem;
+    height: 2.5rem;
+  }
+
+  .stat-value {
+    font-size: 1.5rem;
+  }
+
+  .enrollments-section {
+    margin-bottom: 1.5rem;
+  }
+
+  .section-header h2 {
+    font-size: 1.125rem;
+  }
+}
+
+/* ♿ Mejoras de accesibilidad */
+@media (prefers-reduced-motion: reduce) {
+  .stat-card,
+  .student-card,
+  .btn-back,
+  .btn-enroll,
+  .btn-unenroll,
+  .btn-enroll-empty,
+  .capacity-fill {
+    transition: none;
+  }
+
+  .stat-card:hover,
+  .student-card:hover,
+  .btn-back:hover,
+  .btn-enroll:hover,
+  .btn-enroll-empty:hover {
+    transform: none;
+  }
+
+  .loading-spinner {
+    animation: none;
+    border-top-color: rgba(233, 83, 26, 0.5);
+  }
+}
+
+/* 🎨 Modo oscuro mejorado */
+@media (prefers-color-scheme: dark) {
+  .stat-card:hover {
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+  }
+
+  .student-card:hover {
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+  }
+}
+
+/* 🔍 Alto contraste */
+@media (prefers-contrast: high) {
+  .student-card,
+  .stat-card,
+  .capacity-section,
+  .search-container {
+    border-color: rgba(255, 255, 255, 0.3);
+  }
+
+  .btn-enroll,
+  .btn-enroll-empty {
+    border: 2px solid rgba(255, 255, 255, 0.3);
+  }
+
+  .student-card-waitlist {
+    border-left-width: 4px;
   }
 }

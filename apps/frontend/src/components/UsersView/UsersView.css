@@ -4,6 +4,7 @@
   margin: 0 auto;
 }
 
+/* Header */
 .users-header {
   margin-bottom: 32px;
 }
@@ -21,6 +22,7 @@
   margin: 0;
 }
 
+/* Filtros */
 .users-filters {
   display: flex;
   gap: 16px;
@@ -81,6 +83,7 @@
   color: white;
 }
 
+/* Stats Cards */
 .users-stats {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -112,6 +115,7 @@
   justify-content: center;
   border-radius: 12px;
   color: white;
+  flex-shrink: 0; /* Evita que el icono se comprima */
 }
 
 .stat-icon.total {
@@ -129,6 +133,7 @@
 .stat-info {
   display: flex;
   flex-direction: column;
+  min-width: 0; /* Permite que el texto se trunque si es necesario */
 }
 
 .stat-value {
@@ -144,6 +149,7 @@
   margin-top: 4px;
 }
 
+/* Tabla */
 .users-table-container {
   background: rgba(255, 255, 255, 0.05);
   border: 1px solid rgba(255, 255, 255, 0.1);
@@ -168,6 +174,8 @@
   color: rgba(255, 255, 255, 0.9);
   text-transform: uppercase;
   letter-spacing: 0.05em;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
 .users-table tbody tr {
@@ -183,6 +191,8 @@
   padding: 16px;
   color: rgba(255, 255, 255, 0.8);
   font-size: 0.875rem;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
 .user-info {
@@ -202,6 +212,7 @@
   color: white;
   font-weight: 700;
   font-size: 0.875rem;
+  flex-shrink: 0; /* Evita que el avatar se comprima */
 }
 
 .user-name {
@@ -216,6 +227,10 @@
   color: rgba(255, 255, 255, 0.7);
 }
 
+.user-email svg {
+  flex-shrink: 0; /* Evita que el icono se comprima */
+}
+
 .role-badge {
   display: inline-flex;
   align-items: center;
@@ -223,6 +238,7 @@
   border-radius: 20px;
   font-size: 0.75rem;
   font-weight: 600;
+  white-space: nowrap; /* Evita que el texto se parta */
 }
 
 .role-badge.role-admin {
@@ -262,6 +278,10 @@
   color: rgba(255, 255, 255, 0.7);
 }
 
+.css-info svg {
+  flex-shrink: 0; /* Evita que el icono se comprima */
+}
+
 .no-css {
   color: rgba(255, 255, 255, 0.4);
   font-style: italic;
@@ -275,6 +295,11 @@
   border-radius: 20px;
   font-size: 0.75rem;
   font-weight: 600;
+  white-space: nowrap; /* Evita que el texto se parta */
+}
+
+.status-badge svg {
+  flex-shrink: 0; /* Evita que el icono se comprima */
 }
 
 .status-badge.active {
@@ -289,6 +314,7 @@
   border: 1px solid rgba(239, 68, 68, 0.3);
 }
 
+/* No users */
 .no-users {
   text-align: center;
   padding: 80px 20px;
@@ -305,6 +331,7 @@
   margin: 0;
 }
 
+/* Loading */
 .users-loading {
   display: flex;
   flex-direction: column;
@@ -328,24 +355,543 @@
   to { transform: rotate(360deg); }
 }
 
-@media (max-width: 768px) {
+/* ============================================
+   🎨 MOBILE CARDS STYLE (NUEVO)
+   Se muestra SOLO en móvil reemplazando la tabla
+   ============================================ */
+.users-cards {
+  display: none; /* Oculto por defecto, se muestra en móvil */
+  flex-direction: column;
+  gap: 16px;
+}
+
+.user-card {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 20px;
+  transition: all 0.3s ease;
+}
+
+.user-card:active {
+  background: rgba(255, 255, 255, 0.08);
+  transform: scale(0.98);
+}
+
+.user-card-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.user-card-avatar {
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #E9531A, #dc2626);
+  border-radius: 50%;
+  color: white;
+  font-weight: 700;
+  font-size: 1rem;
+  flex-shrink: 0;
+}
+
+.user-card-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.user-card-name {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: white;
+  margin-bottom: 4px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.user-card-email {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.875rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.user-card-email svg {
+  flex-shrink: 0;
+}
+
+.user-card-details {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.user-card-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+}
+
+.user-card-label {
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.5);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 600;
+}
+
+.user-card-value {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* ============================================
+   📱 RESPONSIVE - MOBILE FIRST
+   ============================================ */
+
+/* 📱 Móviles pequeños (< 480px) */
+@media (max-width: 480px) {
   .users-view {
+    padding: 16px;
+  }
+
+  /* Header */
+  .users-header {
+    margin-bottom: 24px;
+  }
+
+  .header-title h1 {
+    font-size: 1.5rem;
+  }
+
+  .header-title .subtitle {
+    font-size: 0.875rem;
+  }
+
+  /* Stats Cards - 1 columna en móvil pequeño */
+  .users-stats {
+    grid-template-columns: 1fr;
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+
+  .stat-card {
+    padding: 16px;
+    gap: 12px;
+  }
+
+  .stat-icon {
+    width: 48px;
+    height: 48px;
+  }
+
+  .stat-icon svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  .stat-value {
+    font-size: 1.75rem;
+  }
+
+  .stat-label {
+    font-size: 0.8125rem;
+  }
+
+  /* Filtros - Todo apilado */
+  .users-filters {
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+
+  .search-box {
+    min-width: 100%;
+    padding: 12px;
+  }
+
+  .search-box svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  .filter-group {
+    width: 100%;
+    padding: 12px;
+  }
+
+  .filter-group svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  .filter-group select {
+    flex: 1;
+    width: 100%;
+    font-size: 0.875rem;
+    padding: 8px 10px;
+  }
+
+  /* OCULTAR tabla y MOSTRAR cards */
+  .users-table-container {
+    display: none;
+  }
+
+  .users-cards {
+    display: flex;
+  }
+
+  /* Ajustar badges en cards para móvil */
+  .role-badge {
+    font-size: 0.6875rem;
+    padding: 4px 8px;
+  }
+
+  .status-badge {
+    font-size: 0.6875rem;
+    padding: 4px 8px;
+  }
+
+  .status-badge svg {
+    width: 12px;
+    height: 12px;
+  }
+
+  .user-card-row {
+    padding: 10px;
+  }
+
+  .css-info svg {
+    width: 12px;
+    height: 12px;
+  }
+
+  /* No users */
+  .no-users {
+    padding: 40px 20px;
+  }
+
+  .no-users svg {
+    width: 36px;
+    height: 36px;
+  }
+
+  .no-users p {
+    font-size: 0.875rem;
+  }
+
+  /* Loading */
+  .users-loading {
+    min-height: 300px;
+  }
+
+  .loading-spinner {
+    width: 40px;
+    height: 40px;
+    border-width: 3px;
+  }
+}
+
+/* 📱 Móviles grandes y Tablets pequeños (481px - 768px) */
+@media (min-width: 481px) and (max-width: 768px) {
+  .users-view {
+    padding: 24px;
+  }
+
+  /* Stats Cards - 2 columnas */
+  .users-stats {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
+
+  .stat-card {
     padding: 20px;
   }
 
+  .stat-icon {
+    width: 52px;
+    height: 52px;
+  }
+
+  /* Filtros */
   .users-filters {
     flex-direction: column;
+    gap: 12px;
   }
 
   .search-box {
     min-width: 100%;
   }
 
+  .filter-group {
+    width: 100%;
+  }
+
+  .filter-group select {
+    flex: 1;
+  }
+
+  /* OCULTAR tabla y MOSTRAR cards */
+  .users-table-container {
+    display: none;
+  }
+
+  .users-cards {
+    display: flex;
+  }
+
+  /* Cards más compactos en tablet */
+  .user-card {
+    padding: 18px;
+  }
+
+  .user-card-avatar {
+    width: 44px;
+    height: 44px;
+    font-size: 0.9375rem;
+  }
+
+  .user-card-name {
+    font-size: 1.0625rem;
+  }
+}
+
+/* 💻 Tablets en landscape (769px - 1024px) */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .users-view {
+    padding: 28px;
+  }
+
+  /* Stats Cards - 3 columnas */
+  .users-stats {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+  }
+
+  .stat-card {
+    padding: 20px;
+  }
+
+  /* Filtros - Se mantienen en fila pero más compactos */
+  .users-filters {
+    gap: 12px;
+  }
+
+  .search-box {
+    min-width: 250px;
+  }
+
+  /* Tabla con scroll horizontal */
   .users-table-container {
     overflow-x: auto;
   }
 
   .users-table {
     min-width: 900px;
+  }
+
+  /* Ajustar columnas de la tabla */
+  .users-table th,
+  .users-table td {
+    padding: 12px;
+    font-size: 0.8125rem;
+  }
+
+  .user-avatar {
+    width: 36px;
+    height: 36px;
+    font-size: 0.8125rem;
+  }
+
+  .role-badge,
+  .status-badge {
+    font-size: 0.6875rem;
+    padding: 5px 10px;
+  }
+
+  .status-badge svg,
+  .user-email svg,
+  .css-info svg {
+    width: 13px;
+    height: 13px;
+  }
+}
+
+/* 🖥️ Desktop pequeño (1025px - 1280px) */
+@media (min-width: 1025px) and (max-width: 1280px) {
+  .users-stats {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 18px;
+  }
+
+  .stat-card {
+    padding: 22px;
+  }
+
+  .users-filters {
+    gap: 14px;
+  }
+}
+
+/* 🖥️ Desktop grande (> 1280px) */
+@media (min-width: 1281px) {
+  .users-stats {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* 📱 Landscape mode para móviles */
+@media (max-height: 500px) and (orientation: landscape) {
+  .users-view {
+    padding: 16px;
+  }
+
+  .users-header {
+    margin-bottom: 16px;
+  }
+
+  .header-title h1 {
+    font-size: 1.25rem;
+  }
+
+  .header-title .subtitle {
+    font-size: 0.8125rem;
+  }
+
+  .users-stats {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+
+  .stat-card {
+    padding: 12px;
+    gap: 8px;
+  }
+
+  .stat-icon {
+    width: 40px;
+    height: 40px;
+  }
+
+  .stat-icon svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  .stat-value {
+    font-size: 1.25rem;
+  }
+
+  .stat-label {
+    font-size: 0.75rem;
+  }
+
+  .users-filters {
+    margin-bottom: 16px;
+  }
+
+  /* Tabla compacta en landscape */
+  .users-table th,
+  .users-table td {
+    padding: 10px;
+  }
+
+  .user-avatar {
+    width: 32px;
+    height: 32px;
+    font-size: 0.75rem;
+  }
+
+  /* Cards compactos en landscape si está en móvil */
+  .user-card {
+    padding: 14px;
+  }
+
+  .user-card-avatar {
+    width: 40px;
+    height: 40px;
+    font-size: 0.875rem;
+  }
+
+  .user-card-name {
+    font-size: 1rem;
+  }
+
+  .user-card-row {
+    padding: 8px;
+  }
+}
+
+/* 🎨 Modo oscuro mejorado para pantallas OLED */
+@media (prefers-color-scheme: dark) {
+  .stat-card:hover {
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+  }
+  
+  .user-card:active {
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+  }
+}
+
+/* ♿ Mejoras de accesibilidad */
+@media (prefers-reduced-motion: reduce) {
+  .stat-card,
+  .user-card,
+  .users-table tbody tr {
+    transition: none;
+  }
+
+  .stat-card:hover,
+  .user-card:active {
+    transform: none;
+  }
+
+  .loading-spinner {
+    animation: none;
+    border-top-color: rgba(233, 83, 26, 0.5);
+  }
+}
+
+/* 🔍 Mejora para usuarios con alto contraste */
+@media (prefers-contrast: high) {
+  .users-table th,
+  .users-table td,
+  .user-card,
+  .stat-card {
+    border-color: rgba(255, 255, 255, 0.3);
+  }
+
+  .role-badge,
+  .status-badge {
+    border-width: 2px;
+  }
+}
+
+/* 📊 Optimización para pantallas ultra anchas (> 1600px) */
+@media (min-width: 1601px) {
+  .users-view {
+    padding: 40px;
+  }
+
+  .users-stats {
+    gap: 24px;
+  }
+
+  .stat-card {
+    padding: 28px;
   }
 }

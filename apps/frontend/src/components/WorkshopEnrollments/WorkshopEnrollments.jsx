@@ -35,30 +35,22 @@ const WorkshopEnrollments = () => {
 
   // Permisos
   const canManageEnrollments = ['administrator', 'coordinator'].includes(role);
-  const canEnrollUsers = canManageEnrollments || role === 'professional'
+  const canEnrollUsers = canManageEnrollments || role === 'professional';
 
-//FUNCIÓN PARA DETERMINAR RUTA DE VUELTA SEGÚN ROL USAMOS LA MISMA FUNCION DE SESSION PARA DETERMINAR LA NAVEGACION
+  // Función para determinar ruta de vuelta según rol
   const getBackRoute = () => {
-    // Admin y coordinadores gestionan → /workshops
     if (role === 'administrator' || role === 'coordinator') {
       return '/workshops';
     }
-    
-    // Profesionales y clientes usan → /my-workshops
     if (role === 'professional' || role === 'client') {
       return '/my-workshops';
     }
-    
-    // CSS Technician (por defecto) → /workshops
     return '/workshops';
   };
 
   useEffect(() => {
     if (workshopId) {
-      // Cargar estudiantes del taller
       fetchWorkshopStudents(parseInt(workshopId));
-
-      // Obtener info del taller
       fetchWorkshops().then(response => {
         if (response?.workshops) {
           const workshop = response.workshops.find(w => w.id === parseInt(workshopId));
@@ -97,45 +89,32 @@ const WorkshopEnrollments = () => {
 
   return (
     <div className="enrollments-view">
+      {/* Botón Volver */}
+      <button className="btn-back" onClick={() => navigate(getBackRoute())}>
+        <ArrowLeft size={20} />
+        Volver a Talleres
+      </button>
+
       {/* Header */}
       <div className="enrollments-header">
-        <button
-          className="btn-back"
-          onClick={() => navigate(getBackRoute())}
-        >
-          <ArrowLeft size={20} />
-          Volver a Talleres
-        </button>
-
-        <div className="header-content">
-          <div className="header-title">
-            <h1>
-              {selectedWorkshop
-                ? `Inscripciones: ${selectedWorkshop.name}`
-                : 'Inscripciones'}
-            </h1>
-            <p className="subtitle">
-              {canManageEnrollments
-                ? 'Gestiona los usuarios inscritos'
-                : 'Visualiza los usuarios inscritos'}
-            </p>
-          </div>
-
-          {canEnrollUsers && (
-            <button
-              className="btn-enroll"
-              onClick={() => setShowEnrollModal(true)}
-            >
-              <UserPlus size={20} />
-              Inscribir Usuario
-            </button>
-          )}
+        <div className="header-info">
+          <h1>{selectedWorkshop ? `Inscripciones: ${selectedWorkshop.name}` : 'Inscripciones'}</h1>
+          <p className="subtitle">
+            {canManageEnrollments ? 'Gestiona los usuarios inscritos' : 'Visualiza los usuarios inscritos'}
+          </p>
         </div>
+
+        {canEnrollUsers && (
+          <button className="btn-enroll" onClick={() => setShowEnrollModal(true)}>
+            <UserPlus size={20} />
+            <span>Inscribir Usuario</span>
+          </button>
+        )}
       </div>
 
-      {/* Capacidad del taller */}
+      {/* Barra de capacidad */}
       {selectedWorkshop && (
-        <div className="capacity-bar">
+        <div className="capacity-section">
           <div className="capacity-info">
             <span className="capacity-label">Capacidad:</span>
             <span className="capacity-numbers">
@@ -189,7 +168,7 @@ const WorkshopEnrollments = () => {
       </div>
 
       {/* Búsqueda */}
-      <div className="enrollments-search">
+      <div className="search-container">
         <Search size={20} />
         <input
           type="text"
@@ -200,44 +179,38 @@ const WorkshopEnrollments = () => {
       </div>
 
       {/* Estudiantes inscritos */}
-      <div className="section-enrolled">
+      <section className="enrollments-section">
         <div className="section-header">
           <h2>
             <Users size={20} />
-           Usuarios Inscritos ({filteredEnrolled.length})
+            Usuarios Inscritos ({filteredEnrolled.length})
           </h2>
         </div>
 
         {filteredEnrolled.length === 0 ? (
-          <div className="no-students">
+          <div className="empty-state">
             <Users size={48} />
             <p>No hay estudiantes inscritos</p>
             {canEnrollUsers && (
-              <button
-                className="btn-enroll-first"
-                onClick={() => setShowEnrollModal(true)}
-              >
+              <button className="btn-enroll-empty" onClick={() => setShowEnrollModal(true)}>
                 <UserPlus size={20} />
                 Inscribir Primer Usuario
               </button>
             )}
           </div>
         ) : (
-          <div className="students-list">
+          <div className="students-grid">
             {filteredEnrolled.map(enrollment => (
               <div key={enrollment.id} className="student-card">
-                <div className="student-info">
+                <div className="student-main">
                   <div className="student-avatar">
                     {enrollment.user_name?.charAt(0).toUpperCase()}
                   </div>
-                  <div className="student-details">
+                  <div className="student-content">
                     <h3>{enrollment.user_name}</h3>
-                    <p className="enrollment-date">
-                      Inscrito: {new Date(enrollment.assignment_date).toLocaleDateString('es-ES')}
-                    </p>
+                    <p>Inscrito: {new Date(enrollment.assignment_date).toLocaleDateString('es-ES')}</p>
                   </div>
                 </div>
-
                 {canManageEnrollments && (
                   <button
                     className="btn-unenroll"
@@ -245,18 +218,18 @@ const WorkshopEnrollments = () => {
                     title="Desinscribir usuario"
                   >
                     <UserMinus size={16} />
-                    Desinscribir
+                    <span>Desinscribir</span>
                   </button>
                 )}
               </div>
             ))}
           </div>
         )}
-      </div>
+      </section>
 
       {/* Lista de espera */}
       {waitlistStudents.length > 0 && (
-        <div className="section-waitlist">
+        <section className="enrollments-section">
           <div className="section-header">
             <h2>
               <Clock size={20} />
@@ -264,24 +237,19 @@ const WorkshopEnrollments = () => {
             </h2>
           </div>
 
-          <div className="students-list">
+          <div className="students-grid">
             {filteredWaitlist.map(enrollment => (
-              <div key={enrollment.id} className="student-card waitlist">
-                <div className="waitlist-position">
-                  #{enrollment.waitlist_position}
-                </div>
-                <div className="student-info">
-                  <div className="student-avatar waitlist">
+              <div key={enrollment.id} className="student-card student-card-waitlist">
+                <span className="waitlist-badge">#{enrollment.waitlist_position}</span>
+                <div className="student-main">
+                  <div className="student-avatar student-avatar-waitlist">
                     {enrollment.user_name?.charAt(0).toUpperCase()}
                   </div>
-                  <div className="student-details">
+                  <div className="student-content">
                     <h3>{enrollment.user_name}</h3>
-                    <p className="enrollment-date">
-                      En espera desde: {new Date(enrollment.assignment_date).toLocaleDateString('es-ES')}
-                    </p>
+                    <p>En espera desde: {new Date(enrollment.assignment_date).toLocaleDateString('es-ES')}</p>
                   </div>
                 </div>
-
                 {canManageEnrollments && (
                   <button
                     className="btn-unenroll"
@@ -289,20 +257,17 @@ const WorkshopEnrollments = () => {
                     title="Eliminar de lista de espera"
                   >
                     <UserMinus size={16} />
-                    Eliminar
+                    <span>Eliminar</span>
                   </button>
                 )}
               </div>
             ))}
           </div>
-        </div>
+        </section>
       )}
 
-      {/*         MODALES         */}
-
-      {/* Modal Inscribir */}
-
-      {canEnrollUsers && showEnrollModal &&  (
+      {/* Modales */}
+      {canEnrollUsers && showEnrollModal && (
         <EnrollUserModal
           workshopId={parseInt(workshopId)}
           workshopName={selectedWorkshop?.name}
@@ -313,9 +278,6 @@ const WorkshopEnrollments = () => {
           }}
         />
       )}
-
-  
-      {/* Modal Desinscribir */}
 
       {showUnenrollModal && selectedEnrollment && (
         <UnenrollUserModal
