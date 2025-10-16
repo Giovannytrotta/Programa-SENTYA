@@ -224,23 +224,197 @@
   color: rgba(255, 255, 255, 0.7);
 }
 
-/* Responsive */
+.loading-spinner {
+  width: 48px;
+  height: 48px;
+  border: 4px solid rgba(255, 255, 255, 0.1);
+  border-top-color: #E9531A;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 16px;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ============================================
+   RESPONSIVE MEJORADO
+   ============================================ */
+
+/* Tablets */
+@media (max-width: 992px) {
+  .attendance-modal {
+    max-width: 90%;
+  }
+
+  .attendance-stats {
+    padding: 20px 24px;
+    gap: 12px;
+  }
+
+  .stat-item {
+    padding: 14px;
+  }
+
+  .stat-number {
+    font-size: 1.5rem;
+  }
+
+  .attendance-form {
+    padding: 20px 24px 24px 24px;
+  }
+}
+
+/* Móviles grandes */
 @media (max-width: 768px) {
   .attendance-modal {
-    max-width: 100%;
-    border-radius: 0;
+    max-width: 95%;
+    max-height: 95vh;
   }
 
   .attendance-stats {
     grid-template-columns: 1fr;
+    padding: 16px 20px;
+    gap: 10px;
+  }
+
+  .stat-item {
+    padding: 12px;
+    flex-direction: row;
+    justify-content: space-between;
+  }
+
+  .stat-number {
+    font-size: 1.375rem;
+  }
+
+  .stat-label {
+    font-size: 0.75rem;
+  }
+
+  .attendance-form {
+    padding: 16px 20px 20px 20px;
+  }
+
+  .students-attendance-list {
+    max-height: 300px;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+
+  .student-attendance-card {
+    padding: 14px;
+    gap: 10px;
+  }
+
+  .student-avatar {
+    width: 36px;
+    height: 36px;
+    font-size: 0.9375rem;
+  }
+
+  .student-name h4 {
+    font-size: 0.875rem;
   }
 
   .attendance-controls {
     flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
   }
 
   .btn-toggle {
     width: 100%;
     justify-content: center;
+  }
+
+  .observations-input {
+    width: 100%;
+  }
+}
+
+/* Móviles pequeños */
+@media (max-width: 480px) {
+  .attendance-modal {
+    max-width: 100%;
+    max-height: 100vh;
+    border-radius: 0;
+  }
+
+  .session-info-subtitle {
+    font-size: 0.8125rem;
+  }
+
+  .attendance-stats {
+    padding: 14px 16px;
+    gap: 8px;
+  }
+
+  .stat-item {
+    padding: 10px;
+  }
+
+  .stat-number {
+    font-size: 1.25rem;
+  }
+
+  .stat-label {
+    font-size: 0.6875rem;
+  }
+
+  .attendance-form {
+    padding: 14px 16px 16px 16px;
+  }
+
+  .students-attendance-list {
+    max-height: 250px;
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+
+  .student-attendance-card {
+    padding: 12px;
+    gap: 8px;
+  }
+
+  .student-attendance-info {
+    gap: 10px;
+  }
+
+  .student-avatar {
+    width: 32px;
+    height: 32px;
+    font-size: 0.875rem;
+  }
+
+  .student-name h4 {
+    font-size: 0.8125rem;
+  }
+
+  .attendance-controls {
+    gap: 8px;
+  }
+
+  .btn-toggle {
+    padding: 8px 12px;
+    font-size: 0.75rem;
+  }
+
+  .observations-input {
+    padding: 8px 10px;
+    font-size: 0.75rem;
+  }
+
+  .no-students {
+    padding: 50px 16px;
+  }
+
+  .no-students p {
+    font-size: 0.9375rem;
+  }
+
+  .loading-container {
+    padding: 60px 16px;
   }
 }

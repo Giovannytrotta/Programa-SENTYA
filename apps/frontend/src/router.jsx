@@ -21,6 +21,7 @@ import ScheduleView from './components/ScheduleView/ScheduleView';
 import UsersView from './components/UsersView/UsersView';
 import CSSView from './components/CSSView/CSSView';
 
+
 // 🆕 Componente global para inicialización de auth
 const AuthProvider = ({ children }) => {
   const { checkAuthOnLoad, isInitializing } = useAuth();

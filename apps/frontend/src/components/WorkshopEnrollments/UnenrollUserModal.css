@@ -23,6 +23,7 @@
   color: white;
   font-size: 1.5rem;
   font-weight: 700;
+  flex-shrink: 0;
 }
 
 .user-info-display h3 {
@@ -30,6 +31,8 @@
   font-size: 1.125rem;
   font-weight: 600;
   margin: 0 0 6px 0;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
 .waitlist-badge {
@@ -69,6 +72,8 @@
   font-family: inherit;
   resize: vertical;
   transition: all 0.3s ease;
+  box-sizing: border-box;
+  min-height: 100px;
 }
 
 .reason-input textarea:focus {
@@ -86,6 +91,7 @@
   color: rgba(255, 255, 255, 0.5);
   font-size: 0.75rem;
   margin-top: 6px;
+  line-height: 1.4;
 }
 
 .reason-input .error {
@@ -94,4 +100,150 @@
   font-size: 0.8125rem;
   margin-top: 6px;
   font-weight: 500;
+}
+
+/* ============================================
+   RESPONSIVE MEJORADO
+   ============================================ */
+
+/* Tablets */
+@media (max-width: 992px) {
+  .enrollment-info-box {
+    padding: 18px;
+    margin-bottom: 20px;
+  }
+
+  .user-info-display {
+    gap: 14px;
+  }
+
+  .user-avatar-large {
+    width: 52px;
+    height: 52px;
+    font-size: 1.375rem;
+  }
+
+  .user-info-display h3 {
+    font-size: 1.0625rem;
+  }
+
+  .reason-input {
+    margin-top: 18px;
+  }
+
+  .reason-input textarea {
+    min-height: 90px;
+  }
+}
+
+/* Móviles grandes */
+@media (max-width: 768px) {
+  .enrollment-info-box {
+    padding: 16px;
+    margin-bottom: 18px;
+  }
+
+  .user-info-display {
+    gap: 12px;
+  }
+
+  .user-avatar-large {
+    width: 48px;
+    height: 48px;
+    font-size: 1.25rem;
+  }
+
+  .user-info-display h3 {
+    font-size: 1rem;
+    margin-bottom: 5px;
+  }
+
+  .waitlist-badge,
+  .enrolled-badge {
+    font-size: 0.8125rem;
+  }
+
+  .reason-input {
+    margin-top: 16px;
+  }
+
+  .reason-input label {
+    font-size: 0.8125rem;
+    margin-bottom: 6px;
+  }
+
+  .reason-input textarea {
+    padding: 10px;
+    font-size: 0.8125rem;
+    min-height: 80px;
+  }
+
+  .reason-input small {
+    font-size: 0.6875rem;
+    margin-top: 5px;
+  }
+
+  .reason-input .error {
+    font-size: 0.75rem;
+    margin-top: 5px;
+  }
+}
+
+/* Móviles pequeños */
+@media (max-width: 480px) {
+  .enrollment-info-box {
+    padding: 14px;
+    margin-bottom: 16px;
+    border-radius: 10px;
+  }
+
+  .user-info-display {
+    gap: 10px;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .user-avatar-large {
+    width: 44px;
+    height: 44px;
+    font-size: 1.125rem;
+  }
+
+  .user-info-display h3 {
+    font-size: 0.9375rem;
+    margin-bottom: 4px;
+    width: 100%;
+  }
+
+  .waitlist-badge,
+  .enrolled-badge {
+    font-size: 0.75rem;
+  }
+
+  .reason-input {
+    margin-top: 14px;
+  }
+
+  .reason-input label {
+    font-size: 0.75rem;
+    margin-bottom: 6px;
+  }
+
+  .reason-input textarea {
+    padding: 10px;
+    font-size: 0.75rem;
+    min-height: 70px;
+    border-radius: 8px;
+  }
+
+  .reason-input small {
+    font-size: 0.625rem;
+    margin-top: 4px;
+  }
+
+  .reason-input .error {
+    font-size: 0.6875rem;
+    margin-top: 4px;
+  }
 }

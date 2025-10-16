@@ -2,6 +2,7 @@
 
 .session-modal {
   max-width: 700px;
+  width: 100%;
 }
 
 .workshop-subtitle {
@@ -33,6 +34,7 @@
 
 .form-section h3 svg {
   color: #E9531A;
+  flex-shrink: 0;
 }
 
 .form-group {
@@ -58,6 +60,7 @@
   color: white;
   font-size: 0.875rem;
   transition: all 0.3s ease;
+  box-sizing: border-box;
 }
 
 .form-group input:focus,
@@ -68,11 +71,17 @@
   background: rgba(255, 255, 255, 0.12);
 }
 
+.form-group select option {
+  background: #1f2937;
+  color: white;
+}
+
 .form-group small {
   display: block;
   color: rgba(255, 255, 255, 0.5);
   font-size: 0.75rem;
   margin-top: 4px;
+  line-height: 1.4;
 }
 
 .form-group .error {
@@ -80,6 +89,7 @@
   color: #ef4444;
   font-size: 0.75rem;
   margin-top: 4px;
+  font-weight: 500;
 }
 
 .form-row {
@@ -88,14 +98,148 @@
   gap: 20px;
 }
 
-/* Responsive */
+/* ============================================
+   RESPONSIVE MEJORADO
+   ============================================ */
+
+/* Tablets */
+@media (max-width: 992px) {
+  .session-modal {
+    max-width: 90%;
+  }
+
+  .session-form {
+    padding: 28px;
+  }
+
+  .form-section {
+    margin-bottom: 28px;
+  }
+
+  .form-group {
+    margin-bottom: 18px;
+  }
+}
+
+/* Móviles grandes */
 @media (max-width: 768px) {
   .session-modal {
-    max-height: 100vh;
-    border-radius: 0;
+    max-width: 95%;
+    max-height: 95vh;
+  }
+
+  .workshop-subtitle {
+    font-size: 0.8125rem;
+  }
+
+  .session-form {
+    padding: 24px;
+  }
+
+  .form-section {
+    margin-bottom: 24px;
+  }
+
+  .form-section h3 {
+    font-size: 0.9375rem;
+    margin-bottom: 16px;
+    padding-bottom: 10px;
+  }
+
+  .form-section h3 svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  .form-group {
+    margin-bottom: 16px;
+  }
+
+  .form-group label {
+    font-size: 0.8125rem;
+    margin-bottom: 6px;
+  }
+
+  .form-group input,
+  .form-group select,
+  .form-group textarea {
+    padding: 10px 14px;
+    font-size: 0.8125rem;
+  }
+
+  .form-group small {
+    font-size: 0.6875rem;
   }
 
   .form-row {
     grid-template-columns: 1fr;
+    gap: 16px;
+  }
+}
+
+/* Móviles pequeños */
+@media (max-width: 480px) {
+  .session-modal {
+    max-width: 100%;
+    max-height: 100vh;
+    border-radius: 0;
+  }
+
+  .workshop-subtitle {
+    font-size: 0.75rem;
+  }
+
+  .session-form {
+    padding: 20px;
+  }
+
+  .form-section {
+    margin-bottom: 20px;
+  }
+
+  .form-section h3 {
+    font-size: 0.875rem;
+    margin-bottom: 14px;
+    padding-bottom: 8px;
+    gap: 6px;
+  }
+
+  .form-section h3 svg {
+    width: 14px;
+    height: 14px;
+  }
+
+  .form-group {
+    margin-bottom: 14px;
+  }
+
+  .form-group label {
+    font-size: 0.75rem;
+    margin-bottom: 6px;
+  }
+
+  .form-group input,
+  .form-group select,
+  .form-group textarea {
+    padding: 10px 12px;
+    font-size: 0.8125rem;
+  }
+
+  /* .form-group textarea {
+    rows: 2;
+  } */
+
+  .form-group small {
+    font-size: 0.6875rem;
+    margin-top: 3px;
+  }
+
+  .form-group .error {
+    font-size: 0.6875rem;
+    margin-top: 3px;
+  }
+
+  .form-row {
+    gap: 14px;
   }
 }

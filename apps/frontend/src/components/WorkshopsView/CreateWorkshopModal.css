@@ -56,6 +56,7 @@
   color: white;
   cursor: pointer;
   transition: all 0.3s ease;
+  flex-shrink: 0;
 }
 
 .btn-close:hover {
@@ -104,6 +105,7 @@
   color: white;
   font-size: 0.875rem;
   transition: all 0.3s ease;
+  box-sizing: border-box;
 }
 
 .form-group input:focus,
@@ -114,11 +116,17 @@
   background: rgba(255, 255, 255, 0.12);
 }
 
+.form-group select option {
+  background: #1f2937;
+  color: white;
+}
+
 .form-group small {
   display: block;
   color: rgba(255, 255, 255, 0.5);
   font-size: 0.75rem;
   margin-top: 4px;
+  line-height: 1.4;
 }
 
 .form-group .error {
@@ -126,6 +134,7 @@
   color: #ef4444;
   font-size: 0.75rem;
   margin-top: 4px;
+  font-weight: 500;
 }
 
 .form-row {
@@ -187,14 +196,267 @@
   cursor: not-allowed;
 }
 
-/* Responsive */
-@media (max-width: 768px) {
+/* ============================================
+   RESPONSIVE MEJORADO
+   ============================================ */
+
+/* Tablets */
+@media (max-width: 992px) {
+  .modal-overlay {
+    padding: 16px;
+  }
+
   .modal-content {
+    max-width: 90%;
+    max-height: 92vh;
+  }
+
+  .modal-header {
+    padding: 28px;
+  }
+
+  .modal-header h2 {
+    font-size: 1.375rem;
+  }
+
+  .workshop-form {
+    padding: 28px;
+  }
+
+  .form-section {
+    margin-bottom: 28px;
+  }
+
+  .form-section h3 {
+    font-size: 1.0625rem;
+    margin-bottom: 18px;
+  }
+
+  .form-group {
+    margin-bottom: 18px;
+  }
+
+  .modal-actions {
+    padding: 20px 28px;
+    margin: -28px;
+    margin-top: 28px;
+  }
+}
+
+/* Móviles grandes */
+@media (max-width: 768px) {
+  .modal-overlay {
+    padding: 0;
+    align-items: flex-start;
+  }
+
+  .modal-content {
+    max-width: 100%;
     max-height: 100vh;
     border-radius: 0;
   }
 
+  .modal-header {
+    padding: 24px;
+  }
+
+  .modal-header h2 {
+    font-size: 1.25rem;
+    padding-right: 10px;
+  }
+
+  .btn-close {
+    width: 36px;
+    height: 36px;
+  }
+
+  .workshop-form {
+    padding: 24px;
+  }
+
+  .form-section {
+    margin-bottom: 24px;
+  }
+
+  .form-section h3 {
+    font-size: 1rem;
+    margin-bottom: 16px;
+    padding-bottom: 10px;
+  }
+
+  .form-group {
+    margin-bottom: 16px;
+  }
+
+  .form-group label {
+    font-size: 0.8125rem;
+    margin-bottom: 6px;
+  }
+
+  .form-group input,
+  .form-group select,
+  .form-group textarea {
+    padding: 10px 14px;
+    font-size: 0.8125rem;
+  }
+
+  .form-group small {
+    font-size: 0.6875rem;
+  }
+
+  .form-group .error {
+    font-size: 0.6875rem;
+  }
+
   .form-row {
     grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .modal-actions {
+    gap: 12px;
+    padding: 20px 24px;
+    padding-top: 20px;
+    margin: -24px;
+    margin-top: 24px;
+  }
+
+  .btn-cancel,
+  .btn-submit {
+    padding: 11px;
+    font-size: 0.9375rem;
+  }
+}
+
+/* Móviles pequeños */
+@media (max-width: 480px) {
+  .modal-header {
+    padding: 20px;
+  }
+
+  .modal-header h2 {
+    font-size: 1.125rem;
+  }
+
+  .btn-close {
+    width: 32px;
+    height: 32px;
+  }
+
+  .btn-close svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  .workshop-form {
+    padding: 20px;
+  }
+
+  .form-section {
+    margin-bottom: 20px;
+  }
+
+  .form-section h3 {
+    font-size: 0.9375rem;
+    margin-bottom: 14px;
+    padding-bottom: 8px;
+  }
+
+  .form-group {
+    margin-bottom: 14px;
+  }
+
+  .form-group label {
+    font-size: 0.75rem;
+    margin-bottom: 6px;
+  }
+
+  .form-group input,
+  .form-group select,
+  .form-group textarea {
+    padding: 10px 12px;
+    font-size: 0.8125rem;
+    border-radius: 8px;
+  }
+
+  .form-group textarea {
+    min-height: 70px;
+  }
+
+  .form-group small {
+    font-size: 0.625rem;
+    margin-top: 3px;
+  }
+
+  .form-group .error {
+    font-size: 0.625rem;
+    margin-top: 3px;
+  }
+
+  .form-row {
+    gap: 14px;
+  }
+
+  .modal-actions {
+    gap: 10px;
+    padding: 18px 20px;
+    margin: -20px;
+    margin-top: 20px;
+  }
+
+  .btn-cancel,
+  .btn-submit {
+    padding: 10px;
+    font-size: 0.875rem;
+    border-radius: 10px;
+  }
+}
+
+/* Landscape para móviles */
+@media (max-height: 600px) and (orientation: landscape) {
+  .modal-content {
+    max-height: 100vh;
+  }
+
+  .modal-header {
+    padding: 16px 20px;
+    position: relative;
+  }
+
+  .modal-header h2 {
+    font-size: 1rem;
+  }
+
+  .workshop-form {
+    padding: 16px 20px;
+  }
+
+  .form-section {
+    margin-bottom: 16px;
+  }
+
+  .form-section h3 {
+    font-size: 0.9375rem;
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+  }
+
+  .form-group {
+    margin-bottom: 12px;
+  }
+
+  .form-group input,
+  .form-group select,
+  .form-group textarea {
+    padding: 8px 12px;
+  }
+
+  .form-group textarea {
+    min-height: 60px;
+  }
+
+  .modal-actions {
+    padding: 14px 20px;
+    position: relative;
   }
 }

@@ -19,6 +19,7 @@
 .session-date-info svg,
 .session-time-info svg {
   color: #E9531A;
+  flex-shrink: 0;
 }
 
 .session-info-box h3 {
@@ -26,4 +27,82 @@
   font-weight: 600;
   color: white;
   margin: 12px 0 0 0;
+  line-height: 1.4;
+}
+
+/* ============================================
+   RESPONSIVE MEJORADO
+   ============================================ */
+
+/* Tablets */
+@media (max-width: 992px) {
+  .session-info-box {
+    padding: 18px;
+    margin-bottom: 20px;
+  }
+
+  .session-date-info,
+  .session-time-info {
+    font-size: 0.875rem;
+  }
+
+  .session-info-box h3 {
+    font-size: 1.0625rem;
+  }
+}
+
+/* Móviles grandes */
+@media (max-width: 768px) {
+  .session-info-box {
+    padding: 16px;
+    margin-bottom: 18px;
+  }
+
+  .session-date-info,
+  .session-time-info {
+    font-size: 0.8125rem;
+    gap: 6px;
+    margin-bottom: 6px;
+  }
+
+  .session-date-info svg,
+  .session-time-info svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  .session-info-box h3 {
+    font-size: 1rem;
+    margin: 10px 0 0 0;
+  }
+}
+
+/* Móviles pequeños */
+@media (max-width: 480px) {
+  .session-info-box {
+    padding: 14px;
+    margin-bottom: 16px;
+    border-radius: 10px;
+  }
+
+  .session-date-info,
+  .session-time-info {
+    font-size: 0.75rem;
+    gap: 6px;
+    margin-bottom: 6px;
+    flex-wrap: wrap;
+  }
+
+  .session-date-info svg,
+  .session-time-info svg {
+    width: 14px;
+    height: 14px;
+  }
+
+  .session-info-box h3 {
+    font-size: 0.9375rem;
+    margin: 8px 0 0 0;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+  }
 }

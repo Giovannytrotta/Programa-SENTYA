@@ -4,6 +4,7 @@ import { useAuth } from '../../hooks/useAuth';
 import UserDashboard from '../Dashboards/UserDashboard/UserDashboard';
 import ProfessionalDashboard from '../Dashboards/ProfessionalDashboard/ProfessionalDashboard';
 import AdminDashboardPanel from '../Dashboards/AdminDashboard/AdminDashboardPanel';
+import CSSTechnicianDashboard from '../Dashboards/CSSTechnicianDashboard/CSSTechnicianDashboard';
 
 const DashboardRouter = () => {
   const { user } = useAuth();
@@ -33,11 +34,7 @@ const DashboardRouter = () => {
   // Técnico CSS
   if (role === 'css_technician') {
     return (
-      <div style={{ padding: '40px', color: 'red', textAlign: 'center' }}>
-        <h1>👁️ Dashboard de Técnico CSS</h1>
-        <p>Rol detectado: {role}</p>
-        <p>CSS ID: {user?.css_id || 'N/A'}</p>
-      </div>
+    <CSSTechnicianDashboard />
     );
   }
 

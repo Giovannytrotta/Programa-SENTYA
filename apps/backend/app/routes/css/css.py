@@ -8,7 +8,7 @@ from app.models.user import SystemUser
 css_bp = Blueprint("css", __name__, url_prefix='/css')
 
 @css_bp.route('/active', methods=['GET'])
-@requires_professional_access
+@requires_staff_access
 def get_active_css_centers():
     """Obtener todos los centros CSS activos con conteo de usuarios"""
     try:

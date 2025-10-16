@@ -1,5 +1,6 @@
 .enroll-modal {
   max-width: 600px;
+  width: 100%;
 }
 
 .enroll-content {
@@ -29,6 +30,7 @@
 
 .search-input svg {
   color: rgba(255, 255, 255, 0.5);
+  flex-shrink: 0;
 }
 
 .search-input input {
@@ -48,6 +50,7 @@
   color: rgba(255, 255, 255, 0.6);
   font-size: 0.8125rem;
   margin: 8px 0 0 0;
+  line-height: 1.4;
 }
 
 /* Lista de usuarios */
@@ -99,6 +102,7 @@
 
 .user-info {
   flex: 1;
+  min-width: 0;
 }
 
 .user-info h4 {
@@ -106,12 +110,18 @@
   font-size: 0.9375rem;
   font-weight: 600;
   margin: 0 0 4px 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .user-info p {
   color: rgba(255, 255, 255, 0.6);
   font-size: 0.8125rem;
   margin: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .selected-check {
@@ -125,6 +135,7 @@
   color: white;
   font-weight: 700;
   font-size: 0.875rem;
+  flex-shrink: 0;
 }
 
 /* Loading states */
@@ -154,6 +165,10 @@
   margin-bottom: 12px;
 }
 
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
 /* Scrollbar personalizado */
 .users-list::-webkit-scrollbar {
   width: 8px;
@@ -173,14 +188,197 @@
   background: rgba(233, 83, 26, 0.5);
 }
 
-/* Responsive */
+/* ============================================
+   RESPONSIVE MEJORADO
+   ============================================ */
+
+/* Tablets */
+@media (max-width: 992px) {
+  .enroll-modal {
+    max-width: 90%;
+  }
+
+  .enroll-content {
+    padding: 20px 28px;
+  }
+
+  .users-list {
+    max-height: 350px;
+  }
+}
+
+/* Móviles grandes */
 @media (max-width: 768px) {
   .enroll-modal {
-    max-width: 100%;
-    border-radius: 0;
+    max-width: 95%;
+    max-height: 95vh;
+  }
+
+  .enroll-content {
+    padding: 20px 24px;
+  }
+
+  .search-section {
+    margin-bottom: 20px;
+  }
+
+  .search-input {
+    padding: 10px 14px;
+    gap: 10px;
+  }
+
+  .search-input svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  .search-input input {
+    font-size: 0.8125rem;
+  }
+
+  .search-hint {
+    font-size: 0.75rem;
+    margin-top: 6px;
   }
 
   .users-list {
     max-height: 300px;
+  }
+
+  .user-item {
+    padding: 12px;
+    gap: 10px;
+  }
+
+  .user-avatar {
+    width: 36px;
+    height: 36px;
+    font-size: 0.9375rem;
+  }
+
+  .user-info h4 {
+    font-size: 0.875rem;
+    margin-bottom: 3px;
+  }
+
+  .user-info p {
+    font-size: 0.75rem;
+  }
+
+  .selected-check {
+    width: 22px;
+    height: 22px;
+    font-size: 0.8125rem;
+  }
+
+  .loading-users,
+  .no-users {
+    padding: 50px 20px;
+  }
+
+  .loading-users svg,
+  .no-users svg {
+    width: 40px;
+    height: 40px;
+  }
+
+  .loading-spinner-small {
+    width: 28px;
+    height: 28px;
+    border-width: 2px;
+  }
+}
+
+/* Móviles pequeños */
+@media (max-width: 480px) {
+  .enroll-modal {
+    max-width: 100%;
+    max-height: 100vh;
+    border-radius: 0;
+  }
+
+  .enroll-content {
+    padding: 16px 20px;
+  }
+
+  .search-section {
+    margin-bottom: 16px;
+  }
+
+  .search-input {
+    padding: 10px 12px;
+    gap: 8px;
+    border-radius: 8px;
+  }
+
+  .search-input svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  .search-input input {
+    font-size: 0.75rem;
+  }
+
+  .search-hint {
+    font-size: 0.6875rem;
+    margin-top: 6px;
+  }
+
+  .users-list {
+    max-height: 250px;
+    border-radius: 8px;
+  }
+
+  .user-item {
+    padding: 10px 12px;
+    gap: 10px;
+  }
+
+  .user-item.selected {
+    border-left-width: 2px;
+  }
+
+  .user-avatar {
+    width: 32px;
+    height: 32px;
+    font-size: 0.875rem;
+  }
+
+  .user-info h4 {
+    font-size: 0.8125rem;
+    margin-bottom: 2px;
+  }
+
+  .user-info p {
+    font-size: 0.6875rem;
+  }
+
+  .selected-check {
+    width: 20px;
+    height: 20px;
+    font-size: 0.75rem;
+  }
+
+  .loading-users,
+  .no-users {
+    padding: 40px 16px;
+  }
+
+  .loading-users svg,
+  .no-users svg {
+    width: 36px;
+    height: 36px;
+  }
+
+  .loading-users p,
+  .no-users p {
+    font-size: 0.875rem;
+  }
+
+  .loading-spinner-small {
+    width: 24px;
+    height: 24px;
+    border-width: 2px;
   }
 }
