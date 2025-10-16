@@ -736,7 +736,7 @@
 /* ===== TABLA TOTALMENTE RESPONSIVE ===== */
 
 /* Base: Estilos comunes para tabla */
-.users-table-container {
+.admin-dash-users-table-container {
     background: rgba(255, 255, 255, 0.06);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
@@ -745,20 +745,21 @@
     overflow: hidden;
     box-shadow: 0 8px 32px rgba(233, 83, 26, 0.1);
     margin-bottom: 32px;
+    overflow-x: auto;
 }
 
-.users-table {
+.admin-dash-users-table {
     width: 100%;
     border-collapse: collapse;
     display: table;
 }
 
-.users-table thead {
+.admin-dash-users-table thead {
     background: rgba(255, 255, 255, 0.08);
     display: table-header-group;
 }
 
-.users-table tbody {
+.admin-dash-users-table tbody {
     display: table-row-group;
 }
 
@@ -773,8 +774,8 @@
     border-color: rgba(233, 83, 26, 0.1);
 }
 
-.users-table th,
-.users-table td {
+.admin-dash-users-table th,
+.admin-dash-users-table td {
     display: table-cell;
     text-align: left;
     vertical-align: middle;
@@ -782,7 +783,7 @@
     color: rgba(255, 255, 255, 0.9);
 }
 
-.users-table th {
+.admin-dash-users-table th {
     color: rgba(255, 255, 255, 0.9);
     font-weight: 700;
     text-transform: uppercase;
@@ -793,34 +794,34 @@
 
 /* Desktop (1200px+): Tabla completa optimizada */
 @media (min-width: 1200px) {
-    .users-table-container {
+    .admin-dash-users-table-container {
         border-radius: 20px;
         margin-bottom: 32px;
     }
 
-    .users-table th,
-    .users-table td {
+    .admin-dash-users-table th,
+    .admin-dash-users-table td {
         padding: 20px 16px;
         font-size: 0.95rem;
     }
 
-    .users-table th {
+    .admin-dash-users-table th {
         font-size: 0.85rem;
         padding: 18px 16px;
     }
 
     /* Optimizar anchos de columnas para desktop grande */
-    .users-table th:nth-child(1), /* Usuario */
-    .users-table td:nth-child(1) { min-width: 200px; }
+    .admin-dash-users-table th:nth-child(1), /* Usuario */
+    .admin-dash-users-table td:nth-child(1) { min-width: 200px; }
     
-    .users-table th:nth-child(2), /* Email */  
-    .users-table td:nth-child(2) { min-width: 180px; }
+    .admin-dash-users-table th:nth-child(2), /* Email */  
+    .admin-dash-users-table td:nth-child(2) { min-width: 180px; }
     
-    .users-table th:nth-child(6), /* Centro Social */
-    .users-table td:nth-child(6) { min-width: 160px; }
+    .admin-dash-users-table th:nth-child(6), /* Centro Social */
+    .admin-dash-users-table td:nth-child(6) { min-width: 160px; }
     
-    .users-table th:nth-child(7), /* Rol */
-    .users-table td:nth-child(7) { min-width: 140px; }
+    .admin-dash-users-table th:nth-child(7), /* Rol */
+    .admin-dash-users-table td:nth-child(7) { min-width: 140px; }
 
     .user-css { min-width: 160px; }
     .user-role { min-width: 140px; }
@@ -828,28 +829,28 @@
 
 /* Desktop Mediano (992px-1199px): Tabla completa compacta */
 @media (max-width: 1199px) and (min-width: 992px) {
-    .users-table-container {
+    .admin-dash-users-table-container {
         border-radius: 18px;
         margin-bottom: 28px;
     }
 
-    .users-table th,
-    .users-table td {
+    .admin-dash-users-table th,
+    .admin-dash-users-table td {
         padding: 16px 12px;
         font-size: 0.9rem;
     }
 
-    .users-table th {
+    .admin-dash-users-table th {
         font-size: 0.8rem;
         padding: 14px 12px;
     }
 
     /* Ajustar anchos para desktop mediano */
-    .users-table th:nth-child(1),
-    .users-table td:nth-child(1) { min-width: 180px; }
+    .admin-dash-users-table th:nth-child(1),
+    .admin-dash-users-table td:nth-child(1) { min-width: 180px; }
     
-    .users-table th:nth-child(2),
-    .users-table td:nth-child(2) { min-width: 160px; }
+    .admin-dash-users-table th:nth-child(2),
+    .admin-dash-users-table td:nth-child(2) { min-width: 160px; }
 
     .user-css { min-width: 140px; }
     .user-role { min-width: 120px; }
@@ -874,29 +875,29 @@
 
 /* Tablet (768px-991px): Tabla simplificada */
 @media (max-width: 991px) and (min-width: 768px) {
-    .users-table-container {
+    .admin-dash-users-table-container {
         border-radius: 16px;
         margin-bottom: 24px;
     }
 
-    .users-table th,
-    .users-table td {
+    .admin-dash-users-table th,
+    .admin-dash-users-table td {
         padding: 14px 10px;
         font-size: 0.85rem;
     }
 
-    .users-table th {
+    .admin-dash-users-table th {
         font-size: 0.75rem;
         padding: 12px 10px;
     }
 
     /* Ocultar columnas menos importantes en tablet */
-    .users-table th:nth-child(4), /* DNI */
-    .users-table td:nth-child(4),
-    .users-table th:nth-child(5), /* Edad */
-    .users-table td:nth-child(5),
-    .users-table th:nth-child(9), /* Registro */
-    .users-table td:nth-child(9) {
+    .admin-dash-users-table th:nth-child(4), /* DNI */
+    .admin-dash-users-table td:nth-child(4),
+    .admin-dash-users-table th:nth-child(5), /* Edad */
+    .admin-dash-users-table td:nth-child(5),
+    .admin-dash-users-table th:nth-child(9), /* Registro */
+    .admin-dash-users-table td:nth-child(9) {
         display: none;
     }
 
@@ -943,7 +944,7 @@
 
 /* Móvil: Convertir tabla a cards apiladas */
 @media (max-width: 767px) {
-    .users-table-container {
+    .admin-dash-users-table-container {
         background: transparent;
         border: none;
         border-radius: 0;
@@ -952,17 +953,17 @@
         margin-bottom: 20px;
     }
 
-    .users-table {
+    .admin-dash-users-table {
         display: block;
         width: 100%;
         border: none;
     }
 
-    .users-table thead {
+    .admin-dash-users-table thead {
         display: none;
     }
 
-    .users-table tbody {
+    .admin-dash-users-table tbody {
         display: block;
         width: 100%;
     }
@@ -987,7 +988,7 @@
         box-shadow: 0 8px 24px rgba(233, 83, 26, 0.15);
     }
 
-    .users-table td {
+    .admin-dash-users-table td {
         display: block;
         width: 100%;
         padding: 0;
@@ -999,12 +1000,12 @@
         font-size: 0.95rem;
     }
 
-    .users-table td:last-child {
+    .admin-dash-users-table td:last-child {
         margin-bottom: 0;
     }
 
     /* Añadir etiquetas a cada campo */
-    .users-table td::before {
+    .admin-dash-users-table td::before {
         content: attr(data-label);
         font-weight: 600;
         color: rgba(255, 255, 255, 0.8);
@@ -1130,7 +1131,7 @@
         font-size: 1rem;
     }
 
-    .users-table td::before {
+    .admin-dash-users-table td::before {
         font-size: 0.8rem;
     }
 
@@ -3228,7 +3229,7 @@
   .dashboard-header,
   .stat-card,
   .action-card,
-  .users-table-container,
+  .admin-dash-users-table-container,
   .modal-container {
     background: rgba(255, 255, 255, 0.15);
     border: 2px solid rgba(255, 255, 255, 0.4);

@@ -604,8 +604,8 @@ const AdminDashboard = () => {
                                 </div>
                             ) : (
                                 <>
-                                    <div className="users-table-container">
-                                        <table className="users-table">
+                                    <div className="admin-dash-users-table-container">
+                                        <table className="admin-dash-users-table">
                                             <thead>
                                                 <tr>
                                                     <th>Usuario</th>
