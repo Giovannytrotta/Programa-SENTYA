@@ -53,7 +53,8 @@ def login():
             "email": user.email,
             "name": user.name,
             "last_name": user.last_name,
-            "rol": user.rol.value
+            "rol": user.rol.value,
+            "css_id": user.css_id
         },
         "role": user.rol.value
     })

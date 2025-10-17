@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   Building2,
@@ -15,103 +15,45 @@ import {
   Award,
   BarChart3
 } from 'lucide-react';
-import { apiService } from '../../../services/api';
 import { useAuth } from '../../../hooks/useAuth';
-import useGlobalReducer from '../../../store/useGlobalReducer';
-import { ACTION_TYPES } from '../../../store';
+import { useDashboard } from '../../../hooks/useDashboard'; // 🆕 HOOK NUEVO
 import './CSSTechnicianDashboard.css';
 
 const CSSTechnicianDashboard = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
-  const { dispatch } = useGlobalReducer();
 
-  const [loading, setLoading] = useState(true);
-  const [centerInfo, setCenterInfo] = useState(null);
-  const [stats, setStats] = useState({
-    totalWorkshops: 0,
-    activeWorkshops: 0,
-    totalUsers: 0,
-    upcomingSessions: 0
-  });
-  const [workshops, setWorkshops] = useState([]);
-  const [usersByRole, setUsersByRole] = useState({
-    administrator: 0,
-    coordinator: 0,
-    professional: 0,
-    client: 0,
-    css_technician: 0
+  console.log("🧩 CSSTechnicianDashboard render:", {
+    id: user?.id,
+    role: user?.rol,
+    css_id: user?.css_id,
+    user
   });
 
-  useEffect(() => {
-    loadDashboardData();
-  }, [user]);
+  if (!user?.css_id) {
+  return (
+    <div className="dashboard-loading">
+      <div className="loading-spinner"></div>
+      <p>Verificando centro asignado...</p>
+    </div>
+  );
+}
 
-  const loadDashboardData = async () => {
-    if (!user?.css_id) {
-      setLoading(false);
-      showNotification('⚠️ No tienes un centro asignado', 'warning');
-      return;
-    }
+  // ============================================
+  // 🔥 UNA SOLA LÍNEA - TODA LA LÓGICA DELEGADA AL HOOK
+  // ============================================
+  const {
+    stats,
+    recentWorkshops,
+    centerInfo,
+    usersByRole,
+    loading,
+    error
+  } = useDashboard('css_technician', user?.id, user?.css_id);
 
-    setLoading(true);
-    try {
-      // Cargar info del centro
-      const centersResponse = await apiService.getActiveCSSCenters();
-      const myCenter = centersResponse.css_centers?.find(c => c.id === user.css_id);
-      setCenterInfo(myCenter);
-
-      // Cargar talleres del centro
-      const workshopsResponse = await apiService.getAllWorkshops();
-      const centerWorkshops = workshopsResponse.workshops?.filter(w => w.css_id === user.css_id) || [];
-      setWorkshops(centerWorkshops.slice(0, 6)); // Solo primeros 6
-
-      // Cargar usuarios del centro
-      const usersResponse = await apiService.getAllUsers();
-      const centerUsers = usersResponse.users?.filter(u => u.css_id === user.css_id) || [];
-
-      // Calcular stats
-      const activeWorkshops = centerWorkshops.filter(w => w.status === 'active').length;
-      
-      // Contar usuarios por rol
-      const roleCount = {
-        administrator: 0,
-        coordinator: 0,
-        professional: 0,
-        client: 0,
-        css_technician: 0
-      };
-
-      centerUsers.forEach(u => {
-        if (roleCount.hasOwnProperty(u.rol)) {
-          roleCount[u.rol]++;
-        }
-      });
-
-      setUsersByRole(roleCount);
-
-      setStats({
-        totalWorkshops: centerWorkshops.length,
-        activeWorkshops: activeWorkshops,
-        totalUsers: centerUsers.length,
-        upcomingSessions: centerWorkshops.reduce((sum, w) => sum + (w.total_sessions || 0), 0)
-      });
-
-    } catch (error) {
-      console.error('Error loading dashboard:', error);
-      showNotification('❌ Error al cargar el dashboard', 'error');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const showNotification = (message, type) => {
-    dispatch({
-      type: ACTION_TYPES.ADD_NOTIFICATION,
-      payload: { id: Date.now(), message, type, timestamp: new Date() }
-    });
-  };
-
+  // ============================================
+  // 🎨 FUNCIONES HELPER DE UI (solo formateo visual)
+  // ============================================
   const getRoleLabel = (role) => {
     const labels = {
       administrator: 'Administradores',
@@ -133,11 +75,23 @@ const CSSTechnicianDashboard = () => {
     return labels[status] || status;
   };
 
+  // ============================================
+  // 🎭 ESTADOS DE CARGA Y ERROR
+  // ============================================
   if (loading) {
     return (
       <div className="dashboard-loading">
         <div className="loading-spinner"></div>
         <p>Cargando información del centro...</p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="empty-state">
+        <Building2 size={64} />
+        <p>{error}</p>
       </div>
     );
   }
@@ -151,6 +105,9 @@ const CSSTechnicianDashboard = () => {
     );
   }
 
+  // ============================================
+  // 🎨 RENDERIZADO PRINCIPAL - SOLO JSX LIMPIO
+  // ============================================
   return (
     <div className="css-technician-dashboard">
       {/* Header */}
@@ -245,14 +202,14 @@ const CSSTechnicianDashboard = () => {
           </button>
         </div>
 
-        {workshops.length === 0 ? (
+        {recentWorkshops.length === 0 ? (
           <div className="empty-state">
             <BookOpen size={48} />
             <p>No hay talleres disponibles en este centro</p>
           </div>
         ) : (
           <div className="workshops-grid">
-            {workshops.map(workshop => (
+            {recentWorkshops.map(workshop => (
               <div 
                 key={workshop.id} 
                 className="workshop-card"
