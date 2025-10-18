@@ -1,77 +1,47 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   Users,
   BookOpen,
   Calendar,
   Building2,
-  TrendingUp,
   Activity,
-  ArrowRight,
-  AlertCircle
+  ArrowRight
 } from 'lucide-react';
-import { apiService } from '../../../services/api';
 import { useAuth } from '../../../hooks/useAuth';
-import useGlobalReducer from '../../../store/useGlobalReducer';
-import { ACTION_TYPES } from '../../../store';
+import { useDashboard } from '../../../hooks/useDashboard'; // 🆕 HOOK NUEVO
 import './AdminDashboardPanel.css';
 
 const AdminDashboardPanel = () => {
   const navigate = useNavigate();
-  const { dispatch } = useGlobalReducer();
-  const { role } = useAuth();
+  const { user, role } = useAuth();
 
-  const [loading, setLoading] = useState(true);
-  const [stats, setStats] = useState({
-    totalUsers: 0,
-    activeWorkshops: 0,
-    totalSessions: 0,
-    totalCenters: 0
-  });
-  const [recentWorkshops, setRecentWorkshops] = useState([]);
+  // ============================================
+  // 🔥 UNA SOLA LÍNEA - TODA LA LÓGICA DELEGADA AL HOOK
+  // ============================================
+  const {
+    stats,
+    recentWorkshops,
+    loading,
+    error
+  } = useDashboard(role, user?.id);
 
-  useEffect(() => {
-    loadDashboardData();
-  }, []);
-
-  const loadDashboardData = async () => {
-    setLoading(true);
-    try {
-      const usersResponse = await apiService.getAllUsers();
-      const users = usersResponse.users || [];
-
-      const workshopsResponse = await apiService.getAllWorkshops();
-      const workshops = workshopsResponse.workshops || [];
-
-      const centersResponse = await apiService.getActiveCSSCenters();
-      const centers = centersResponse.css_centers || [];
-
-      const activeWorkshops = workshops.filter(w => w.status === 'active').length;
-
-      setStats({
-        totalUsers: users.length,
-        activeWorkshops: activeWorkshops,
-        totalSessions: workshops.reduce((sum, w) => sum + (w.total_sessions || 0), 0),
-        totalCenters: centers.length
-      });
-
-      setRecentWorkshops(workshops.slice(0, 6));
-
-    } catch (error) {
-      console.error('Error:', error);
-      showNotification('Error al cargar el dashboard', 'error');
-    } finally {
-      setLoading(false);
-    }
+  // ============================================
+  // 🎨 FUNCIONES HELPER DE UI (solo formateo visual)
+  // ============================================
+  const getStatusLabel = (status) => {
+    const labels = {
+      active: 'Activo',
+      pending: 'Pendiente',
+      paused: 'Pausado',
+      finished: 'Finalizado'
+    };
+    return labels[status] || status;
   };
 
-  const showNotification = (message, type) => {
-    dispatch({
-      type: ACTION_TYPES.ADD_NOTIFICATION,
-      payload: { id: Date.now(), message, type, timestamp: new Date() }
-    });
-  };
-
+  // ============================================
+  // 🎭 ESTADOS DE CARGA Y ERROR
+  // ============================================
   if (loading) {
     return (
       <div className="admin-dashboard-loading">
@@ -81,8 +51,21 @@ const AdminDashboardPanel = () => {
     );
   }
 
+  if (error) {
+    return (
+      <div className="empty-state">
+        <Activity size={64} />
+        <p>{error}</p>
+      </div>
+    );
+  }
+
+  // ============================================
+  // 🎨 RENDERIZADO PRINCIPAL - SOLO JSX LIMPIO
+  // ============================================
   return (
     <div className="admin-dashboard">
+      {/* Header */}
       <div className="dashboard-header">
         <h1>Panel de {role === 'administrator' ? 'Administración' : 'Coordinación'}</h1>
         <p>Vista general del sistema</p>
@@ -160,7 +143,7 @@ const AdminDashboardPanel = () => {
                 <div className="workshop-header">
                   <h3>{workshop.name}</h3>
                   <span className={`status-badge ${workshop.status}`}>
-                    {workshop.status}
+                    {getStatusLabel(workshop.status)}
                   </span>
                 </div>
                 <div className="workshop-meta">
@@ -200,13 +183,6 @@ const AdminDashboardPanel = () => {
         >
           <Users size={20} />
           Gestionar Usuarios
-        </button>
-        <button 
-          className="action-btn secondary"
-          onClick={() => navigate('/reports')}
-        >
-          <TrendingUp size={20} />
-          Ver Reportes
         </button>
       </div>
     </div>

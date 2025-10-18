@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   BookOpen,
@@ -11,84 +11,37 @@ import {
   ArrowRight,
   AlertCircle
 } from 'lucide-react';
-import { apiService } from '../../../services/api';
-import useGlobalReducer from '../../../store/useGlobalReducer';
-import { ACTION_TYPES } from '../../../store';
+import { useAuth } from '../../../hooks/useAuth';
+import { useDashboard } from '../../../hooks/useDashboard'; // 🆕 HOOK NUEVO
 import './ProfessionalDashboard.css';
 
 const ProfessionalDashboard = () => {
   const navigate = useNavigate();
-  const { dispatch } = useGlobalReducer();
+  const { user } = useAuth();
 
-  const [loading, setLoading] = useState(true);
-  const [stats, setStats] = useState({
-    totalWorkshops: 0,
-    todaySessions: 0,
-    upcomingSessions: 0,
-    completedSessions: 0,
-    averageAttendance: 0
-  });
-  const [todaySessions, setTodaySessions] = useState([]);
-  const [upcomingSessions, setUpcomingSessions] = useState([]);
-  const [myWorkshops, setMyWorkshops] = useState([]);
+  // ============================================
+  // 🔥 UNA SOLA LÍNEA - TODA LA LÓGICA DELEGADA AL HOOK
+  // ============================================
+  const {
+    stats,
+    recentWorkshops,
+    todaySessions,
+    upcomingSessions,
+    loading,
+    error
+  } = useDashboard('professional', user?.id);
 
-  useEffect(() => {
-    loadDashboardData();
-  }, []);
-
-  const loadDashboardData = async () => {
-    setLoading(true);
-    try {
-      // Cargar calendario/horarios
-      const scheduleResponse = await apiService.getMySchedule();
-      
-      // Cargar asistencias
-      const attendanceResponse = await apiService.getMyWorkshopsAttendance();
-
-      // Procesar stats
-      const scheduleStats = scheduleResponse.stats || {};
-      const attendanceStats = attendanceResponse.stats || {};
-
-      setStats({
-        totalWorkshops: scheduleStats.total_workshops || 0,
-        todaySessions: scheduleStats.today || 0,
-        upcomingSessions: scheduleStats.upcoming || 0,
-        completedSessions: scheduleStats.completed || 0,
-        averageAttendance: attendanceStats.average_attendance_rate || 0
-      });
-
-      // Sesiones de hoy
-      const today = scheduleResponse.sessions?.today || [];
-      setTodaySessions(today);
-
-      // Próximas sesiones (máximo 5)
-      const upcoming = scheduleResponse.sessions?.upcoming || [];
-      setUpcomingSessions(upcoming.slice(0, 5));
-
-      // Mis talleres
-      const workshops = scheduleResponse.workshops || [];
-      setMyWorkshops(workshops);
-
-    } catch (error) {
-      console.error('Error loading dashboard:', error);
-      showNotification('Error al cargar el dashboard', 'error');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const showNotification = (message, type) => {
-    dispatch({
-      type: ACTION_TYPES.ADD_NOTIFICATION,
-      payload: { id: Date.now(), message, type, timestamp: new Date() }
-    });
-  };
-
+  // ============================================
+  // 🎨 FUNCIONES HELPER DE UI
+  // ============================================
   const parseDate = (dateStr) => {
     const [year, month, day] = dateStr.split('-').map(Number);
     return new Date(year, month - 1, day);
   };
 
+  // ============================================
+  // 🎭 ESTADOS DE CARGA Y ERROR
+  // ============================================
   if (loading) {
     return (
       <div className="professional-dashboard-loading">
@@ -98,11 +51,24 @@ const ProfessionalDashboard = () => {
     );
   }
 
+  if (error) {
+    return (
+      <div className="empty-state">
+        <BookOpen size={64} />
+        <p>{error}</p>
+      </div>
+    );
+  }
+
+
+  // ============================================
+  // 🎨 RENDERIZADO PRINCIPAL - SOLO JSX LIMPIO
+  // ============================================
   return (
     <div className="professional-dashboard">
       {/* Header */}
       <div className="dashboard-header">
-        <h1>Dashboard Profesional</h1>
+        <h1>Dashboard Monitor</h1>
         <p>Gestiona tus talleres y sesiones</p>
       </div>
 
@@ -270,14 +236,14 @@ const ProfessionalDashboard = () => {
           </button>
         </div>
 
-        {myWorkshops.length === 0 ? (
+        {recentWorkshops.length === 0 ? (
           <div className="empty-state">
             <BookOpen size={48} />
             <p>No tienes talleres asignados</p>
           </div>
         ) : (
           <div className="workshops-grid">
-            {myWorkshops.slice(0, 6).map(workshop => (
+            {recentWorkshops.map(workshop => (
               <div 
                 key={workshop.id} 
                 className="workshop-card"
@@ -285,7 +251,7 @@ const ProfessionalDashboard = () => {
               >
                 <div 
                   className="workshop-color-bar"
-                  style={{ backgroundColor: workshop.color || '#E9531A' }}
+                  style={{ backgroundColor: '#E9531A' }}
                 ></div>
                 
                 <div className="workshop-content">
@@ -294,7 +260,7 @@ const ProfessionalDashboard = () => {
                   <div className="workshop-meta">
                     <span>
                       <Users size={14} />
-                      {workshop.week_days}
+                      {workshop.week_days || 'Sin días'}
                     </span>
                     <span>
                       <Clock size={14} />
