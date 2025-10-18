@@ -16,6 +16,11 @@ const MESSAGES = {
     }
 };
 
+//DE MOMENTO DEJAREMOS LOS ESTADOS DE CARGAS Y LLAMADAS A LA API DE userDashboard Comentado
+// dejamos para una segunda fase su optimizacion necesitamos tener flujo de usuarios reales
+// para saber que cambiar y que no y que mejorar de momento su componente de encarga
+// de todo su funcionamiento es decir estado de carga, y llamadas a la api 
+
 /**
  * Hook personalizado para cargar datos de dashboards según rol
  * @param {string} role - Rol del usuario (administrator, coordinator, professional, client, css_technician)
@@ -148,15 +153,15 @@ export const useDashboard = (role, userId, cssId = null) => {
         }
     }, []);
 
-    // ============================================
-    // 🟡 CLIENT DASHBOARD
-    // ============================================
+// ============================================
+// 🟡 CLIENT DASHBOARD
+// ============================================
 
-//   const loadClientDashboard = useCallback(async () => {
+// const loadClientDashboard = useCallback(async () => {
 //   try {
 //     const [sessionsResponse, workshopsResponse] = await Promise.all([
 //       apiService.getMyEnrolledSessions(),
-//       apiService.getAllWorkshops()
+//       apiService.getAvailableWorkshops()
 //     ]);
 
 //     const sessions = sessionsResponse.sessions || [];
@@ -177,10 +182,10 @@ export const useDashboard = (role, userId, cssId = null) => {
 //       attendanceRate: sessions.length > 0 ? Math.round((completed.length / sessions.length) * 100) : 0
 //     });
 
-//     // 🆕 FILTRAR SOLO LOS TALLERES DONDE ESTÁ INSCRITO
-//     const myWorkshops = workshops.filter(w => uniqueWorkshops.includes(w.id));
-//     setRecentWorkshops(myWorkshops.slice(0, 6));
+//     // Talleres disponibles del CSS
+//     setRecentWorkshops(workshops);
     
+//     // Próximas sesiones
 //     const sortedUpcoming = upcoming
 //       .sort((a, b) => new Date(a.date) - new Date(b.date))
 //       .slice(0, 5);
@@ -272,9 +277,9 @@ export const useDashboard = (role, userId, cssId = null) => {
                     await loadProfessionalDashboard();
                     break;
 
-                case 'client':
-                    await loadClientDashboard();
-                    break;
+                // case 'client':
+                //     await loadClientDashboard();
+                //     break;
 
                 case 'css_technician':
                     await loadCSSTechnicianDashboard(cssId);

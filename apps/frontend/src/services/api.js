@@ -298,6 +298,29 @@ async getProfessionals() {
   });
 }
 
+/**
+ * Obtener talleres donde estoy inscrito (clientes)
+ * /**
+ * Obtener mis talleres inscritos (clientes)
+ * Devuelve TODOS los talleres donde estoy inscrito,
+ * sin importar su estado o capacidad
+ */
+ 
+async getMyEnrolledWorkshops() {
+  return this.request('/workshop-users/my-enrolled', {
+    method: 'GET'
+  });
+}
+
+/**
+ * Obtener talleres disponibles de mi CSS (clientes)
+ * Devuelve TODOS los talleres activos del centro del usuario
+ */
+async getAvailableWorkshops() {
+  return this.request('/workshops/available', {
+    method: 'GET'
+  });
+}
 
 // ============================================
 // SESSIONS

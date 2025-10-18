@@ -19,47 +19,29 @@ export const useMyWorkshops = () => {
   const fetchMyWorkshops = useCallback(async (role, userId) => {
     setLoading(true);
     setError(null);
-    
+
     try {
       if (role === 'professional') {
         const response = await apiService.getAllWorkshops();
         const myWorkshops = response.workshops.filter(w => w.professional_id === userId);
         setWorkshops(myWorkshops);
         return myWorkshops;
-      } 
-      
+      }
+
+
       if (role === 'client') {
-        const response = await apiService.getMyEnrolledSessions();
-        const sessions = response.sessions || [];
-        
-        const uniqueWorkshops = {};
-        sessions.forEach(session => {
-          if (!uniqueWorkshops[session.workshop_id]) {
-            uniqueWorkshops[session.workshop_id] = {
-              id: session.workshop_id,
-              name: session.workshop_name,
-              description: '',
-              status: 'active',
-              css_name: '',
-              location: session.location || '',
-              current_capacity: 0,
-              max_capacity: 0,
-              start_date: session.date,
-              start_time: session.start_time,
-              end_time: session.end_time,
-              thematic_area_name: ''
-            };
-          }
-        });
-        
-        const myWorkshops = Object.values(uniqueWorkshops);
+        // ✅ USAR EL NUEVO ENDPOINT
+        const response = await apiService.getMyEnrolledWorkshops();
+        const myWorkshops = response.workshops || [];
+
         setWorkshops(myWorkshops);
         return myWorkshops;
       }
-      
+
+      // Default: Sin talleres
       setWorkshops([]);
       return [];
-      
+
     } catch (err) {
       const errorMessage = '❌ Error al cargar talleres';
       setError(errorMessage);

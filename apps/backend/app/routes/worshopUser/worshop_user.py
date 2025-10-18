@@ -293,7 +293,7 @@ def get_workshop_students(workshop_id):
 # ============================================
 
 @workshop_users_bp.route("/user/<int:user_id>/workshops", methods=["GET"])
-@requires_staff_access
+@jwt_required()
 def get_user_workshops(user_id):
     """Ver todos los talleres en los que está inscrito un usuario"""
     user = SystemUser.query.get(user_id)
@@ -322,6 +322,50 @@ def get_user_workshops(user_id):
         }
     }), 200
 
+# ============================================
+# MIS TALLERES INSCRITOS (CLIENTES)
+# ============================================
+
+@workshop_users_bp.route("/my-enrolled", methods=["GET"])
+@jwt_required()
+def get_my_enrolled_workshops():
+    """
+    Obtener talleres donde el cliente está inscrito
+    (Sin filtros de estado o capacidad)
+    """
+    user_id = int(get_jwt_identity())
+    user = SystemUser.query.get(user_id)
+    
+    if not user:
+        raise NotFoundError("Usuario no encontrado")
+    
+    # Solo para clientes
+    if user.rol != UserRole.CLIENT:
+        raise BadRequestError("Esta ruta es solo para clientes")
+    
+    # Obtener inscripciones activas (sin lista de espera)
+    enrollments = WorkshopUser.query.filter_by(
+        user_id=user_id
+    ).filter(
+        WorkshopUser.waitlist_position.is_(None)
+    ).all()
+    
+    if not enrollments:
+        return jsonify({
+            "workshops": [],
+            "message": "No estás inscrito en ningún taller"
+        }), 200
+    
+    # Obtener los talleres completos (SIN FILTROS)
+    workshop_ids = [e.workshop_id for e in enrollments]
+    workshops = Workshop.query.filter(
+        Workshop.id.in_(workshop_ids)
+    ).all()
+    
+    return jsonify({
+        "workshops": [w.serialize() for w in workshops],
+        "total": len(workshops)
+    }), 200
 
 # ============================================
 # VER LISTA DE ESPERA DE UN TALLER

@@ -7,6 +7,7 @@ from app.utils.decorators import (
 )
 from app.models.user import SystemUser, UserRole
 from app.models.workshops import Workshop,WorkshopStatus
+from app.models.workshop_users import WorkshopUser
 from app.models.thematic_areas import ThematicArea
 from app.models.css import Css
 from app.extensions import db
@@ -175,7 +176,7 @@ def get_all_workshops():
         workshops = Workshop.query.filter(
             Workshop.css_id == user.css_id,
             Workshop.status == WorkshopStatus.ACTIVE,
-            Workshop.current_capacity < Workshop.max_capacity
+            # Workshop.current_capacity < Workshop.max_capacity comentada por verificar 
         ).all()
     else:
         # Staff ve todos
@@ -200,6 +201,50 @@ def get_workshop_details(workshop_id):
     
     return jsonify({
         "workshop": workshop.serialize()
+    }), 200
+    
+
+# ============================================
+# TALLERES DISPONIBLES DE MI CSS (CLIENTES)
+# ============================================
+
+@workshop_bp.route("/available", methods=["GET"])
+@jwt_required()
+def get_available_workshops():
+    """
+    Obtener TODOS los talleres activos del CSS del cliente
+    (Incluye talleres con y sin cupo disponible)
+    
+    Para: Vista "Talleres Disponibles" en el dashboard del cliente
+    Permissions: Solo CLIENT
+    """
+    user_id = int(get_jwt_identity())
+    user = SystemUser.query.get(user_id)
+    
+    if not user:
+        raise NotFoundError("Usuario no encontrado")
+    
+    # Solo para clientes
+    if user.rol != UserRole.CLIENT:
+        raise BadRequestError("Esta ruta es solo para clientes")
+    
+    if not user.css_id:
+        return jsonify({
+            "workshops": [],
+            "message": "No tienes un centro social asignado"
+        }), 200
+    
+    # Obtener TODOS los talleres activos del CSS
+    # (No filtrar por cupo - mostrar todos aunque estén llenos)
+    workshops = Workshop.query.filter(
+        Workshop.css_id == user.css_id,
+        Workshop.status == WorkshopStatus.ACTIVE
+    ).all()
+    
+    return jsonify({
+        "workshops": [w.serialize() for w in workshops],
+        "total": len(workshops),
+        "css_name": user.css.name if user.css else None
     }), 200
 
 

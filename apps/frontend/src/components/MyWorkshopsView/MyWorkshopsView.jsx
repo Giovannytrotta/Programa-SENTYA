@@ -23,10 +23,18 @@ const MyWorkshopsView = () => {
   const [statusFilter, setStatusFilter] = useState('all');
 
    useEffect(() => {
+      console.log('🟢 MyWorkshopsView - useEffect ejecutado');
+  console.log('🟢 User:', user);
+  console.log('🟢 Role:', role);
     if (user && role) {
       fetchMyWorkshops(role, user.id);
     }
   }, [role, user, fetchMyWorkshops]);
+
+  useEffect(() => {
+  console.log('🟢 Workshops cargados en MyWorkshopsView:', workshops);
+  console.log('🟢 Total workshops:', workshops.length);
+}, [workshops]);
 
   useEffect(() => {
     const handleClickOutside = () => {
@@ -38,8 +46,17 @@ const MyWorkshopsView = () => {
   }, [openDropdown]);
 
 
-  // Aplicar filtros de búsqueda y status
-  const filteredWorkshops = workshops.filter(workshop => {
+  // // Aplicar filtros de búsqueda y status
+  // const filteredWorkshops = workshops.filter(workshop => {
+  //   const matchesSearch = workshop.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+  //     workshop.description?.toLowerCase().includes(searchQuery.toLowerCase());
+
+  //   const matchesStatus = statusFilter === 'all' || workshop.status === statusFilter;
+
+  //   return matchesSearch && matchesStatus;
+  // });
+  const filteredWorkshops = useMemo(() => {
+  const filtered = workshops.filter(workshop => {
     const matchesSearch = workshop.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       workshop.description?.toLowerCase().includes(searchQuery.toLowerCase());
 
@@ -47,6 +64,15 @@ const MyWorkshopsView = () => {
 
     return matchesSearch && matchesStatus;
   });
+  
+  // 🔍 DEBUG
+  console.log('🟡 Workshops ANTES de filtrar:', workshops.length);
+  console.log('🟡 Workshops DESPUÉS de filtrar:', filtered.length);
+  console.log('🟡 SearchQuery:', searchQuery);
+  console.log('🟡 StatusFilter:', statusFilter);
+  
+  return filtered;
+}, [workshops, searchQuery, statusFilter]);
 
   const getStatusColor = (status) => {
     const colors = {
