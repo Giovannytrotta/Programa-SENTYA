@@ -23,7 +23,7 @@ import DeleteSessionModal from './DeleteSessionModal';
 import AttendanceModal from './AttendanceModal';
 
 const SessionsView = () => {
-    const { workshopId } = useParams(); // Para cuando viene desde un taller específico
+    const { workshopId } = useParams();
     const navigate = useNavigate();
     const { role } = useAuth();
     const { sessions, loading, fetchWorkshopSessions, completeSession } = useSessions();
@@ -39,31 +39,21 @@ const SessionsView = () => {
     // Permisos
     const canManageSessions = ['administrator', 'coordinator'].includes(role);
     const isProfessional = role === 'professional';
-    const canCreateSessions = canManageSessions || isProfessional; //NUEVO PERMISO PARA CREAR SESSIONES PARA PROFESIONAL
-
-    //FUNCIÓN PARA DETERMINAR RUTA DE VUELTA SEGÚN ROL ES IMPORTANTE PORQUE DEPENDE DE TU ROL HARAS LA NAVEGACION
+    const canCreateSessions = canManageSessions || isProfessional;
 
     const getBackRoute = () => {
-        // Admin y coordinadores gestionan → /workshops
         if (role === 'administrator' || role === 'coordinator') {
             return '/workshops';
         }
-
-        // Profesionales y clientes usan → /my-workshops
         if (role === 'professional' || role === 'client') {
             return '/my-workshops';
         }
-
-        // CSS Technician (por defecto) → /workshops SOLO VISTA DE INVITADO
         return '/workshops';
     };
 
     useEffect(() => {
         if (workshopId) {
-            // Cargar sesiones del taller específico
             fetchWorkshopSessions(parseInt(workshopId));
-
-            // Obtener info del taller
             fetchWorkshops().then(response => {
                 if (response?.workshops) {
                     const workshop = response.workshops.find(w => w.id === parseInt(workshopId));
@@ -73,7 +63,6 @@ const SessionsView = () => {
         }
     }, [workshopId, fetchWorkshopSessions, fetchWorkshops]);
 
-    // Filtrar sesiones por status
     const filteredSessions = sessions.filter(session => {
         if (statusFilter === 'all') return true;
         return session.status === statusFilter;
@@ -112,24 +101,12 @@ const SessionsView = () => {
 
     const handleComplete = async (sessionId) => {
         if (!window.confirm('¿Marcar esta sesión como completada?')) return;
-
         try {
             await completeSession(sessionId);
         } catch (error) {
             console.error('Error completing session:', error);
         }
     };
-
-    if (loading && sessions.length === 0) {
-        return (
-            <div className="sessions-loading">
-                <div className="loading-spinner"></div>
-                <p>Cargando sesiones...</p>
-            </div>
-        );
-    }
-
-    //funciones handle para editar eliminar y marcar
 
     const handleEdit = (session) => {
         setSelectedSession(session);
@@ -157,6 +134,15 @@ const SessionsView = () => {
         setSelectedSession(session);
         setShowAttendanceModal(true);
     };
+
+    if (loading && sessions.length === 0) {
+        return (
+            <div className="sessions-loading">
+                <div className="loading-spinner"></div>
+                <p>Cargando sesiones...</p>
+            </div>
+        );
+    }
 
     return (
         <div className="sessions-view">
@@ -189,7 +175,7 @@ const SessionsView = () => {
                     {canCreateSessions && (
                         <button
                             className="btn-create-session"
-                            onClick={() => setShowCreateModal(true)}  // ← Cambiar esto
+                            onClick={() => setShowCreateModal(true)}
                         >
                             <Plus size={20} />
                             Nueva Sesión
@@ -263,7 +249,7 @@ const SessionsView = () => {
                         {canManageSessions && (
                             <button
                                 className="btn-create-first"
-                                onClick={() => console.log('Crear primera sesión')}
+                                onClick={() => setShowCreateModal(true)}
                             >
                                 <Plus size={20} />
                                 Crear Primera Sesión
@@ -273,14 +259,14 @@ const SessionsView = () => {
                 ) : (
                     filteredSessions.map(session => (
                         <div key={session.id} className="session-card">
-                            {/* Status badge */}
-                            <div className={`session-status ${getStatusColor(session.status)}`}>
-                                {getStatusIcon(session.status)}
-                                {getStatusLabel(session.status)}
-                            </div>
-
                             {/* Contenido principal */}
                             <div className="session-content">
+                                {/* ✅ BADGE MOVIDO AQUÍ - PRIMER ELEMENTO */}
+                                <div className={`session-status ${getStatusColor(session.status)}`}>
+                                    {getStatusIcon(session.status)}
+                                    {getStatusLabel(session.status)}
+                                </div>
+
                                 <div className="session-date-time">
                                     <div className="date-block">
                                         <Calendar size={20} />
@@ -317,7 +303,6 @@ const SessionsView = () => {
                             {/* Acciones */}
                             {(canManageSessions || isProfessional) && (
                                 <div className="session-actions">
-                                    {/* Tomar Asistencia - NUEVO */}
                                     {session.status === 'scheduled' && (
                                         <button
                                             className="btn-action attendance"
@@ -329,7 +314,6 @@ const SessionsView = () => {
                                         </button>
                                     )}
 
-                                    {/* Completar (solo si está scheduled) */}
                                     {session.status === 'scheduled' && (
                                         <button
                                             className="btn-action complete"
@@ -341,7 +325,6 @@ const SessionsView = () => {
                                         </button>
                                     )}
 
-                                    {/* Editar */}
                                     <button
                                         className="btn-action edit"
                                         onClick={() => handleEdit(session)}
@@ -350,9 +333,11 @@ const SessionsView = () => {
                                         Editar
                                     </button>
 
-                                    {/* Eliminar (solo admin/coordinator y si no está completed) */}
                                     {canManageSessions && session.status !== 'completed' && (
-                                        <button className="btn-action delete" onClick={() => handleDelete(session)}>
+                                        <button 
+                                            className="btn-action delete" 
+                                            onClick={() => handleDelete(session)}
+                                        >
                                             <Trash2 size={16} />
                                             Eliminar
                                         </button>
@@ -363,9 +348,8 @@ const SessionsView = () => {
                     ))
                 )}
             </div>
-            {/* MODALES  */}
 
-            {/* Modal de creación */}
+            {/* MODALES */}
             {canCreateSessions && showCreateModal && (
                 <CreateSessionModal
                     workshopId={parseInt(workshopId)}
@@ -378,8 +362,6 @@ const SessionsView = () => {
                 />
             )}
 
-            {/* Modal editar */}
-
             {(canManageSessions || isProfessional) && showEditModal && selectedSession && (
                 <EditSessionModal
                     session={selectedSession}
@@ -390,8 +372,6 @@ const SessionsView = () => {
                     onSuccess={handleEditSuccess}
                 />
             )}
-
-            {/* Modal eliminar */}
 
             {canManageSessions && showDeleteModal && selectedSession && (
                 <DeleteSessionModal
@@ -404,7 +384,6 @@ const SessionsView = () => {
                 />
             )}
             
-            {/* Modal Asistencia */}
             {(canManageSessions || isProfessional) && showAttendanceModal && selectedSession && (
                 <AttendanceModal
                     session={selectedSession}
@@ -419,7 +398,6 @@ const SessionsView = () => {
                     }}
                 />
             )}
-
         </div>
     );
 };

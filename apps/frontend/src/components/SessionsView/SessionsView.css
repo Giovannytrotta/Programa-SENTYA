@@ -196,16 +196,16 @@
 
 /* Status badge */
 .session-status {
-  position: absolute;
-  top: 16px;
-  right: 16px;
+ 
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
   padding: 6px 12px;
   border-radius: 20px;
   font-size: 0.75rem;
   font-weight: 600;
-  display: flex;
-  align-items: center;
-  gap: 6px;
+  margin-bottom: 12px; 
+  align-self: flex-start; 
 }
 
 .status-scheduled {

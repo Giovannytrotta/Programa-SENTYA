@@ -233,7 +233,7 @@ const UserLogin = () => {
           <p>
             ¿Problemas para acceder? <br />
             Contacta con el personal de tu centro o llama al{' '}
-            <span className="user-phone-number">900 123 456</span>
+            <span className="user-phone-number">954 2715 19</span>
           </p>
         </div>
       </div>
