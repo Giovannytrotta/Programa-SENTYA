@@ -42,10 +42,6 @@
   margin: 0;
 }
 
-.heart-icon {
-  color: #ff6b6b;
-  animation: heartbeat 1.5s ease-in-out infinite;
-}
 
 @keyframes heartbeat {
   0%, 100% { transform: scale(1); }

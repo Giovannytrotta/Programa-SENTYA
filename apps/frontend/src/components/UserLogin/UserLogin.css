@@ -1,4 +1,4 @@
-/* ===== USER LOGIN STYLES ===== */
+/* ===== USER LOGIN STYLES - LOGO EXTRA GRANDE ===== */
 
 :root {
   --orange-primary: #E9531A;
@@ -44,9 +44,11 @@
   transform: scale(1.05);
 }
 
+/* 🚀 LOGO EXTRA GRANDE - MUCHO MÁS VISIBLE */
 .user-logo-image {
-  height: 6rem;
+  height: 200px !important;  /* Desktop: 200px (antes 96px) */
   width: auto;
+  max-width: 90vw;
   margin: 0 auto;
   display: block;
 }
@@ -329,8 +331,45 @@
   font-weight: 500;
 }
 
-/* ===== RESPONSIVE ===== */
-@media (max-width: 640px) {
+/* ===== RESPONSIVE - LOGO MÁS GRANDE EN TODOS LOS TAMAÑOS ===== */
+
+/* Desktop extra grande (1920px+) */
+@media (min-width: 1920px) {
+  .user-logo-image {
+    height: 240px !important;  /* Extra grande para 4K */
+  }
+}
+
+/* Desktop grande (1440px - 1919px) */
+@media (min-width: 1440px) and (max-width: 1919px) {
+  .user-logo-image {
+    height: 220px !important;  /* Muy grande */
+  }
+}
+
+/* Desktop estándar (1024px - 1439px) */
+@media (min-width: 1024px) and (max-width: 1439px) {
+  .user-logo-image {
+    height: 180px !important;  /* Grande */
+  }
+}
+
+/* Tablets (768px - 1023px) */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .user-logo-image {
+    height: 160px !important;  /* Mediano-grande */
+  }
+}
+
+/* Tablets pequeñas (641px - 767px) */
+@media (min-width: 641px) and (max-width: 767px) {
+  .user-logo-image {
+    height: 140px !important;  /* Mediano */
+  }
+}
+
+/* Móviles grandes y tablets pequeñas (481px - 640px) */
+@media (min-width: 481px) and (max-width: 640px) {
   .user-login {
     padding: 16px;
   }
@@ -345,7 +384,7 @@
   }
   
   .user-logo-image {
-    height: 5rem;
+    height: 130px !important;  /* Aumentado significativamente */
   }
   
   .user-login-title {
@@ -357,7 +396,8 @@
   }
 }
 
-@media (max-width: 480px) {
+/* Móviles medianos (375px - 480px) - iPhone estándar */
+@media (min-width: 375px) and (max-width: 480px) {
   .user-login-container {
     max-width: 100%;
   }
@@ -367,11 +407,70 @@
   }
   
   .user-logo-image {
-    height: 4rem;
+    height: 120px !important;  /* MUCHO más grande que antes (64px → 120px) */
   }
   
   .user-login-title {
     font-size: 1.375rem;
+  }
+}
+
+/* Móviles pequeños (<375px) - iPhone SE */
+@media (max-width: 374px) {
+  .user-login {
+    padding: 16px;
+  }
+  
+  .user-login-card {
+    padding: 20px;
+  }
+  
+  .user-logo-image {
+    height: 110px !important;  /* Más grande (64px → 110px) */
+  }
+  
+  .user-login-title {
+    font-size: 1.25rem;
+  }
+  
+  .user-login-subtitle {
+    font-size: 0.9375rem;
+  }
+}
+
+/* Landscape mobile (orientación horizontal) */
+@media (max-height: 650px) and (orientation: landscape) {
+  .user-login {
+    padding: 12px;
+  }
+  
+  .user-login-header {
+    margin-bottom: 1rem;
+  }
+  
+  .user-logo-link {
+    margin-bottom: 0.75rem;
+  }
+  
+  .user-logo-image {
+    height: 90px !important;  /* Reducido para landscape para evitar scroll */
+  }
+  
+  .user-login-card {
+    padding: 20px;
+  }
+  
+  .user-heart-icon {
+    width: 48px;
+    height: 48px;
+  }
+  
+  .user-heart-icon-container {
+    margin-bottom: 1rem;
+  }
+  
+  .user-login-form {
+    gap: 16px;
   }
 }
 
@@ -399,5 +498,17 @@
   
   .user-input-field {
     border: 2px solid rgba(255, 255, 255, 0.4);
+  }
+}
+
+/* ===== MEJORAS PARA TOUCH ===== */
+@media (hover: none) and (pointer: coarse) {
+  .user-login-button {
+    min-height: 48px;
+  }
+  
+  .user-password-toggle {
+    min-width: 44px;
+    min-height: 44px;
   }
 }

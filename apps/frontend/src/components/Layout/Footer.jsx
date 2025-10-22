@@ -14,7 +14,7 @@ const Footer = () => {
             © {currentYear} SENTYA - Sistema de Gestión de Talleres
           </p>
           <p className="footer-love">
-            Hecho con <Heart size={14} className="heart-icon" /> por AOSSA GLOBAL S.A.
+            Hecho por AOSSA GLOBAL S.A.
           </p>
         </div>
       </div>
