@@ -261,7 +261,7 @@ const SessionsView = () => {
                         <div key={session.id} className="session-card">
                             {/* Contenido principal */}
                             <div className="session-content">
-                                {/* ✅ BADGE MOVIDO AQUÍ - PRIMER ELEMENTO */}
+                            
                                 <div className={`session-status ${getStatusColor(session.status)}`}>
                                     {getStatusIcon(session.status)}
                                     {getStatusLabel(session.status)}

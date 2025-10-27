@@ -69,6 +69,10 @@ class SystemUser(db.Model):
     #two_factor_setup_complete: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False,comment="Si completó la configuración inicial de 2FA")#Usuario click "habilitar 2FA Sistema genera secret, muestra QR
     #backup_codes: Mapped[Optional[str]] = mapped_column(Text)#Código de emergencia por si pierdes el teléfono
     #failed_2fa_attempts: Mapped[int] = mapped_column(Integer, default=0)#Que hace? Contador de intentos fallidos consecutivos, bloquear después de X fallos
+    avatar: Mapped[Optional[str]] = mapped_column(String(255), nullable=True, 
+        comment="URL o identificador del avatar (predefinido o custom)")
+    avatar_type: Mapped[Optional[str]] = mapped_column(String(20), nullable=True, 
+        default='initials', comment="initials, predefined, custom, gravatar")
     # Campos específicos para clientes 
     dni: Mapped[str] = mapped_column(String(20), unique=True, nullable=False, comment='DNI obligatorio para identificación')#Campos específicos para clientes (cuando auth_provider=local)
     #campo edad
