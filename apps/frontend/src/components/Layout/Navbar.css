@@ -847,6 +847,72 @@
   max-width: 200px;
 }
 
+
+
+/* ========================================
+   DROPDOWN ITEM (EDITAR PERFIL)
+   ======================================== */
+
+.dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 20px;
+  width: 100%;
+  background: transparent;
+  border: none;
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  text-align: left;
+}
+
+.dropdown-item::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: var(--sentya-gradient-1);
+  transform: scaleY(0);
+  transition: transform 0.3s ease;
+}
+
+.dropdown-item:hover::before {
+  transform: scaleY(1);
+}
+
+.dropdown-item:hover {
+  background: rgba(233, 83, 26, 0.1);
+  color: var(--orange-primary);
+  padding-left: 24px;
+}
+
+.dropdown-item svg {
+  transition: all 0.3s ease;
+}
+
+.dropdown-item:hover svg {
+  transform: scale(1.1) rotate(5deg);
+  color: var(--orange-secondary);
+}
+
+.dropdown-item span {
+  flex: 1;
+}
+
+/* Mobile dropdown item (dentro del drawer) */
+.mobile-nav-link.mobile-profile-btn {
+  margin-top: 8px;
+  border-top: 1px solid rgba(233, 83, 26, 0.2);
+  padding-top: 16px;
+}
+
 /* ========================================
    RESPONSIVE
    ======================================== */

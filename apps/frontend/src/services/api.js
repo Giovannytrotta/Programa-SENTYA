@@ -557,6 +557,40 @@ async getActiveCSSCenters(){
   });
 }
 
+ // 🆕 PROFILE ENDPOINTS
+  
+  async getUserProfile() {
+    return this.request('/user/profile', {
+      method: 'GET'
+    });
+  }
+
+  async updateUserProfile(profileData) {
+    return this.request('/user/profile', {
+      method: 'PUT',
+      body: profileData
+    });
+  }
+
+  async updatePassword(passwordData) {
+    return this.request('/user/profile/password', {
+      method: 'PUT',
+      body: passwordData
+    });
+  }
+
+  async getPredefinedAvatars() {
+    return this.request('/user/avatars/predefined', {
+      method: 'GET'
+    });
+  }
+
+  async updateAvatar(avatarData) {
+    return this.request('/user/profile/avatar', {
+      method: 'PUT',
+      body: avatarData
+    });
+  }
 }
 
 

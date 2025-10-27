@@ -1,11 +1,12 @@
 // src/components/Layout/Navbar.jsx
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { ChevronDown, User, Sparkles, Menu, X } from 'lucide-react';
+import { ChevronDown, User, Sparkles, Menu, X, Settings } from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth';
 import { getNavLinks } from '../../utils/navConfig';
 import { useScroll } from '../../hooks/useScroll';
 import ExitToggle from '../AdminDashboard/ExitToggle';
+import ProfileEditor from '../ProfileEditor/ProfileEditor';
 import './Navbar.css';
 
 const Navbar = () => {
@@ -15,6 +16,7 @@ const Navbar = () => {
   const isScrolled = useScroll(50);
   
   const [showUserMenu, setShowUserMenu] = useState(false);
+  const [showProfileEditor, setShowProfileEditor] = useState(false); // 🆕 NUEVO ESTADO
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [scrollProgress, setScrollProgress] = useState(0);
@@ -59,6 +61,13 @@ const Navbar = () => {
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
+
+  // 🆕 FUNCIÓN PARA ABRIR EDITOR DE PERFIL
+  const handleOpenProfileEditor = () => {
+    setShowProfileEditor(true);
+    setShowUserMenu(false);
+    setMobileMenuOpen(false);
+  };
 
   return (
     <>
@@ -163,6 +172,8 @@ const Navbar = () => {
             {showUserMenu && (
               <div className="user-dropdown">
                 <div className="dropdown-glow"></div>
+                
+                {/* Header con info del usuario */}
                 <div className="dropdown-header">
                   <div className="dropdown-avatar">
                     <User size={24} />
@@ -172,6 +183,17 @@ const Navbar = () => {
                   </div>
                 </div>
                 
+                <div className="dropdown-divider"></div>
+                
+                {/* 🆕 BOTÓN DE EDITAR PERFIL */}
+                <button
+                  className="dropdown-item"
+                  onClick={handleOpenProfileEditor}
+                >
+                  <Settings size={18} />
+                  <span>Editar Perfil</span>
+                </button>
+
                 <div className="dropdown-divider"></div>
                 
                 {/* ExitToggle Component - Puerta Premium */}
@@ -221,6 +243,15 @@ const Navbar = () => {
                   </Link>
                 );
               })}
+
+              {/* 🆕 BOTÓN DE EDITAR PERFIL EN MOBILE */}
+              <button
+                className="mobile-nav-link"
+                onClick={handleOpenProfileEditor}
+              >
+                <Settings className="mobile-nav-icon" size={20} />
+                <span className="mobile-nav-label">Editar Perfil</span>
+              </button>
             </div>
 
             {/* ExitToggle en Mobile - Al final del drawer */}
@@ -230,6 +261,12 @@ const Navbar = () => {
           </div>
         </>
       )}
+
+      {/* 🆕 MODAL DE EDICIÓN DE PERFIL */}
+      <ProfileEditor 
+        isOpen={showProfileEditor}
+        onClose={() => setShowProfileEditor(false)}
+      />
     </>
   );
 };

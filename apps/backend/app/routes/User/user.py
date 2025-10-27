@@ -254,3 +254,138 @@ def get_professionals():
             for prof in professionals
         ]
     }), 200
+
+
+# =================================================================
+# RUTA PARA CAMBIAR LA CONTRASEÑA EN EL PERFIL TAL Y COMO PIDIO AOSSA
+# ==================================================================
+
+@user_bp.route("/profile/password", methods=["PUT"])
+@jwt_required()
+def update_password():
+    """Actualizar contraseña del usuario actual
+    Body:
+        - current_password: string (requerido)
+        - new_password: string (requerido)
+        - confirm_password: string (requerido)
+    """
+    try:
+        current_user_id = get_jwt_identity()
+        user = SystemUser.query.get(current_user_id)
+        
+        if not user or not user.is_active:
+            raise UnauthorizedError("Usuario no válido")
+        
+        data = request.get_json(silent=True) or {}
+        
+        # Validar campos requeridos
+        if not all([data.get('current_password'), data.get('new_password'), data.get('confirm_password')]):
+            raise BadRequestError("Todos los campos son requeridos")
+        
+        # Verificar contraseña actual
+        if not bcrypt.check_password_hash(user.password, data['current_password']):
+            raise UnauthorizedError("Contraseña actual incorrecta")
+        
+        # Verificar que las nuevas contraseñas coincidan
+        if data['new_password'] != data['confirm_password']:
+            raise ValidationError("Las contraseñas no coinciden")
+        
+        # Validar longitud mínima
+        if len(data['new_password']) < 8:
+            raise ValidationError("La contraseña debe tener al menos 8 caracteres")
+        
+        # Actualizar contraseña
+        user.password = bcrypt.generate_password_hash(data['new_password']).decode("utf-8")
+        user.updated_at = datetime.now(timezone.utc)
+        
+        db.session.commit()
+        
+        return jsonify({
+            "success": True,
+            "message": "Contraseña actualizada exitosamente"
+        }), 200
+        
+    except (BadRequestError, UnauthorizedError, ValidationError) as e:
+        db.session.rollback()
+        raise e
+    except Exception as e:
+        db.session.rollback()
+        raise BadRequestError(f"Error al actualizar contraseña: {str(e)}")
+    
+
+# =================================================================
+# RUTAs PARA LA MODIFICACION DEL AVATAR EN EL PERFIL 
+# ==================================================================
+
+    # Lista de avatares predefinidos
+PREDEFINED_AVATARS = [
+    {'id': 'avatar-1', 'url': '/avatars/default-1.png', 'category': 'classic'},
+    {'id': 'avatar-2', 'url': '/avatars/default-2.png', 'category': 'classic'},
+    {'id': 'avatar-3', 'url': '/avatars/default-3.png', 'category': 'modern'},
+    {'id': 'avatar-4', 'url': '/avatars/default-4.png', 'category': 'modern'},
+    # ... más avatares
+]
+
+@user_bp.route("/avatars/predefined", methods=["GET"])
+@jwt_required()
+def get_predefined_avatars():
+    """Obtener lista de avatares predefinidos"""
+    return jsonify({
+        "avatars": PREDEFINED_AVATARS
+    }), 200
+
+@user_bp.route("/profile/avatar", methods=["PUT"])
+@jwt_required()
+def update_avatar():
+    """Actualizar avatar del usuario
+    Body:
+        - avatar_id: string (para predefinidos)
+        - avatar_type: string (initials, predefined, gravatar)
+    """
+    try:
+        current_user_id = get_jwt_identity()
+        user = SystemUser.query.get(current_user_id)
+        
+        if not user or not user.is_active:
+            raise UnauthorizedError("Usuario no válido")
+        
+        data = request.get_json(silent=True) or {}
+        avatar_type = data.get('avatar_type', 'initials')
+        
+        if avatar_type == 'predefined':
+            avatar_id = data.get('avatar_id')
+            if not avatar_id:
+                raise ValidationError("avatar_id es requerido para avatares predefinidos")
+            
+            # Validar que el avatar existe
+            avatar = next((a for a in PREDEFINED_AVATARS if a['id'] == avatar_id), None)
+            if not avatar:
+                raise NotFoundError("Avatar no encontrado")
+            
+            user.avatar = avatar['url']
+            user.avatar_type = 'predefined'
+        
+        elif avatar_type == 'initials':
+            user.avatar = None  # Se generará en frontend
+            user.avatar_type = 'initials'
+        
+        elif avatar_type == 'gravatar':
+            user.avatar = user.email  # Gravatar usa el email
+            user.avatar_type = 'gravatar'
+        
+        user.updated_at = datetime.now(timezone.utc)
+        db.session.commit()
+        
+        return jsonify({
+            "success": True,
+            "message": "Avatar actualizado exitosamente",
+            "avatar": user.avatar,
+            "avatar_type": user.avatar_type
+        }), 200
+        
+    except (ValidationError, NotFoundError, UnauthorizedError) as e:
+        db.session.rollback()
+        raise e
+    except Exception as e:
+        db.session.rollback()
+        raise BadRequestError(f"Error al actualizar avatar: {str(e)}")

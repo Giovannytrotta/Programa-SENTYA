@@ -1,0 +1,417 @@
+/* ========================================
+   AVATAR SELECTOR
+   ======================================== */
+
+.avatar-selector {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+/* ========================================
+   PREVIEW SECTION
+   ======================================== */
+
+.avatar-preview-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  padding: 32px;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(233, 83, 26, 0.2);
+  border-radius: 16px;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Efecto gradient animado de fondo */
+.avatar-preview-section::before {
+  content: '';
+  position: absolute;
+  inset: -100%;
+  background: conic-gradient(
+    from 0deg,
+    transparent 0deg,
+    rgba(233, 83, 26, 0.1) 90deg,
+    rgba(220, 38, 38, 0.1) 180deg,
+    rgba(233, 83, 26, 0.1) 270deg,
+    transparent 360deg
+  );
+  animation: rotateGradient 8s linear infinite;
+  pointer-events: none;
+}
+
+@keyframes rotateGradient {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.avatar-preview-section h3 {
+  font-size: 16px;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.9);
+  margin: 0;
+  position: relative;
+  z-index: 1;
+}
+
+.avatar-preview-large {
+  width: 160px;
+  height: 160px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.05);
+  border: 3px solid rgba(233, 83, 26, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  position: relative;
+  box-shadow: 
+    0 8px 32px rgba(233, 83, 26, 0.3),
+    inset 0 2px 8px rgba(0, 0, 0, 0.2);
+  transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  z-index: 1;
+}
+
+.avatar-preview-large:hover {
+  transform: scale(1.05) rotate(2deg);
+  border-color: rgba(233, 83, 26, 0.6);
+  box-shadow: 
+    0 12px 48px rgba(233, 83, 26, 0.5),
+    inset 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Ring animado alrededor del preview */
+.avatar-preview-large::before {
+  content: '';
+  position: absolute;
+  inset: -8px;
+  border-radius: 50%;
+  background: conic-gradient(
+    from 0deg,
+    var(--orange-primary),
+    var(--red-primary),
+    var(--orange-secondary),
+    var(--orange-primary)
+  );
+  opacity: 0.5;
+  animation: rotateBorder 3s linear infinite;
+  z-index: -1;
+}
+
+@keyframes rotateBorder {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.avatar-preview-large img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Avatar con iniciales */
+.avatar-initials-large {
+  font-size: 56px;
+  font-weight: 900;
+  background: var(--sentya-gradient-1);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-shadow: 0 4px 16px rgba(233, 83, 26, 0.5);
+}
+
+/* ========================================
+   AVATAR OPTIONS GRID
+   ======================================== */
+
+.avatar-options {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+  gap: 16px;
+  padding: 8px;
+}
+
+.avatar-option {
+  position: relative;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.avatar-option-preview {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.05);
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  position: relative;
+}
+
+.avatar-option-preview img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Avatar con iniciales pequeño */
+.avatar-option-preview.avatar-initials {
+  font-size: 32px;
+  font-weight: 900;
+  background: var(--sentya-gradient-3);
+  color: white;
+}
+
+.avatar-option span {
+  font-size: 12px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.7);
+  transition: color 0.3s;
+}
+
+/* Check icon cuando está seleccionado */
+.avatar-option svg {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  width: 24px;
+  height: 24px;
+  padding: 4px;
+  background: var(--sentya-gradient-1);
+  border-radius: 50%;
+  color: white;
+  box-shadow: 0 4px 12px rgba(233, 83, 26, 0.6);
+  animation: checkBounce 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes checkBounce {
+  0% {
+    transform: scale(0) rotate(-45deg);
+  }
+  60% {
+    transform: scale(1.2) rotate(5deg);
+  }
+  100% {
+    transform: scale(1) rotate(0deg);
+  }
+}
+
+/* Estados hover y selected */
+.avatar-option:hover .avatar-option-preview {
+  transform: scale(1.1) translateY(-4px);
+  border-color: rgba(233, 83, 26, 0.4);
+  box-shadow: 0 8px 24px rgba(233, 83, 26, 0.3);
+}
+
+.avatar-option:hover span {
+  color: rgba(255, 255, 255, 0.95);
+}
+
+.avatar-option.selected .avatar-option-preview {
+  border-color: rgba(233, 83, 26, 0.8);
+  box-shadow: 
+    0 8px 24px rgba(233, 83, 26, 0.5),
+    inset 0 0 0 2px rgba(233, 83, 26, 0.3);
+  transform: scale(1.05);
+}
+
+.avatar-option.selected span {
+  color: var(--orange-primary);
+  font-weight: 700;
+}
+
+/* Efecto glow en el seleccionado */
+.avatar-option.selected .avatar-option-preview::before {
+  content: '';
+  position: absolute;
+  inset: -4px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(233, 83, 26, 0.3) 0%, transparent 70%);
+  filter: blur(12px);
+  z-index: -1;
+  animation: glowPulse 2s ease-in-out infinite;
+}
+
+@keyframes glowPulse {
+  0%, 100% {
+    opacity: 0.5;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.1);
+  }
+}
+
+/* ========================================
+   SPECIAL AVATAR TYPES
+   ======================================== */
+
+/* Iniciales especiales */
+.avatar-option:first-child .avatar-option-preview {
+  background: linear-gradient(135deg, rgba(233, 83, 26, 0.3), rgba(220, 38, 38, 0.3));
+}
+
+/* Gravatar especial */
+.avatar-option:nth-child(2) .avatar-option-preview {
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.3), rgba(147, 51, 234, 0.3));
+}
+
+/* ========================================
+   LOADING STATE
+   ======================================== */
+
+.avatar-option-preview.loading {
+  position: relative;
+  overflow: hidden;
+}
+
+.avatar-option-preview.loading::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(233, 83, 26, 0.2),
+    transparent
+  );
+  animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+/* ========================================
+   EMPTY STATE
+   ======================================== */
+
+.avatar-options-empty {
+  grid-column: 1 / -1;
+  padding: 40px;
+  text-align: center;
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 14px;
+}
+
+/* ========================================
+   RESPONSIVE
+   ======================================== */
+
+@media (max-width: 768px) {
+  .avatar-preview-section {
+    padding: 24px;
+  }
+
+  .avatar-preview-large {
+    width: 140px;
+    height: 140px;
+  }
+
+  .avatar-initials-large {
+    font-size: 48px;
+  }
+
+  .avatar-options {
+    grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+    gap: 12px;
+  }
+
+  .avatar-option-preview {
+    width: 90px;
+    height: 90px;
+  }
+
+  .avatar-option-preview.avatar-initials {
+    font-size: 28px;
+  }
+}
+
+@media (max-width: 480px) {
+  .avatar-preview-section {
+    padding: 20px;
+  }
+
+  .avatar-preview-large {
+    width: 120px;
+    height: 120px;
+  }
+
+  .avatar-initials-large {
+    font-size: 40px;
+  }
+
+  .avatar-options {
+    grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+    gap: 10px;
+  }
+
+  .avatar-option-preview {
+    width: 80px;
+    height: 80px;
+  }
+
+  .avatar-option-preview.avatar-initials {
+    font-size: 24px;
+  }
+
+  .avatar-option span {
+    font-size: 11px;
+  }
+}
+
+/* ========================================
+   ACCESSIBILITY
+   ======================================== */
+
+.avatar-option:focus-visible {
+  outline: 2px solid var(--orange-primary);
+  outline-offset: 4px;
+  border-radius: 50%;
+}
+
+.avatar-option:focus-visible .avatar-option-preview {
+  border-color: rgba(233, 83, 26, 0.6);
+}
+
+/* ========================================
+   PERFORMANCE
+   ======================================== */
+
+.avatar-option-preview,
+.avatar-preview-large {
+  will-change: transform;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
