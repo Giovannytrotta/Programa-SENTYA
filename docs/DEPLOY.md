@@ -1,6 +1,6 @@
-# 📋 SENTYA - Especificaciones Técnicas para Deploy
+#  SENTYA - Especificaciones Técnicas para Deploy
 
-## 🎯 Información General del Proyecto
+##  Información General del Proyecto
 
 **Nombre:** Sistema SENTYA (Sistema de Gestión de Talleres Sociales)  
 **Tipo:** Aplicación Web Full-Stack (Monorepo)  
@@ -9,7 +9,7 @@
 
 ---
 
-## 📦 Estructura del Proyecto
+##  Estructura del Proyecto
 
 ```
 Programa-SENTYA/
@@ -33,7 +33,7 @@ Programa-SENTYA/
 
 ---
 
-## 🐍 Backend - Flask API
+## Backend - Flask API
 
 ### Stack Tecnológico
 
@@ -162,7 +162,7 @@ flask db upgrade   # Aplicar cambios
 
 ---
 
-## ⚛️ Frontend - React + Vite
+##  Frontend - React + Vite
 
 ### Stack Tecnológico
 
@@ -247,7 +247,7 @@ server {
 
 ---
 
-## 🗄️ Base de Datos PostgreSQL
+##  Base de Datos PostgreSQL
 
 ### Requisitos
 - **Versión mínima:** PostgreSQL 12
@@ -295,7 +295,7 @@ El proyecto incluye migraciones con datos iniciales:
 
 ---
 
-## 🔐 Seguridad y Autenticación
+##  Seguridad y Autenticación
 
 ### Sistema de Autenticación
 - **JWT** almacenado en cookies `HttpOnly`

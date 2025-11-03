@@ -87,7 +87,7 @@ Naming Convention: snake_case para tablas y columnas
                     │ new_data     │
                     └──────────────┘
 
-📊 Tablas
+ Tablas
 
 1. system_users
 Descripción: Almacena todos los usuarios del sistema (personal y clientes).
@@ -403,7 +403,8 @@ workshops (N) ←──────→ (N) system_users [workshop_users]
 sessions (1) ←──────→ (N) attendances
 system_users (1) ←──────→ (N) attendances
 
-📑 Índices
+Índices
+
 Índices de Rendimiento
 sql-- Búsquedas frecuentes
 CREATE INDEX idx_users_email_active ON system_users(email, is_active);
@@ -414,7 +415,7 @@ CREATE INDEX idx_sessions_date_workshop ON sessions(date, workshop_id);
 CREATE INDEX idx_users_name_search ON system_users 
     USING GIN (to_tsvector('spanish', name || ' ' || last_name));
 
-🔄 Migraciones
+ Migraciones
 Historial de Migraciones
 bash# Listar migraciones aplicadas
 flask db history
@@ -434,7 +435,7 @@ Migraciones con Datos Semilla
 5ce666c764d9_users_for_example_table_user.py - Usuario admin
 
 
-🌱 Datos Semilla
+Datos Semilla
 
 Script de Inicialización Completo
 sql-- 1. Crear áreas temáticas
@@ -471,7 +472,7 @@ INSERT INTO system_users (
     TRUE
 );
 
-🔍 Queries Útiles
+Queries Útiles
 
 1. Obtener talleres activos con plazas disponibles
 sqlSELECT 
@@ -550,7 +551,8 @@ pg_dump -U sentya_user -h localhost sentya_db > backup_$(date +%Y%m%d).sql
 # Restaurar
 psql -U sentya_user -h localhost sentya_db < backup_20250120.sql
 
-📊 Estadísticas de la Base de Datos
+Estadísticas de la Base de Datos
+
 Tamaño de Tablas (Query)
 sqlSELECT 
     schemaname,
@@ -577,7 +579,8 @@ SELECT 'thematic_areas', COUNT(*) FROM thematic_areas
 UNION ALL
 SELECT 'audit_logs', COUNT(*) FROM audit_logs;
 
-🔒 Seguridad
+Seguridad
+
 Permisos PostgreSQL (Producción)
 sql-- Crear usuario con permisos limitados
 CREATE USER sentya_app WITH PASSWORD 'password_segura';
@@ -591,7 +594,8 @@ GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA public TO sentya_app;
 -- Sin permisos de DROP o ALTER
 REVOKE CREATE ON SCHEMA public FROM sentya_app;
 
-🔧 Mantenimiento
+Mantenimiento
+
 Tareas Recomendadas
 sql-- Vacuuming (limpiar espacio)
 VACUUM ANALYZE;
@@ -609,7 +613,8 @@ FROM pg_stat_statements
 ORDER BY mean_time DESC
 LIMIT 10;
 
-📝 Changelog de Schema
+Changelog de Schema
+
 v1.0.0 (2025-01-15)
 
  Creación inicial de 8 tablas
