@@ -327,7 +327,7 @@ PENDING          # Pendiente de aprobación
 
 ---
 
-## 🚀 Opciones de Deploy
+##  Opciones de Deploy
 
 ### Opción 1: VPS (DigitalOcean, Linode, AWS EC2)
 
@@ -452,7 +452,7 @@ volumes:
 
 ---
 
-## 📊 Recursos Necesarios
+##  Recursos Necesarios
 
 ### Servidor Backend
 - **CPU:** 2 cores mínimo
@@ -510,7 +510,7 @@ server {
 
 ---
 
-## ✅ Checklist de Deploy
+##  Checklist de Deploy
 
 ### Pre-Deploy
 - [ ] Todas las variables de entorno configuradas

@@ -1,8 +1,8 @@
-# 🎓 SENTYA - Sistema de Gestión de Talleres Sociales
+#  SENTYA - Sistema de Gestión de Talleres Sociales
 Sistema web para gestionar talleres, sesiones, asistencias y usuarios 
 en Centros de Servicios Sociales de Sevilla.
 
-## 🚀 Quick Start
+##  Quick Start
 
 ### Requisitos
 - Python 3.13
@@ -22,15 +22,15 @@ npm install
 npm run dev
 \`\`\`
 
-📖 **[Ver documentación completa de deploy](./docs/DEPLOY.md)**
+ **[Ver documentación completa de deploy](./docs/DEPLOY.md)**
 
-## 📚 Documentación
+##  Documentación
 
-- [🚀 Guía de Deploy](./docs/DEPLOY.md)
-- [🏗️ Arquitectura](./docs/ARCHITECTURE.md)
-- [🔌 API Reference](./docs/API.md)
+- [ Guía de Deploy](./docs/DEPLOY.md)
+- [ Arquitectura](./docs/ARCHITECTURE.md)
+- [ API Reference](./docs/API.md)
 
-# 🎓 SENTYA - Sistema de Gestión de Talleres Sociales
+#  SENTYA - Sistema de Gestión de Talleres Sociales
 
 <div align="center">
 
@@ -51,54 +51,54 @@ npm run dev
 
 ---
 
-## 📋 Descripción
+##  Descripción
 
 **SENTYA** es una aplicación web full-stack diseñada para optimizar la gestión de talleres sociales en los 14 Centros de Servicios Sociales (CSS) de Sevilla. El sistema permite:
 
-- 👥 Gestión completa de usuarios con roles diferenciados
-- 🎨 Administración de talleres por áreas temáticas
-- 📅 Control de sesiones y horarios
-- ✅ Registro de asistencias en tiempo real
-- 🔐 Autenticación segura con 2FA (TOTP)
-- 📊 Reportes y exportación de datos
-- 🏢 Gestión multi-centro (14 CSS)
+-  Gestión completa de usuarios con roles diferenciados
+-  Administración de talleres por áreas temáticas
+-  Control de sesiones y horarios
+-  Registro de asistencias en tiempo real
+-  Autenticación segura con 2FA (TOTP)
+-  Reportes y exportación de datos
+-  Gestión multi-centro (14 CSS)
 
 ---
 
-## ✨ Características
+##  Características
 
-### 🔐 Autenticación y Seguridad
+###  Autenticación y Seguridad
 - Sistema de login local con JWT (cookies HttpOnly)
 - Autenticación de dos factores (2FA) con Google Authenticator
 - Cifrado de contraseñas con Bcrypt
 - Gestión de roles: Administrador, Coordinador, Profesional, Técnico CSS, Cliente
 
-### 👥 Gestión de Usuarios
+###  Gestión de Usuarios
 - Registro y alta de beneficiarios
 - Perfiles completos con datos personales
 - Sistema de avatares personalizables (DiceBear + Initials)
 - Historial de participación en talleres
 
-### 🎨 Talleres
+###  Talleres
 - áreas temáticas predefinidas (Autoestima, Risoterapia, Memoria, etc.)
 - Control de capacidad y lista de espera
 - Asignación de profesionales responsables
 - Estados: Pendiente, Activo, Pausado, Finalizado
 
-### 📅 Sesiones y Asistencias
+###  Sesiones y Asistencias
 - Calendario de sesiones por taller
 - Registro de asistencia individual
 - Observaciones y notas por sesión
 - Exportación de reportes a Excel
 
-### 🏢 Multi-Centro
+###  Multi-Centro
 - Gestión de 14 Centros CSS de Sevilla
 - Asignación de usuarios por centro
 - Reportes por centro específico
 
 ---
 
-## 🚀 Instalación Rápida
+##  Instalación Rápida
 
 ### Requisitos Previos
 - **Python 3.13+**
@@ -106,13 +106,13 @@ npm run dev
 - **PostgreSQL 14+**
 - **Pipenv** (opcional pero recomendado)
 
-### 1️⃣ Clonar el repositorio
+### 1️ Clonar el repositorio
 ```bash
 git clone https://github.com/tu-usuario/Programa-SENTYA.git
 cd Programa-SENTYA
 ```
 
-### 2️⃣ Configurar Backend
+### 2 Configurar Backend
 ```bash
 cd apps/backend
 
@@ -137,7 +137,7 @@ pipenv run upgrade
 pipenv run start
 ```
 
-### 3️⃣ Configurar Frontend
+### 3️ Configurar Frontend
 ```bash
 cd apps/frontend
 
@@ -151,7 +151,7 @@ echo "VITE_API_URL=http://localhost:3001" > .env
 npm run dev
 ```
 
-### 4️⃣ Acceder a la aplicación
+### 4️ Acceder a la aplicación
 - **Frontend:** http://localhost:5173
 - **Backend API:** http://localhost:3001
 
@@ -162,7 +162,7 @@ npm run dev
 
 ---
 
-## 🏗️ Arquitectura
+##  Arquitectura
 
 ```
 ┌─────────────────┐      ┌─────────────────┐      ┌─────────────────┐
@@ -180,19 +180,19 @@ npm run dev
 
 ---
 
-## 📚 Documentación
+##  Documentación
 
 | Documento | Descripción |
 |-----------|-------------|
-| **[🚀 DEPLOY.md](./docs/DEPLOY.md)** | Guía completa de despliegue en producción |
-| **[🏗️ ARCHITECTURE.md](./docs/ARCHITECTURE.md)** | Arquitectura del sistema y decisiones técnicas |
-| **[🔌 API.md](./docs/API.md)** | Referencia completa de endpoints de la API |
-| **[💾 DATABASE.md](./docs/DATABASE.md)** | Esquema de base de datos y relaciones |
-| **[💻 DEVELOPMENT.md](./docs/DEVELOPMENT.md)** | Guía para desarrolladores y c |
+| **[ DEPLOY.md](./docs/DEPLOY.md)** | Guía completa de despliegue en producción |
+| **[ ARCHITECTURE.md](./docs/ARCHITECTURE.md)** | Arquitectura del sistema y decisiones técnicas |
+| **[ API.md](./docs/API.md)** | Referencia completa de endpoints de la API |
+| **[ DATABASE.md](./docs/DATABASE.md)** | Esquema de base de datos y relaciones |
+| **[ DEVELOPMENT.md](./docs/DEVELOPMENT.md)** | Guía para desarrolladores y c |
 
 ---
 
-## 📂 Estructura del Proyecto
+##  Estructura del Proyecto
 
 ```
 Programa-SENTYA/
@@ -225,7 +225,7 @@ Programa-SENTYA/
 
 ---
 
-## 🛠️ Scripts Útiles
+##  Scripts Útiles
 
 ### Backend
 
@@ -248,7 +248,7 @@ npm run preview     # Preview del build
 
 ---
 
-## 🚀 Deploy en Producción
+##  Deploy en Producción
 
 
 ### Opción 2: VPS Manual
@@ -269,9 +269,9 @@ Ver [DEVELOPMENT.md](./docs/DEVELOPMENT.md) para más detalles.
 
 ---
 
-## 📝 Roadmap
+##  Roadmap
 
-### ✅ Versión 1.0 (Actual)
+###  Versión 1.0 (Actual)
 - [x] Sistema de autenticación con 2FA
 - [x] Panel de administrador privado
 - [x] Gestión de usuarios y roles
@@ -288,7 +288,7 @@ Ver [DEVELOPMENT.md](./docs/DEVELOPMENT.md) para más detalles.
 
 ---
 
-## 👥 Equipo
+##  Equipo
 
 Desarrollado con ❤️ para los Centros de Servicios Sociales de Sevilla.
 
@@ -298,19 +298,19 @@ Desarrollado con ❤️ para los Centros de Servicios Sociales de Sevilla.
 
 ---
 
-## 📞 Soporte
+##  Soporte
 
 ¿Encontraste un bug? ¿Tienes una sugerencia?
 
 
-- 📖 **Documentación:** [docs/](./docs/)
+- **Documentación:** [docs/](./docs/)
 
 ---
 
 <div align="center">
 
-**⭐ Si te gusta el proyecto, dale una estrella en GitHub ⭐**
+** Si te gusta el proyecto, dale una estrella en GitHub ⭐**
 
-Hecho con 🎓 para mejorar la gestión social
+Hecho con  para mejorar la gestión social
 
 </div>
