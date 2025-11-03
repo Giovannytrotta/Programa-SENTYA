@@ -1,4 +1,5 @@
 // apps/frontend/src/hooks/useProfile.js
+// HOOK MEJORADO CON SISTEMA DE NOTIFICACIONES CORRECTO
 
 import { useState, useCallback } from 'react';
 import { apiService, ApiError } from '../services/api';
@@ -7,27 +8,38 @@ import { ACTION_TYPES } from '../store';
 
 const MESSAGES = {
   SUCCESS: {
-    PROFILE_UPDATED: '✅ Perfil actualizado correctamente',
-    PASSWORD_UPDATED: '✅ Contraseña actualizada correctamente',
-    AVATAR_UPDATED: '✅ Avatar actualizado correctamente'
+    UPDATE_PROFILE: '✅ Perfil actualizado exitosamente',
+    UPDATE_PASSWORD: '✅ Contraseña actualizada exitosamente',
+    UPDATE_AVATAR: '✅ Avatar actualizado exitosamente',
+    DELETE_AVATAR: '✅ Avatar eliminado exitosamente'
   },
   ERROR: {
-    FETCH_PROFILE: '❌ Error al cargar perfil',
-    UPDATE_PROFILE: '❌ Error al actualizar perfil',
-    UPDATE_PASSWORD: '❌ Error al actualizar contraseña',
-    UPDATE_AVATAR: '❌ Error al actualizar avatar',
-    WRONG_PASSWORD: '❌ Contraseña actual incorrecta',
-    PASSWORDS_DONT_MATCH: '❌ Las contraseñas no coinciden'
+    UPDATE_PROFILE: '❌ Error al actualizar el perfil',
+    UPDATE_PASSWORD: '❌ Error al actualizar la contraseña',
+    UPDATE_AVATAR: '❌ Error al actualizar el avatar',
+    DELETE_AVATAR: '❌ Error al eliminar el avatar',
+    FETCH_PROFILE: '❌ Error al cargar el perfil',
+    INVALID_PASSWORD: '❌ Contraseña actual incorrecta',
+    PASSWORD_MISMATCH: '❌ Las contraseñas no coinciden',
+    PASSWORD_LENGTH: '❌ La contraseña debe tener al menos 8 caracteres'
   }
 };
 
 export const useProfile = () => {
-  const { dispatch } = useGlobalReducer();
+  const { dispatch, store } = useGlobalReducer();
+
+  // ============================================
+  // 📊 ESTADOS
+  // ============================================
+  
   const [profile, setProfile] = useState(null);
-  const [avatars, setAvatars] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
+  // ============================================
+  // 🔔 NOTIFICACIONES (USANDO TU SISTEMA)
+  // ============================================
+  
   const showNotification = useCallback((message, type = 'info') => {
     dispatch({
       type: ACTION_TYPES.ADD_NOTIFICATION,
@@ -40,7 +52,10 @@ export const useProfile = () => {
     });
   }, [dispatch]);
 
-  // Obtener perfil
+  // ============================================
+  // 📥 OBTENER PERFIL DEL USUARIO
+  // ============================================
+  
   const fetchProfile = useCallback(async () => {
     setLoading(true);
     setError(null);
@@ -48,44 +63,66 @@ export const useProfile = () => {
     try {
       const response = await apiService.getUserProfile();
       
-      if (response && response.data) {
-        setProfile(response.data);
-        return response.data;
+      if (response.success && response.user) {
+        setProfile(response.user);
+        
+        // Actualizar el contexto de auth
+        dispatch({
+          type: ACTION_TYPES.SET_USER,
+          payload: {
+            ...store.auth.user,  // store accesible por closure
+            ...response.user
+          }
+        });
+        
+        return { success: true, data: response.user };
       }
       
-      throw new Error('Respuesta inválida del servidor');
+      throw new Error('Error al obtener perfil');
     } catch (err) {
-      const errorMessage = err instanceof ApiError ? 
-        err.message : MESSAGES.ERROR.FETCH_PROFILE;
+      let errorMessage = MESSAGES.ERROR.FETCH_PROFILE;
+      
+      if (err instanceof ApiError) {
+        errorMessage = `❌ ${err.message}`;
+      }
       
       setError(errorMessage);
       showNotification(errorMessage, 'error');
-      throw err;
+      return { success: false, error: errorMessage };
     } finally {
       setLoading(false);
     }
-  }, [showNotification]);
+  }, [showNotification, dispatch]); // ✅ SIN store en dependencias
 
-  // Actualizar perfil
+  // ============================================
+  // 📝 ACTUALIZAR INFORMACIÓN DEL PERFIL
+  // ============================================
+  
   const updateProfile = useCallback(async (profileData) => {
     setLoading(true);
+    setError(null);
     
     try {
       const response = await apiService.updateUserProfile(profileData);
       
-      if (response && response.success) {
-        showNotification(MESSAGES.SUCCESS.PROFILE_UPDATED, 'success');
-        
+      if (response.success) {
         // Actualizar estado local
-        setProfile(prev => ({ ...prev, ...profileData }));
+        setProfile(prev => ({
+          ...prev,
+          ...response.user
+        }));
         
-        // Actualizar usuario en el store global si es necesario
+        // Actualizar contexto de auth
         dispatch({
           type: ACTION_TYPES.SET_USER,
-          payload: { ...profile, ...profileData }
+          payload: {
+            ...store.auth.user,  // store accesible por closure
+            ...response.user
+          }
         });
         
-        return { success: true, data: response };
+        showNotification(MESSAGES.SUCCESS.UPDATE_PROFILE, 'success');
+        return { success: true, data: response.user };
       }
       
       throw new Error('Error al actualizar perfil');
@@ -96,86 +133,91 @@ export const useProfile = () => {
         errorMessage = `❌ ${err.message}`;
       }
       
+      setError(errorMessage);
       showNotification(errorMessage, 'error');
-      throw new Error(errorMessage);
+      return { success: false, error: errorMessage };
     } finally {
       setLoading(false);
     }
-  }, [profile, showNotification, dispatch]);
+  }, [showNotification, dispatch]); // ✅ SIN store en dependencias
 
-  // Actualizar contraseña
+  // ============================================
+  // 🔒 ACTUALIZAR CONTRASEÑA
+  // ============================================
+  
   const updatePassword = useCallback(async (passwordData) => {
     setLoading(true);
+    setError(null);
     
     try {
-      // Validación frontend
+      // Validaciones frontend
       if (passwordData.new_password !== passwordData.confirm_password) {
-        throw new Error(MESSAGES.ERROR.PASSWORDS_DONT_MATCH);
+        throw new Error(MESSAGES.ERROR.PASSWORD_MISMATCH);
+      }
+      
+      if (passwordData.new_password.length < 8) {
+        throw new Error(MESSAGES.ERROR.PASSWORD_LENGTH);
       }
       
       const response = await apiService.updatePassword(passwordData);
       
-      if (response && response.success) {
-        showNotification(MESSAGES.SUCCESS.PASSWORD_UPDATED, 'success');
+      if (response.success) {
+        showNotification(MESSAGES.SUCCESS.UPDATE_PASSWORD, 'success');
         return { success: true };
       }
       
-      throw new Error('Error al actualizar contraseña');
+      throw new Error(response.error || 'Error al actualizar contraseña');
     } catch (err) {
       let errorMessage = MESSAGES.ERROR.UPDATE_PASSWORD;
       
-      if (err instanceof ApiError) {
-        if (err.message.includes('incorrecta')) {
-          errorMessage = MESSAGES.ERROR.WRONG_PASSWORD;
-        } else {
-          errorMessage = `❌ ${err.message}`;
-        }
-      } else if (err.message === MESSAGES.ERROR.PASSWORDS_DONT_MATCH) {
+      // Errores específicos del backend
+      if (err.message?.includes('incorrecta')) {
+        errorMessage = MESSAGES.ERROR.INVALID_PASSWORD;
+      } else if (err.message) {
         errorMessage = err.message;
       }
       
+      if (err instanceof ApiError) {
+        errorMessage = `❌ ${err.message}`;
+      }
+      
+      setError(errorMessage);
       showNotification(errorMessage, 'error');
-      throw new Error(errorMessage);
+      return { success: false, error: errorMessage };
     } finally {
       setLoading(false);
     }
   }, [showNotification]);
 
-  // Obtener avatares predefinidos
-  const fetchAvatars = useCallback(async () => {
-    try {
-      const response = await apiService.getPredefinedAvatars();
-      
-      if (response && response.avatars) {
-        setAvatars(response.avatars);
-        return response.avatars;
-      }
-      
-      return [];
-    } catch (err) {
-      console.error('Error fetching avatars:', err);
-      return [];
-    }
-  }, []);
-
-  // Actualizar avatar
+  // ============================================
+  // 🎨 ACTUALIZAR AVATAR (MEJORADO)
+  // ============================================
+  
   const updateAvatar = useCallback(async (avatarData) => {
     setLoading(true);
+    setError(null);
     
     try {
       const response = await apiService.updateAvatar(avatarData);
       
-      if (response && response.success) {
-        showNotification(MESSAGES.SUCCESS.AVATAR_UPDATED, 'success');
-        
+      if (response.success && response.avatar) {
         // Actualizar perfil local
         setProfile(prev => ({
           ...prev,
-          avatar: response.avatar,
-          avatar_type: response.avatar_type
+          ...response.avatar
         }));
         
-        return { success: true, data: response };
+        // Actualizar contexto de auth para que el Navbar lo vea
+        dispatch({
+          type: ACTION_TYPES.SET_USER,
+          payload: {
+            ...store.auth.user,  // store accesible por closure
+            ...response.avatar
+          }
+        });
+        
+        showNotification(MESSAGES.SUCCESS.UPDATE_AVATAR, 'success');
+        return { success: true, data: response.avatar };
       }
       
       throw new Error('Error al actualizar avatar');
@@ -186,17 +228,75 @@ export const useProfile = () => {
         errorMessage = `❌ ${err.message}`;
       }
       
+      setError(errorMessage);
       showNotification(errorMessage, 'error');
-      throw new Error(errorMessage);
+      return { success: false, error: errorMessage };
     } finally {
       setLoading(false);
     }
-  }, [showNotification]);
+  }, [showNotification, dispatch]); // ✅ SIN store en dependencias
+
+  // ============================================
+  // 🗑️ ELIMINAR AVATAR (volver al default)
+  // ============================================
+  
+  const deleteAvatar = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    
+    try {
+      const response = await apiService.deleteAvatar();
+      
+      if (response.success) {
+        // Limpiar datos de avatar
+        const clearedAvatar = {
+          avatar_url: null,
+          avatar_type: null,
+          avatar_style: null,
+          avatar_color: null,
+          avatar_seed: null
+        };
+        
+        setProfile(prev => ({
+          ...prev,
+          ...clearedAvatar
+        }));
+        
+        dispatch({
+          type: ACTION_TYPES.SET_USER,
+          payload: {
+            ...store.auth.user,  // store accesible por closure
+            ...clearedAvatar
+          }
+        });
+        
+        showNotification(MESSAGES.SUCCESS.DELETE_AVATAR, 'success');
+        return { success: true };
+      }
+      
+      throw new Error('Error al eliminar avatar');
+    } catch (err) {
+      let errorMessage = MESSAGES.ERROR.DELETE_AVATAR;
+      
+      if (err instanceof ApiError) {
+        errorMessage = `❌ ${err.message}`;
+      }
+      
+      setError(errorMessage);
+      showNotification(errorMessage, 'error');
+      return { success: false, error: errorMessage };
+    } finally {
+      setLoading(false);
+    }
+  }, [showNotification, dispatch]); // ✅ SIN store en dependencias
+
+  // ============================================
+  // 📤 RETORNO
+  // ============================================
 
   return {
     // Estado
     profile,
-    avatars,
     loading,
     error,
     
@@ -204,8 +304,8 @@ export const useProfile = () => {
     fetchProfile,
     updateProfile,
     updatePassword,
-    fetchAvatars,
     updateAvatar,
+    deleteAvatar,
     
     // Utilidades
     clearError: () => setError(null),

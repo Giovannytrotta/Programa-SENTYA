@@ -557,7 +557,9 @@ async getActiveCSSCenters(){
   });
 }
 
- // 🆕 PROFILE ENDPOINTS
+  // ========================================
+  // PROFILE ENDPOINTS 
+  // ========================================
   
   async getUserProfile() {
     return this.request('/user/profile', {
@@ -579,16 +581,20 @@ async getActiveCSSCenters(){
     });
   }
 
-  async getPredefinedAvatars() {
-    return this.request('/user/avatars/predefined', {
-      method: 'GET'
-    });
-  }
-
+  // ========================================
+  // AVATAR ENDPOINTS 
+  // ========================================
+  
   async updateAvatar(avatarData) {
     return this.request('/user/profile/avatar', {
       method: 'PUT',
       body: avatarData
+    });
+  }
+
+  async deleteAvatar() {
+    return this.request('/user/profile/avatar', {
+      method: 'DELETE'
     });
   }
 }

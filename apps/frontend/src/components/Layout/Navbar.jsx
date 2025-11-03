@@ -1,4 +1,6 @@
-// src/components/Layout/Navbar.jsx
+// apps/frontend/src/components/Layout/Navbar.jsx
+// ACTUALIZACIÓN PARA MOSTRAR AVATARES EN VEZ DEL ICONO USER
+
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { ChevronDown, User, Sparkles, Menu, X, Settings } from 'lucide-react';
@@ -9,6 +11,40 @@ import ExitToggle from '../AdminDashboard/ExitToggle';
 import ProfileEditor from '../ProfileEditor/ProfileEditor';
 import './Navbar.css';
 
+// 🎨 GENERAR URL DE AVATAR
+const generateAvatarUrl = (user) => {
+  // Si el usuario tiene avatar configurado
+  if (user?.avatar_url) {
+    return user.avatar_url;
+  }
+
+  // Si tiene tipo de avatar y metadata para regenerar
+  if (user?.avatar_type === 'dicebear' && user?.avatar_style) {
+    const seed = user?.avatar_seed || user?.email?.split('@')[0] || user?.name?.replace(/\s+/g, '') || 'user';
+    return `https://api.dicebear.com/7.x/${user.avatar_style}/svg?seed=${seed}&size=200`;
+  }
+
+  if (user?.avatar_type === 'initials' && user?.avatar_color) {
+    const initials = getInitials(user?.name);
+    return `https://ui-avatars.com/api/?name=${initials}&size=200&background=${user.avatar_color}&color=FFFFFF&bold=true&font-size=0.4`;
+  }
+
+  // Fallback: generar avatar por defecto con DiceBear
+  const seed = user?.email?.split('@')[0] || user?.name?.replace(/\s+/g, '') || 'user';
+  return `https://api.dicebear.com/7.x/adventurer/svg?seed=${seed}&size=200`;
+};
+
+// Generar iniciales
+const getInitials = (name) => {
+  if (!name) return 'U';
+  return name
+    .split(' ')
+    .map(n => n[0])
+    .join('')
+    .toUpperCase()
+    .slice(0, 2);
+};
+
 const Navbar = () => {
   const { user } = useAuth();
   const location = useLocation();
@@ -16,13 +52,16 @@ const Navbar = () => {
   const isScrolled = useScroll(50);
   
   const [showUserMenu, setShowUserMenu] = useState(false);
-  const [showProfileEditor, setShowProfileEditor] = useState(false); // 🆕 NUEVO ESTADO
+  const [showProfileEditor, setShowProfileEditor] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [scrollProgress, setScrollProgress] = useState(0);
   const [hoveredLink, setHoveredLink] = useState(null);
 
   const navLinks = getNavLinks(user?.rol || user?.role);
+
+  // ✅ CALCULAR AVATAR DIRECTAMENTE (sin useEffect ni estado local)
+  const avatarUrl = user ? generateAvatarUrl(user) : '';
 
   useEffect(() => {
     const handleMouseMove = (e) => {
@@ -62,7 +101,6 @@ const Navbar = () => {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  // 🆕 FUNCIÓN PARA ABRIR EDITOR DE PERFIL
   const handleOpenProfileEditor = () => {
     setShowProfileEditor(true);
     setShowUserMenu(false);
@@ -72,7 +110,6 @@ const Navbar = () => {
   return (
     <>
       <nav className={`navbar ${isScrolled ? 'scrolled' : ''}`}>
-
         {/* Gradient Orb que sigue al mouse */}
         {!isScrolled && (
           <div 
@@ -94,7 +131,7 @@ const Navbar = () => {
           {/* Logo Premium */}
           <Link to="/dashboard" className="navbar-logo">
             <div className="logo-icon">
-             <img className="logo-sentya-navbar" src="/Sentya.png" alt="Sentya Logo" />
+              <img className="logo-sentya-navbar" src="/Sentya.png" alt="Sentya Logo" />
             </div>
             <div className="logo-glow"></div>
           </Link>
@@ -119,7 +156,6 @@ const Navbar = () => {
                       <Icon className="nav-icon" size={20} />
                       <div className="icon-glow"></div>
                       
-                      {/* Partículas orbitando el icono */}
                       <div className="icon-particles">
                         {[...Array(4)].map((_, i) => (
                           <div 
@@ -149,7 +185,7 @@ const Navbar = () => {
             {mobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
           </button>
 
-          {/* User Menu Premium */}
+          {/* User Menu Premium con AVATAR */}
           <div className="navbar-user">
             <button 
               className="user-button"
@@ -159,8 +195,23 @@ const Navbar = () => {
               }}
               aria-label="User menu"
             >
+              {/* 🎨 AVATAR EN VEZ DE ICONO */}
               <div className="user-avatar">
-                <User size={18} />
+                {avatarUrl ? (
+                  <img 
+                    src={avatarUrl} 
+                    alt={user?.name || 'User'} 
+                    className="user-avatar-img"
+                    key={avatarUrl} // ✅ Key para forzar re-render cuando cambia la URL
+                    onError={(e) => {
+                      // Fallback si falla la imagen
+                      e.target.style.display = 'none';
+                      e.target.parentElement.classList.add('fallback');
+                    }}
+                  />
+                ) : (
+                  <User size={18} />
+                )}
                 <div className="avatar-ring"></div>
               </div>
               <div className="user-info">
@@ -173,10 +224,23 @@ const Navbar = () => {
               <div className="user-dropdown">
                 <div className="dropdown-glow"></div>
                 
-                {/* Header con info del usuario */}
+                {/* Header con avatar y info del usuario */}
                 <div className="dropdown-header">
                   <div className="dropdown-avatar">
-                    <User size={24} />
+                    {avatarUrl ? (
+                      <img 
+                        src={avatarUrl} 
+                        alt={user?.name || 'User'} 
+                        className="dropdown-avatar-img"
+                        key={avatarUrl} // ✅ Key para forzar re-render cuando cambia la URL
+                        onError={(e) => {
+                          e.target.style.display = 'none';
+                          e.target.parentElement.classList.add('fallback');
+                        }}
+                      />
+                    ) : (
+                      <User size={24} />
+                    )}
                   </div>
                   <div className="dropdown-user-info">
                     <p className="user-email">{user?.email}</p>
@@ -185,7 +249,7 @@ const Navbar = () => {
                 
                 <div className="dropdown-divider"></div>
                 
-                {/* 🆕 BOTÓN DE EDITAR PERFIL */}
+                {/* Botón de Editar Perfil */}
                 <button
                   className="dropdown-item"
                   onClick={handleOpenProfileEditor}
@@ -196,7 +260,7 @@ const Navbar = () => {
 
                 <div className="dropdown-divider"></div>
                 
-                {/* ExitToggle Component - Puerta Premium */}
+                {/* ExitToggle Component */}
                 <div className="dropdown-exit-section">
                   <ExitToggle />
                 </div>
@@ -244,7 +308,7 @@ const Navbar = () => {
                 );
               })}
 
-              {/* 🆕 BOTÓN DE EDITAR PERFIL EN MOBILE */}
+              {/* Botón de Editar Perfil en Mobile */}
               <button
                 className="mobile-nav-link"
                 onClick={handleOpenProfileEditor}
@@ -254,7 +318,7 @@ const Navbar = () => {
               </button>
             </div>
 
-            {/* ExitToggle en Mobile - Al final del drawer */}
+            {/* ExitToggle en Mobile */}
             <div className="mobile-exit-section">
               <ExitToggle />
             </div>
@@ -262,7 +326,7 @@ const Navbar = () => {
         </>
       )}
 
-      {/* 🆕 MODAL DE EDICIÓN DE PERFIL */}
+      {/* Modal de Edición de Perfil */}
       <ProfileEditor 
         isOpen={showProfileEditor}
         onClose={() => setShowProfileEditor(false)}

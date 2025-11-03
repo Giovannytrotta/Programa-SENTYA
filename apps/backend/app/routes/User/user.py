@@ -1,10 +1,10 @@
-from flask import Blueprint, jsonify, request, session,current_app
+from flask import Blueprint, jsonify, request, session, current_app
 from app.extensions import db, jwt, bcrypt
-from app.models.user import SystemUser,UserRole
-from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity, unset_jwt_cookies, set_access_cookies,decode_token
-from app.exceptions import ValidationError, UnauthorizedError, ForbiddenError, AppError, BadRequestError,NotFoundError,ConflictError
+from app.models.user import SystemUser, UserRole
+from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity, unset_jwt_cookies, set_access_cookies, decode_token
+from app.exceptions import ValidationError, UnauthorizedError, ForbiddenError, AppError, BadRequestError, NotFoundError, ConflictError
 from app.utils.helper import issue_tokens_for_user
-from datetime import datetime, timezone, timedelta,date
+from datetime import datetime, timezone, timedelta, date
 import re
 from functools import wraps
 from app.utils.decorators import requires_coordinator_or_admin
@@ -62,6 +62,7 @@ def login():
     set_access_cookies(response, access_token)
     return response
 
+
 @user_bp.route("/me", methods=["GET"])
 @jwt_required()
 def get_current_user():
@@ -78,11 +79,17 @@ def get_current_user():
             "last_name": user.last_name,
             "email": user.email,
             "rol": user.rol.value,
-            "css_id" : user.css_id
+            "css_id": user.css_id,
+            "avatar_url": user.avatar_url,
+            "avatar_type": user.avatar_type,
+            "avatar_style": user.avatar_style,
+            "avatar_color": user.avatar_color,
+            "avatar_seed": user.avatar_seed
         },
         "role": user.rol.value 
     })
-    
+
+
 # =================================================================
 #   RUTAS PARA OBTENER PERFIL DEL USUARIO O INFORMACION DEL USUARIO
 # ==================================================================
@@ -104,7 +111,7 @@ def get_current_user_profile():
     
     return jsonify({
         "success": True,
-        "data": {
+        "user": {
             "id": user.id,
             "name": user.name,
             "last_name": user.last_name,
@@ -118,12 +125,20 @@ def get_current_user_profile():
             "css_id": user.css_id,
             "rol": user.rol.value,
             "is_active": user.is_active,
+            # Campos del avatar
+            "avatar_url": user.avatar_url,
+            "avatar_type": user.avatar_type,
+            "avatar_style": user.avatar_style,
+            "avatar_color": user.avatar_color,
+            "avatar_seed": user.avatar_seed,
+            # Timestamps
             "last_login": user.last_login.isoformat() if user.last_login else None,
             "created_at": user.created_at.isoformat() if user.created_at else None,
             "updated_at": user.updated_at.isoformat() if user.updated_at else None
         }
     }), 200
-    
+
+
 # =================================================================
 #           RUTA PARA ACTUALIZAR EL PERFIL DEL USUARIO
 # ==================================================================
@@ -134,13 +149,8 @@ def update_current_user_profile():
     """Actualizar perfil del usuario actual. Body:
         - name: string (opcional)
         - last_name: string (opcional)
-        - email: string (opcional)
         - phone: string (opcional)
-        - bio: string (opcional)
-        - location: string (opcional)
-        - website: string (opcional)
         - address: string (opcional)
-        - birth_date: string (opcional) - formato YYYY-MM-DD
     Returns:
         200: Perfil actualizado exitosamente
         400: Datos inválidos
@@ -189,14 +199,12 @@ def update_current_user_profile():
                     user.phone = new_phone
                     changes_made.append("teléfono")
         
-        
         # Actualizar dirección
         if 'address' in data:
             new_address = data['address'].strip() if data['address'] else None
             if user.address != new_address:
                 user.address = new_address
                 changes_made.append("dirección")
-        
         
         # ========== FINALIZACIÓN ==========
         
@@ -205,19 +213,38 @@ def update_current_user_profile():
             return jsonify({
                 "success": True,
                 "message": "No se realizaron cambios",
-                "changes": []
+                "user": {
+                    "name": user.name,
+                    "last_name": user.last_name,
+                    "phone": user.phone,
+                    "address": user.address,
+                    "avatar_url": user.avatar_url,
+                    "avatar_type": user.avatar_type,
+                    "avatar_style": user.avatar_style,
+                    "avatar_color": user.avatar_color,
+                    "avatar_seed": user.avatar_seed
+                }
             }), 200
         
         # Actualizar timestamp y guardar
         user.updated_at = datetime.now(timezone.utc)
-        
         db.session.commit()
         
         return jsonify({
             "success": True,
             "message": f"Perfil actualizado exitosamente. Cambios realizados: {', '.join(changes_made)}",
-            "changes": changes_made,
-            "updated_at": user.updated_at.isoformat()
+            "user": {
+                "name": user.name,
+                "last_name": user.last_name,
+                "phone": user.phone,
+                "address": user.address,
+                "avatar_url": user.avatar_url,
+                "avatar_type": user.avatar_type,
+                "avatar_style": user.avatar_style,
+                "avatar_color": user.avatar_color,
+                "avatar_seed": user.avatar_seed,
+                "updated_at": user.updated_at.isoformat()
+            }
         }), 200
         
     except (BadRequestError, ConflictError, UnauthorizedError) as e:
@@ -225,79 +252,47 @@ def update_current_user_profile():
         raise e
     except Exception as e:
         db.session.rollback()
-        raise BadRequestError(f"Error al actualizar el perfil: {str(e)}")
-
-# =================================================================
-#       RUTA PARA OBTENER LISTA DE PROFESIONALES 
-# ==================================================================
- 
-    
-@user_bp.route("/professionals", methods=["GET"])
-@requires_coordinator_or_admin
-def get_professionals():
-    """
-    Obtener lista de profesionales activos
-    (Para select al crear/editar taller)
-    """
-    professionals = SystemUser.query.filter_by(
-        rol=UserRole.PROFESSIONAL,
-        is_active=True
-    ).all()
-    
-    return jsonify({
-        "professionals": [
-            {
-                "id": prof.id,
-                "name": f"{prof.name} {prof.last_name}",
-                "email": prof.email
-            } 
-            for prof in professionals
-        ]
-    }), 200
+        return jsonify({"error": str(e)}), 500
 
 
-# =================================================================
-# RUTA PARA CAMBIAR LA CONTRASEÑA EN EL PERFIL TAL Y COMO PIDIO AOSSA
-# ==================================================================
+# ========================================
+# ENDPOINT: Cambiar Contraseña
+# ========================================
 
-@user_bp.route("/profile/password", methods=["PUT"])
+@user_bp.route('/profile/password', methods=['PUT'])
 @jwt_required()
 def update_password():
-    """Actualizar contraseña del usuario actual
-    Body:
-        - current_password: string (requerido)
-        - new_password: string (requerido)
-        - confirm_password: string (requerido)
+    """
+    Cambiar contraseña del usuario
     """
     try:
         current_user_id = get_jwt_identity()
         user = SystemUser.query.get(current_user_id)
         
-        if not user or not user.is_active:
-            raise UnauthorizedError("Usuario no válido")
+        if not user:
+            return jsonify({"error": "Usuario no encontrado"}), 404
         
-        data = request.get_json(silent=True) or {}
+        data = request.get_json()
         
         # Validar campos requeridos
-        if not all([data.get('current_password'), data.get('new_password'), data.get('confirm_password')]):
-            raise BadRequestError("Todos los campos son requeridos")
+        if not all(k in data for k in ('current_password', 'new_password', 'confirm_password')):
+            return jsonify({"error": "Faltan campos requeridos"}), 400
         
-        # Verificar contraseña actual
+        # ✅ Verificar contraseña actual
         if not bcrypt.check_password_hash(user.password, data['current_password']):
-            raise UnauthorizedError("Contraseña actual incorrecta")
+            return jsonify({"error": "Contraseña actual incorrecta"}), 401
         
         # Verificar que las nuevas contraseñas coincidan
         if data['new_password'] != data['confirm_password']:
-            raise ValidationError("Las contraseñas no coinciden")
+            return jsonify({"error": "Las nuevas contraseñas no coinciden"}), 400
         
         # Validar longitud mínima
         if len(data['new_password']) < 8:
-            raise ValidationError("La contraseña debe tener al menos 8 caracteres")
+            return jsonify({"error": "La contraseña debe tener al menos 8 caracteres"}), 400
         
-        # Actualizar contraseña
-        user.password = bcrypt.generate_password_hash(data['new_password']).decode("utf-8")
+        # ✅ Actualizar contraseña correctamente
+        user.password = bcrypt.generate_password_hash(data['new_password']).decode('utf-8')
         user.updated_at = datetime.now(timezone.utc)
-        
         db.session.commit()
         
         return jsonify({
@@ -305,73 +300,63 @@ def update_password():
             "message": "Contraseña actualizada exitosamente"
         }), 200
         
-    except (BadRequestError, UnauthorizedError, ValidationError) as e:
-        db.session.rollback()
-        raise e
     except Exception as e:
         db.session.rollback()
-        raise BadRequestError(f"Error al actualizar contraseña: {str(e)}")
-    
+        return jsonify({"error": str(e)}), 500
 
-# =================================================================
-# RUTAs PARA LA MODIFICACION DEL AVATAR EN EL PERFIL 
-# ==================================================================
+# ========================================
+# ENDPOINT: Actualizar Avatar
+# ========================================
 
-    # Lista de avatares predefinidos
-PREDEFINED_AVATARS = [
-    {'id': 'avatar-1', 'url': '/avatars/default-1.png', 'category': 'classic'},
-    {'id': 'avatar-2', 'url': '/avatars/default-2.png', 'category': 'classic'},
-    {'id': 'avatar-3', 'url': '/avatars/default-3.png', 'category': 'modern'},
-    {'id': 'avatar-4', 'url': '/avatars/default-4.png', 'category': 'modern'},
-    # ... más avatares
-]
-
-@user_bp.route("/avatars/predefined", methods=["GET"])
-@jwt_required()
-def get_predefined_avatars():
-    """Obtener lista de avatares predefinidos"""
-    return jsonify({
-        "avatars": PREDEFINED_AVATARS
-    }), 200
-
-@user_bp.route("/profile/avatar", methods=["PUT"])
+@user_bp.route('/profile/avatar', methods=['PUT'])
 @jwt_required()
 def update_avatar():
-    """Actualizar avatar del usuario
-    Body:
-        - avatar_id: string (para predefinidos)
-        - avatar_type: string (initials, predefined, gravatar)
+    """
+    Actualizar avatar del usuario.
+    Sistema mejorado que guarda la URL y metadata para regenerar.
+    
+    Body esperado:
+    {
+        "avatar_type": "dicebear" | "initials",
+        "avatar_url": "https://...",
+        "avatar_style": "adventurer" (solo para dicebear),
+        "avatar_color": "E9531A" (solo para initials),
+        "avatar_seed": "usuario123" (opcional)
+    }
     """
     try:
         current_user_id = get_jwt_identity()
         user = SystemUser.query.get(current_user_id)
         
-        if not user or not user.is_active:
-            raise UnauthorizedError("Usuario no válido")
+        if not user:
+            return jsonify({"error": "Usuario no encontrado"}), 404
         
-        data = request.get_json(silent=True) or {}
-        avatar_type = data.get('avatar_type', 'initials')
+        data = request.get_json()
         
-        if avatar_type == 'predefined':
-            avatar_id = data.get('avatar_id')
-            if not avatar_id:
-                raise ValidationError("avatar_id es requerido para avatares predefinidos")
-            
-            # Validar que el avatar existe
-            avatar = next((a for a in PREDEFINED_AVATARS if a['id'] == avatar_id), None)
-            if not avatar:
-                raise NotFoundError("Avatar no encontrado")
-            
-            user.avatar = avatar['url']
-            user.avatar_type = 'predefined'
+        # Validar tipo de avatar
+        avatar_type = data.get('avatar_type')
+        if avatar_type not in ['dicebear', 'initials']:
+            return jsonify({"error": "Tipo de avatar inválido"}), 400
+        
+        # Validar URL del avatar
+        avatar_url = data.get('avatar_url')
+        if not avatar_url:
+            return jsonify({"error": "URL del avatar es requerida"}), 400
+        
+        # Actualizar datos del avatar
+        user.avatar_url = avatar_url
+        user.avatar_type = avatar_type
+        
+        # Guardar metadata según el tipo
+        if avatar_type == 'dicebear':
+            user.avatar_style = data.get('avatar_style', 'adventurer')
+            user.avatar_seed = data.get('avatar_seed', '')
+            user.avatar_color = None  # No aplica para dicebear
         
         elif avatar_type == 'initials':
-            user.avatar = None  # Se generará en frontend
-            user.avatar_type = 'initials'
-        
-        elif avatar_type == 'gravatar':
-            user.avatar = user.email  # Gravatar usa el email
-            user.avatar_type = 'gravatar'
+            user.avatar_color = data.get('avatar_color', 'E9531A')
+            user.avatar_style = None  # No aplica para initials
+            user.avatar_seed = None
         
         user.updated_at = datetime.now(timezone.utc)
         db.session.commit()
@@ -379,13 +364,52 @@ def update_avatar():
         return jsonify({
             "success": True,
             "message": "Avatar actualizado exitosamente",
-            "avatar": user.avatar,
-            "avatar_type": user.avatar_type
+            "avatar": {
+                "avatar_url": user.avatar_url,
+                "avatar_type": user.avatar_type,
+                "avatar_style": user.avatar_style,
+                "avatar_color": user.avatar_color,
+                "avatar_seed": user.avatar_seed
+            }
         }), 200
         
-    except (ValidationError, NotFoundError, UnauthorizedError) as e:
-        db.session.rollback()
-        raise e
     except Exception as e:
         db.session.rollback()
-        raise BadRequestError(f"Error al actualizar avatar: {str(e)}")
+        return jsonify({"error": str(e)}), 500
+
+
+# ========================================
+# ENDPOINT: Eliminar Avatar (volver al default)
+# ========================================
+
+@user_bp.route('/profile/avatar', methods=['DELETE'])
+@jwt_required()
+def delete_avatar():
+    """
+    Eliminar avatar personalizado y volver al avatar por defecto
+    """
+    try:
+        current_user_id = get_jwt_identity()
+        user = SystemUser.query.get(current_user_id)
+        
+        if not user:
+            return jsonify({"error": "Usuario no encontrado"}), 404
+        
+        # Limpiar todos los datos del avatar
+        user.avatar_url = None
+        user.avatar_type = None
+        user.avatar_style = None
+        user.avatar_color = None
+        user.avatar_seed = None
+        
+        user.updated_at = datetime.now(timezone.utc)
+        db.session.commit()
+        
+        return jsonify({
+            "success": True,
+            "message": "Avatar eliminado exitosamente"
+        }), 200
+        
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": str(e)}), 500

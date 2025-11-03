@@ -1,5 +1,5 @@
 /* ========================================
-   AVATAR SELECTOR
+   AVATAR SELECTOR - IMPROVED VERSION
    ======================================== */
 
 .avatar-selector {
@@ -16,7 +16,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 16px;
+  gap: 20px;
   padding: 32px;
   background: rgba(0, 0, 0, 0.3);
   border: 1px solid rgba(233, 83, 26, 0.2);
@@ -25,7 +25,6 @@
   overflow: hidden;
 }
 
-/* Efecto gradient animado de fondo */
 .avatar-preview-section::before {
   content: '';
   position: absolute;
@@ -43,21 +42,54 @@
 }
 
 @keyframes rotateGradient {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
 }
 
-.avatar-preview-section h3 {
+.preview-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  position: relative;
+  z-index: 1;
+}
+
+.preview-header h3 {
   font-size: 16px;
   font-weight: 700;
   color: rgba(255, 255, 255, 0.9);
   margin: 0;
-  position: relative;
-  z-index: 1;
+}
+
+.btn-randomize {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.btn-randomize:hover {
+  background: rgba(233, 83, 26, 0.15);
+  border-color: rgba(233, 83, 26, 0.4);
+  color: var(--orange-primary);
+  transform: translateY(-2px);
+}
+
+.btn-randomize svg {
+  transition: transform 0.3s;
+}
+
+.btn-randomize:hover svg {
+  transform: rotate(180deg);
 }
 
 .avatar-preview-large {
@@ -86,7 +118,6 @@
     inset 0 2px 8px rgba(0, 0, 0, 0.2);
 }
 
-/* Ring animado alrededor del preview */
 .avatar-preview-large::before {
   content: '';
   position: absolute;
@@ -105,40 +136,170 @@
 }
 
 @keyframes rotateBorder {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
 }
 
 .avatar-preview-large img {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  border-radius: 50%;
 }
 
-/* Avatar con iniciales */
-.avatar-initials-large {
-  font-size: 56px;
-  font-weight: 900;
-  background: var(--sentya-gradient-1);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  text-shadow: 0 4px 16px rgba(233, 83, 26, 0.5);
+.preview-info {
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.7);
+  font-weight: 500;
+  margin: 0;
+  position: relative;
+  z-index: 1;
 }
 
 /* ========================================
-   AVATAR OPTIONS GRID
+   TYPE SELECTOR (Dicebear vs Iniciales)
+   ======================================== */
+
+.avatar-type-selector {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.type-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 16px 24px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.type-btn::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--sentya-gradient-3);
+  opacity: 0;
+  transition: all 0.4s ease;
+}
+
+.type-btn:hover::before {
+  opacity: 1;
+}
+
+.type-btn:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(233, 83, 26, 0.3);
+  color: rgba(255, 255, 255, 0.95);
+  transform: translateY(-2px);
+}
+
+.type-btn.active {
+  background: rgba(233, 83, 26, 0.15);
+  border-color: rgba(233, 83, 26, 0.5);
+  color: var(--orange-primary);
+  box-shadow: 
+    0 4px 16px rgba(233, 83, 26, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.type-btn svg,
+.type-btn .initials-icon {
+  position: relative;
+  z-index: 1;
+}
+
+.initials-icon {
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--sentya-gradient-1);
+  border-radius: 50%;
+  color: white;
+  font-size: 11px;
+  font-weight: 900;
+}
+
+/* ========================================
+   CATEGORY FILTER
+   ======================================== */
+
+.category-filter {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  padding: 4px;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 12px;
+}
+
+.category-btn {
+  padding: 8px 16px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+}
+
+.category-btn:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.95);
+}
+
+.category-btn.active {
+  background: rgba(233, 83, 26, 0.2);
+  border-color: rgba(233, 83, 26, 0.4);
+  color: var(--orange-primary);
+}
+
+/* ========================================
+   AVATAR OPTIONS GRID (DiceBear Styles)
    ======================================== */
 
 .avatar-options {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
   gap: 16px;
+  max-height: 400px;
+  overflow-y: auto;
   padding: 8px;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 12px;
+}
+
+.avatar-options::-webkit-scrollbar {
+  width: 8px;
+}
+
+.avatar-options::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 4px;
+}
+
+.avatar-options::-webkit-scrollbar-thumb {
+  background: rgba(233, 83, 26, 0.3);
+  border-radius: 4px;
+}
+
+.avatar-options::-webkit-scrollbar-thumb:hover {
+  background: rgba(233, 83, 26, 0.5);
 }
 
 .avatar-option {
@@ -171,56 +332,21 @@
   object-fit: cover;
 }
 
-/* Avatar con iniciales pequeño */
-.avatar-option-preview.avatar-initials {
-  font-size: 32px;
-  font-weight: 900;
-  background: var(--sentya-gradient-3);
-  color: white;
-}
-
-.avatar-option span {
+.avatar-option-name {
   font-size: 12px;
   font-weight: 600;
   color: rgba(255, 255, 255, 0.7);
+  text-align: center;
   transition: color 0.3s;
 }
 
-/* Check icon cuando está seleccionado */
-.avatar-option svg {
-  position: absolute;
-  top: -4px;
-  right: -4px;
-  width: 24px;
-  height: 24px;
-  padding: 4px;
-  background: var(--sentya-gradient-1);
-  border-radius: 50%;
-  color: white;
-  box-shadow: 0 4px 12px rgba(233, 83, 26, 0.6);
-  animation: checkBounce 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-}
-
-@keyframes checkBounce {
-  0% {
-    transform: scale(0) rotate(-45deg);
-  }
-  60% {
-    transform: scale(1.2) rotate(5deg);
-  }
-  100% {
-    transform: scale(1) rotate(0deg);
-  }
-}
-
-/* Estados hover y selected */
 .avatar-option:hover .avatar-option-preview {
   transform: scale(1.1) translateY(-4px);
   border-color: rgba(233, 83, 26, 0.4);
   box-shadow: 0 8px 24px rgba(233, 83, 26, 0.3);
 }
 
-.avatar-option:hover span {
+.avatar-option:hover .avatar-option-name {
   color: rgba(255, 255, 255, 0.95);
 }
 
@@ -232,89 +358,87 @@
   transform: scale(1.05);
 }
 
-.avatar-option.selected span {
+.avatar-option.selected .avatar-option-name {
   color: var(--orange-primary);
   font-weight: 700;
 }
 
-/* Efecto glow en el seleccionado */
-.avatar-option.selected .avatar-option-preview::before {
-  content: '';
+.selected-badge {
   position: absolute;
-  inset: -4px;
+  top: -4px;
+  right: -4px;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--sentya-gradient-1);
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(233, 83, 26, 0.3) 0%, transparent 70%);
-  filter: blur(12px);
-  z-index: -1;
-  animation: glowPulse 2s ease-in-out infinite;
+  border: 2px solid rgba(8, 9, 9, 0.98);
+  color: white;
+  box-shadow: 0 4px 12px rgba(233, 83, 26, 0.6);
+  animation: checkBounce 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  z-index: 10;
 }
 
-@keyframes glowPulse {
-  0%, 100% {
-    opacity: 0.5;
-    transform: scale(1);
-  }
-  50% {
-    opacity: 1;
-    transform: scale(1.1);
-  }
+@keyframes checkBounce {
+  0% { transform: scale(0) rotate(-45deg); }
+  60% { transform: scale(1.2) rotate(5deg); }
+  100% { transform: scale(1) rotate(0deg); }
 }
 
 /* ========================================
-   SPECIAL AVATAR TYPES
+   COLOR OPTIONS (Para Iniciales)
    ======================================== */
 
-/* Iniciales especiales */
-.avatar-option:first-child .avatar-option-preview {
-  background: linear-gradient(135deg, rgba(233, 83, 26, 0.3), rgba(220, 38, 38, 0.3));
+.color-options {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 16px;
 }
 
-/* Gravatar especial */
-.avatar-option:nth-child(2) .avatar-option-preview {
-  background: linear-gradient(135deg, rgba(59, 130, 246, 0.3), rgba(147, 51, 234, 0.3));
-}
-
-/* ========================================
-   LOADING STATE
-   ======================================== */
-
-.avatar-option-preview.loading {
+.color-option {
   position: relative;
-  overflow: hidden;
+  cursor: pointer;
+  padding: 24px 16px;
+  border-radius: 12px;
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
-.avatar-option-preview.loading::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    rgba(233, 83, 26, 0.2),
-    transparent
-  );
-  animation: shimmer 1.5s infinite;
+.color-initials {
+  font-size: 32px;
+  font-weight: 900;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
 }
 
-@keyframes shimmer {
-  0% {
-    transform: translateX(-100%);
-  }
-  100% {
-    transform: translateX(100%);
-  }
+.color-name {
+  font-size: 13px;
+  font-weight: 600;
+  opacity: 0.9;
 }
 
-/* ========================================
-   EMPTY STATE
-   ======================================== */
+.color-option:hover {
+  transform: scale(1.05) translateY(-4px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+  border-color: rgba(255, 255, 255, 0.3);
+}
 
-.avatar-options-empty {
-  grid-column: 1 / -1;
-  padding: 40px;
-  text-align: center;
-  color: rgba(255, 255, 255, 0.5);
-  font-size: 14px;
+.color-option.selected {
+  transform: scale(1.05);
+  box-shadow: 
+    0 8px 24px rgba(0, 0, 0, 0.5),
+    inset 0 0 0 2px rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.4);
+}
+
+.color-option .selected-badge {
+  background: rgba(0, 0, 0, 0.8);
+  border: 2px solid currentColor;
 }
 
 /* ========================================
@@ -331,10 +455,6 @@
     height: 140px;
   }
 
-  .avatar-initials-large {
-    font-size: 48px;
-  }
-
   .avatar-options {
     grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
     gap: 12px;
@@ -345,8 +465,8 @@
     height: 90px;
   }
 
-  .avatar-option-preview.avatar-initials {
-    font-size: 28px;
+  .color-options {
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
   }
 }
 
@@ -360,8 +480,17 @@
     height: 120px;
   }
 
-  .avatar-initials-large {
-    font-size: 40px;
+  .preview-header {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .avatar-type-selector {
+    grid-template-columns: 1fr;
+  }
+
+  .category-filter {
+    justify-content: center;
   }
 
   .avatar-options {
@@ -374,27 +503,17 @@
     height: 80px;
   }
 
-  .avatar-option-preview.avatar-initials {
-    font-size: 24px;
+  .color-options {
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
   }
 
-  .avatar-option span {
-    font-size: 11px;
+  .color-option {
+    padding: 20px 12px;
   }
-}
 
-/* ========================================
-   ACCESSIBILITY
-   ======================================== */
-
-.avatar-option:focus-visible {
-  outline: 2px solid var(--orange-primary);
-  outline-offset: 4px;
-  border-radius: 50%;
-}
-
-.avatar-option:focus-visible .avatar-option-preview {
-  border-color: rgba(233, 83, 26, 0.6);
+  .color-initials {
+    font-size: 28px;
+  }
 }
 
 /* ========================================
@@ -402,7 +521,8 @@
    ======================================== */
 
 .avatar-option-preview,
-.avatar-preview-large {
+.avatar-preview-large,
+.color-option {
   will-change: transform;
 }
 

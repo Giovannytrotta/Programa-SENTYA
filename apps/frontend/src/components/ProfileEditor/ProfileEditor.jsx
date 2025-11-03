@@ -1,4 +1,5 @@
 // apps/frontend/src/components/ProfileEditor/ProfileEditor.jsx
+// ✅ VERSIÓN CORREGIDA - SIN fetchAvatars
 
 import React, { useState, useEffect } from 'react';
 import { User, Lock, Image, Mail, Phone, MapPin, Calendar, X } from 'lucide-react';
@@ -6,8 +7,7 @@ import { useProfile } from '../../hooks/useProfile';
 import { useAuth } from '../../hooks/useAuth';
 import AvatarSelector from './AvatarSelector';
 import PasswordForm from './PasswordForm';
-import "./ProfileEditor.css"
-
+import './ProfileEditor.css';
 
 const ProfileEditor = ({ isOpen, onClose }) => {
   const { user } = useAuth();
@@ -17,8 +17,7 @@ const ProfileEditor = ({ isOpen, onClose }) => {
     fetchProfile, 
     updateProfile,
     updatePassword,
-    fetchAvatars,
-    avatars 
+    // ❌ REMOVIDO: fetchAvatars y avatars (ya no existen)
   } = useProfile();
 
   const [activeTab, setActiveTab] = useState('info'); // 'info', 'avatar', 'password'
@@ -29,13 +28,13 @@ const ProfileEditor = ({ isOpen, onClose }) => {
     address: ''
   });
 
-  // Cargar perfil al abrir
+  // Cargar perfil al abrir (SIN fetchAvatars)
   useEffect(() => {
     if (isOpen) {
       fetchProfile();
-      fetchAvatars();
+      // ❌ REMOVIDO: fetchAvatars() - ya no existe
     }
-  }, [isOpen, fetchProfile, fetchAvatars]);
+  }, [isOpen, fetchProfile]); // ✅ Sin fetchAvatars en dependencias
 
   // Actualizar formulario cuando cargue el perfil
   useEffect(() => {
@@ -196,11 +195,12 @@ const ProfileEditor = ({ isOpen, onClose }) => {
           {/* TAB: Avatar */}
           {activeTab === 'avatar' && (
             <AvatarSelector 
-              currentAvatar={profile?.avatar}
+              currentAvatar={profile?.avatar_url}      // ✅ CORREGIDO: avatar_url en vez de avatar
               currentType={profile?.avatar_type}
-              avatars={avatars}
-              userName={`${user?.name} ${user?.last_name}`}
+              userName={`${user?.name} ${user?.last_name || ''}`}
               userEmail={user?.email}
+              // ❌ REMOVIDO: avatars prop (ya no existe)
+              // Los avatares se generan dinámicamente en AvatarSelector
             />
           )}
 

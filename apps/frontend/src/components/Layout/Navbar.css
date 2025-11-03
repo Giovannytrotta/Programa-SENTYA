@@ -1062,3 +1062,197 @@
     transition-duration: 0.01ms !important;
   }
 }
+.user-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.05);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+/* Imagen del avatar */
+.user-avatar-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+  display: block;
+}
+
+/* Fallback: cuando la imagen falla o no existe */
+.user-avatar.fallback {
+  background: var(--sentya-gradient-1);
+}
+
+/* Ring animado alrededor del avatar */
+.avatar-ring {
+  position: absolute;
+  inset: -3px;
+  border-radius: 50%;
+  background: conic-gradient(
+    from 0deg,
+    var(--orange-primary),
+    var(--red-primary),
+    var(--orange-secondary),
+    var(--orange-primary)
+  );
+  opacity: 0;
+  transition: opacity 0.3s;
+  animation: rotateAvatarRing 3s linear infinite;
+  z-index: -1;
+}
+
+@keyframes rotateAvatarRing {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.user-button:hover .avatar-ring {
+  opacity: 0.6;
+}
+
+/* Efecto hover en el botón completo */
+.user-button:hover .user-avatar {
+  transform: scale(1.1);
+}
+
+/* ========================================
+   DROPDOWN AVATAR (en el menú desplegable)
+   ======================================== */
+
+.dropdown-avatar {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.05);
+  border: 2px solid rgba(233, 83, 26, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  position: relative;
+  box-shadow: 
+    0 4px 16px rgba(233, 83, 26, 0.3),
+    inset 0 1px 4px rgba(0, 0, 0, 0.2);
+}
+
+.dropdown-avatar-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+  display: block;
+}
+
+.dropdown-avatar.fallback {
+  background: var(--sentya-gradient-1);
+}
+
+/* Ring del dropdown avatar */
+.dropdown-avatar::before {
+  content: '';
+  position: absolute;
+  inset: -4px;
+  border-radius: 50%;
+  background: conic-gradient(
+    from 0deg,
+    var(--orange-primary),
+    var(--red-primary),
+    var(--orange-secondary),
+    var(--orange-primary)
+  );
+  opacity: 0.3;
+  animation: rotateAvatarRing 3s linear infinite;
+  z-index: -1;
+}
+
+/* ========================================
+   RESPONSIVE ADJUSTMENTS
+   ======================================== */
+
+@media (max-width: 768px) {
+  .user-avatar {
+    width: 36px;
+    height: 36px;
+  }
+
+  .dropdown-avatar {
+    width: 56px;
+    height: 56px;
+  }
+}
+
+@media (max-width: 480px) {
+  .user-avatar {
+    width: 32px;
+    height: 32px;
+  }
+
+  .dropdown-avatar {
+    width: 48px;
+    height: 48px;
+  }
+}
+
+/* ========================================
+   LOADING STATE (opcional)
+   ======================================== */
+
+.user-avatar.loading,
+.dropdown-avatar.loading {
+  position: relative;
+}
+
+.user-avatar.loading::after,
+.dropdown-avatar.loading::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(233, 83, 26, 0.3),
+    transparent
+  );
+  animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+/* ========================================
+   ACCESSIBILITY
+   ======================================== */
+
+.user-avatar:focus-visible {
+  outline: 2px solid var(--orange-primary);
+  outline-offset: 2px;
+}
+
+/* ========================================
+   PERFORMANCE
+   ======================================== */
+
+.user-avatar,
+.dropdown-avatar {
+  will-change: transform;
+}
+
+.avatar-ring {
+  will-change: opacity, transform;
+}
