@@ -1,15 +1,15 @@
-from flask import Flask, jsonify
+from flask import Flask, jsonify, send_from_directory  
 from app.instance.config import Config
 from flask_migrate import Migrate
 from datetime import timedelta
 from flask_bcrypt import Bcrypt
-from app.extensions import db,ma,jwt,bcrypt,migrate,mail
-# from flask_cors import CORS
+from app.extensions import db, ma, jwt, bcrypt, migrate
 from app.exceptions import AppError
 from marshmallow import ValidationError as MarshmallowError 
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager
 from sqlalchemy import text
+import os
 
 def create_app():
     #crea y configura la aplicación Flask:
@@ -19,13 +19,13 @@ def create_app():
     origins=['*'], 
     methods=['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allow_headers=['Content-Type', 'Authorization', 'Access-Control-Allow-Credentials'],
-    supports_credentials=True)
+    supports_credentials=True,
+    expose_headers=['Content-Type'])
     # 1) Config
     app.config.from_object(Config)
     db.init_app(app)
     migrate.init_app(app, db)
     jwt.init_app(app)
-    mail.init_app(app)
     # ma.init_app(app)
     # migrate= Migrate(app,db,render_as_batch=False)
     bcrypt.init_app(app)
@@ -35,6 +35,7 @@ def create_app():
 
     #BLUEPRINTS 
     from app.routes.auth.auth import auth_bp
+    from app.routes.auth.auth import auth_bp
     from app.routes.User.user import user_bp
     from app.routes.workshop.workshop import workshop_bp
     from app.routes.session.session import session_bp
@@ -42,6 +43,7 @@ def create_app():
     from app.routes.worshopUser.worshop_user import workshop_users_bp
     from app.routes.thematicArea.thematic_areas import thematic_areas_bp
     from app.routes.css.css import css_bp
+    
     app.register_blueprint(auth_bp)
     app.register_blueprint(user_bp)
     app.register_blueprint(workshop_bp)
@@ -62,6 +64,10 @@ def create_app():
     # def handle_marshmallow_error(err):
     # #err.messages es un dict { campo: [errores,…] }
     #     return jsonify(err.messages), 422
+    @app.route('/uploads/avatars/<filename>')
+    def uploaded_avatar(filename):
+        upload_folder = os.path.join(os.path.dirname(__file__), 'uploads/avatars')
+        return send_from_directory(upload_folder, filename)
 
     
     

@@ -11,27 +11,29 @@ import ExitToggle from '../AdminDashboard/ExitToggle';
 import ProfileEditor from '../ProfileEditor/ProfileEditor';
 import './Navbar.css';
 
-// 🎨 GENERAR URL DE AVATAR
 const generateAvatarUrl = (user) => {
-  // Si el usuario tiene avatar configurado
-  if (user?.avatar_url) {
+ 
+  
+  // Si tiene avatar subido (FOTO)
+  if (user?.avatar_type === 'upload' && user?.avatar_url) {
+   
     return user.avatar_url;
   }
 
-  // Si tiene tipo de avatar y metadata para regenerar
-  if (user?.avatar_type === 'dicebear' && user?.avatar_style) {
-    const seed = user?.avatar_seed || user?.email?.split('@')[0] || user?.name?.replace(/\s+/g, '') || 'user';
-    return `https://api.dicebear.com/7.x/${user.avatar_style}/svg?seed=${seed}&size=200`;
+  // Si tiene avatar de iniciales configurado
+  if (user?.avatar_type === 'initials' && user?.avatar_url) {
+   
+    return user.avatar_url;
   }
 
-  if (user?.avatar_type === 'initials' && user?.avatar_color) {
-    const initials = getInitials(user?.name);
-    return `https://ui-avatars.com/api/?name=${initials}&size=200&background=${user.avatar_color}&color=FFFFFF&bold=true&font-size=0.4`;
-  }
-
-  // Fallback: generar avatar por defecto con DiceBear
-  const seed = user?.email?.split('@')[0] || user?.name?.replace(/\s+/g, '') || 'user';
-  return `https://api.dicebear.com/7.x/adventurer/svg?seed=${seed}&size=200`;
+  // Generar avatar por defecto con iniciales
+  const initials = getInitials(user?.name);
+  const color = user?.avatar_color || 'E9531A';
+  const textColor = 'FFFFFF';
+  const defaultUrl = `https://ui-avatars.com/api/?name=${initials}&size=200&background=${color}&color=${textColor}&bold=true&font-size=0.4`;
+  
+ 
+  return defaultUrl;
 };
 
 // Generar iniciales

@@ -1,6 +1,9 @@
 from flask import Blueprint, jsonify, request, session, current_app
 from app.extensions import db, jwt, bcrypt
+from werkzeug.utils import secure_filename
+import os
 from app.models.user import SystemUser, UserRole
+from uuid import uuid4
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity, unset_jwt_cookies, set_access_cookies, decode_token
 from app.exceptions import ValidationError, UnauthorizedError, ForbiddenError, AppError, BadRequestError, NotFoundError, ConflictError
 from app.utils.helper import issue_tokens_for_user
@@ -10,6 +13,18 @@ from functools import wraps
 from app.utils.decorators import requires_coordinator_or_admin
 
 user_bp = Blueprint("user", __name__, url_prefix='/user')
+
+
+# Configuración
+UPLOAD_FOLDER = os.path.join(os.path.dirname(__file__), '../../uploads/avatars')
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'webp'}
+MAX_FILE_SIZE = 5 * 1024 * 1024  # 5MB
+
+# Crear carpeta si no existe
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 
 @user_bp.route("/login", methods=["POST"])
@@ -408,6 +423,90 @@ def delete_avatar():
         return jsonify({
             "success": True,
             "message": "Avatar eliminado exitosamente"
+        }), 200
+        
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": str(e)}), 500
+    
+
+@user_bp.route('/profile/avatar/upload', methods=['POST'])
+@jwt_required()
+def upload_avatar():
+    """
+    Subir imagen de avatar
+    """
+    try:
+        current_user_id = get_jwt_identity()
+        user = SystemUser.query.get(current_user_id)
+        
+        if not user:
+            return jsonify({"error": "Usuario no encontrado"}), 404
+        
+        # Verificar que hay un archivo
+        if 'avatar' not in request.files:
+            return jsonify({"error": "No se envió ningún archivo"}), 400
+        
+        file = request.files['avatar']
+        
+        if file.filename == '':
+            return jsonify({"error": "Archivo vacío"}), 400
+        
+        # Validar tipo de archivo
+        if not allowed_file(file.filename):
+            return jsonify({"error": "Tipo de archivo no permitido"}), 400
+        
+        # Validar tamaño
+        file.seek(0, os.SEEK_END)
+        file_size = file.tell()
+        file.seek(0)
+        
+        if file_size > MAX_FILE_SIZE:
+            return jsonify({"error": "El archivo es demasiado grande (máx. 5MB)"}), 400
+        
+        # Generar nombre único
+        file_extension = file.filename.rsplit('.', 1)[1].lower()
+        unique_filename = f"{uuid4()}.{file_extension}"
+        file_path = os.path.join(UPLOAD_FOLDER, unique_filename)
+        
+        # Eliminar avatar anterior si existe
+        if user.avatar_url and user.avatar_type == 'upload':
+            try:
+                # Extraer solo el nombre del archivo
+                old_filename = user.avatar_url.split('/')[-1]
+                old_path = os.path.join(UPLOAD_FOLDER, old_filename)
+                if os.path.exists(old_path):
+                    os.remove(old_path)
+            except:
+                pass
+        
+        # Guardar archivo
+        file.save(file_path)
+        
+        # ✅ Generar URL COMPLETA
+        from flask import request as flask_request
+        avatar_url = f"{flask_request.host_url}uploads/avatars/{unique_filename}"
+        
+        # Actualizar usuario
+        user.avatar_url = avatar_url
+        user.avatar_type = 'upload'
+        user.avatar_style = None
+        user.avatar_color = None
+        user.avatar_seed = None
+        user.updated_at = datetime.now(timezone.utc)
+        
+        db.session.commit()
+        
+        return jsonify({
+            "success": True,
+            "message": "Avatar subido exitosamente",
+            "avatar": {
+                "avatar_url": avatar_url,
+                "avatar_type": "upload",
+                "avatar_style": None,
+                "avatar_color": None,
+                "avatar_seed": None
+            }
         }), 200
         
     except Exception as e:

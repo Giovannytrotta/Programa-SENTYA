@@ -23,12 +23,6 @@ const CSSTechnicianDashboard = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
 
-  console.log("🧩 CSSTechnicianDashboard render:", {
-    id: user?.id,
-    role: user?.rol,
-    css_id: user?.css_id,
-    user
-  });
 
   if (!user?.css_id) {
   return (

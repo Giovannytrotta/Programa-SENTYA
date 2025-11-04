@@ -193,49 +193,57 @@ export const useProfile = () => {
   // 🎨 ACTUALIZAR AVATAR (MEJORADO)
   // ============================================
   
-  const updateAvatar = useCallback(async (avatarData) => {
-    setLoading(true);
-    setError(null);
+  // Modificar el método updateAvatar para soportar FormData
+const updateAvatar = useCallback(async (avatarData, type = 'data') => {
+  setLoading(true);
+  setError(null);
+  
+  try {
+    let response;
     
-    try {
-      const response = await apiService.updateAvatar(avatarData);
-      
-      if (response.success && response.avatar) {
-        // Actualizar perfil local
-        setProfile(prev => ({
-          ...prev,
-          ...response.avatar
-        }));
-        
-        // Actualizar contexto de auth para que el Navbar lo vea
-        dispatch({
-          type: ACTION_TYPES.SET_USER,
-          payload: {
-            ...store.auth.user,  // store accesible por closure
-            ...response.avatar
-          }
-        });
-        
-        showNotification(MESSAGES.SUCCESS.UPDATE_AVATAR, 'success');
-        return { success: true, data: response.avatar };
-      }
-      
-      throw new Error('Error al actualizar avatar');
-    } catch (err) {
-      let errorMessage = MESSAGES.ERROR.UPDATE_AVATAR;
-      
-      if (err instanceof ApiError) {
-        errorMessage = `❌ ${err.message}`;
-      }
-      
-      setError(errorMessage);
-      showNotification(errorMessage, 'error');
-      return { success: false, error: errorMessage };
-    } finally {
-      setLoading(false);
+    if (type === 'upload') {
+      // Upload de imagen (FormData)
+      response = await apiService.uploadAvatar(avatarData);
+    } else {
+      // Datos JSON normales (iniciales)
+      response = await apiService.updateAvatar(avatarData);
     }
-  }, [showNotification, dispatch]); // ✅ SIN store en dependencias
-
+    
+    if (response.success && response.avatar) {
+      // Actualizar perfil local
+      setProfile(prev => ({
+        ...prev,
+        ...response.avatar
+      }));
+      
+      // Actualizar contexto de auth
+      dispatch({
+        type: ACTION_TYPES.SET_USER,
+        payload: {
+          ...store.auth.user,  // Usuario actual
+          ...response.avatar   // Datos del avatar actualizados
+        }
+      });
+      
+      showNotification(MESSAGES.SUCCESS.UPDATE_AVATAR, 'success');
+      return { success: true, data: response.avatar };
+    }
+    
+    throw new Error('Error al actualizar avatar');
+  } catch (err) {
+    let errorMessage = MESSAGES.ERROR.UPDATE_AVATAR;
+    
+    if (err instanceof ApiError) {
+      errorMessage = `❌ ${err.message}`;
+    }
+    
+    setError(errorMessage);
+    showNotification(errorMessage, 'error');
+    return { success: false, error: errorMessage };
+  } finally {
+    setLoading(false);
+  }
+}, [showNotification, dispatch]); 
   // ============================================
   // 🗑️ ELIMINAR AVATAR (volver al default)
   // ============================================

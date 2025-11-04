@@ -32,7 +32,6 @@ class ApiService {
     }
 
     try {
-      console.log(`🚀 Request: ${config.method || 'GET'} ${url}`);
       const response = await fetch(url, config);
       
       if (response.status === 204) {
@@ -60,17 +59,14 @@ class ApiService {
           data
         );
       }
-
-      console.log(`✅ Success: ${url}`, data);
       return data;
       
     } catch (error) {
       if (error instanceof ApiError) {
-        console.log(`❌ API Error: ${error.message}`, error);
+        
         throw error;
       }
       
-      console.log(`💥 Network Error: ${url}`, error);
       throw new ApiError('Error de conexión. Verifica tu conexión a internet.', 0);
     }
   }
@@ -597,6 +593,22 @@ async getActiveCSSCenters(){
       method: 'DELETE'
     });
   }
+
+ async uploadAvatar(formData) {
+  const response = await fetch(`${this.baseURL}/user/profile/avatar/upload`, {
+    method: 'POST',
+    credentials: 'include',
+    body: formData // No pongas Content-Type, FormData lo pone automáticamente
+  });
+  
+  if (!response.ok) {
+    const error = await response.json();
+    throw new ApiError(error.error || 'Error al subir avatar', response.status);
+  }
+  
+  return response.json();
+}
+
 }
 
 

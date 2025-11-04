@@ -1,50 +1,10 @@
 // apps/frontend/src/components/ProfileEditor/AvatarSelector.jsx
 
-import React, { useState, useEffect } from 'react';
-import { Check, Sparkles, RefreshCw } from 'lucide-react';
+import React, { useState, useEffect, useRef } from 'react';
+import { Check, Upload, X, Image } from 'lucide-react';
 import { useProfile } from '../../hooks/useProfile';
 import { useAuth } from '../../hooks/useAuth';
 import './AvatarSelector.css';
-
-// 🎨 ESTILOS DE DICEBEAR (avatares generados por IA)
-const DICEBEAR_STYLES = [
-  // ========== PERSONAS REALISTAS ==========
-  { id: 'adventurer', name: 'Adventurer', category: 'realistic' },
-  { id: 'adventurer-neutral', name: 'Adventurer Neutral', category: 'realistic' },
-  { id: 'lorelei', name: 'Lorelei', category: 'realistic' },
-  { id: 'lorelei-neutral', name: 'Lorelei Neutral', category: 'realistic' },
-  { id: 'micah', name: 'Micah', category: 'realistic' },
-  { id: 'personas', name: 'Personas', category: 'realistic' },
-  { id: 'notionists', name: 'Notionists', category: 'realistic' },
-  { id: 'notionists-neutral', name: 'Notionists Neutral', category: 'realistic' },
-  
-  // ========== CARTOON / DIBUJOS ANIMADOS ==========
-  { id: 'avataaars', name: 'Avataaars', category: 'cartoon' },
-  { id: 'avataaars-neutral', name: 'Avataaars Neutral', category: 'cartoon' },
-  { id: 'big-ears', name: 'Big Ears', category: 'cartoon' },
-  { id: 'big-ears-neutral', name: 'Big Ears Neutral', category: 'cartoon' },
-  { id: 'big-smile', name: 'Big Smile', category: 'cartoon' },
-  { id: 'croodles', name: 'Croodles', category: 'cartoon' },
-  { id: 'croodles-neutral', name: 'Croodles Neutral', category: 'cartoon' },
-  { id: 'miniavs', name: 'Miniavs', category: 'cartoon' },
-  { id: 'open-peeps', name: 'Open Peeps', category: 'cartoon' },
-  
-  // ========== DIVERTIDOS / FUN ==========
-  { id: 'bottts', name: 'Bottts (Robots)', category: 'fun' },
-  { id: 'bottts-neutral', name: 'Bottts Neutral', category: 'fun' },
-  { id: 'fun-emoji', name: 'Fun Emoji', category: 'fun' },
-  { id: 'thumbs', name: 'Thumbs', category: 'fun' },
-  
-  // ========== RETRO / PIXEL ART ==========
-  { id: 'pixel-art', name: 'Pixel Art', category: 'retro' },
-  { id: 'pixel-art-neutral', name: 'Pixel Art Neutral', category: 'retro' },
-  
-  // ========== ABSTRACTOS / GEOMÉTRICOS ==========
-  { id: 'shapes', name: 'Shapes', category: 'abstract' },
-  { id: 'rings', name: 'Rings', category: 'abstract' },
-  { id: 'identicon', name: 'Identicon', category: 'abstract' },
-  { id: 'icons', name: 'Icons', category: 'abstract' }
-];
 
 // 🎨 PALETA DE COLORES PARA INICIALES
 const INITIAL_COLORS = [
@@ -54,47 +14,44 @@ const INITIAL_COLORS = [
   { name: 'Verde', bg: '10b981', text: 'FFFFFF' },
   { name: 'Púrpura', bg: '8b5cf6', text: 'FFFFFF' },
   { name: 'Rosa', bg: 'ec4899', text: 'FFFFFF' },
-  { name: 'Amarillo', bg: 'f59e0b', text: '000000' },
-  { name: 'Turquesa', bg: '06b6d4', text: 'FFFFFF' }
+  { name: 'Amarillo', bg: 'f59e0b', text: '1f2937' },
+  { name: 'Turquesa', bg: '06b6d4', text: 'FFFFFF' },
+  { name: 'Índigo', bg: '6366f1', text: 'FFFFFF' },
+  { name: 'Esmeralda', bg: '059669', text: 'FFFFFF' },
+  { name: 'Ámbar', bg: 'd97706', text: 'FFFFFF' },
+  { name: 'Cyan', bg: '0891b2', text: 'FFFFFF' }
 ];
 
 const AvatarSelector = ({ currentAvatar, currentType, userName, userEmail }) => {
   const { updateAvatar, loading } = useProfile();
   const { user } = useAuth();
   
-  const [selectedType, setSelectedType] = useState(currentType || 'dicebear');
-  const [selectedStyle, setSelectedStyle] = useState('adventurer');
+  const [avatarType, setAvatarType] = useState(currentType || 'initials');
   const [selectedColor, setSelectedColor] = useState('E9531A');
-  const [seed, setSeed] = useState('');
   const [previewUrl, setPreviewUrl] = useState('');
-  const [categoryFilter, setCategoryFilter] = useState('all');
+  const [uploadedFile, setUploadedFile] = useState(null);
+  const [uploadError, setUploadError] = useState('');
+  
+  const fileInputRef = useRef(null);
 
-  // Generar seed único basado en el usuario
+  // Cargar configuración actual
   useEffect(() => {
-    const userSeed = userEmail?.split('@')[0] || userName?.replace(/\s+/g, '') || 'user';
-    setSeed(userSeed);
-  }, [userEmail, userName]);
-
-  // Actualizar preview cuando cambian los valores
-  useEffect(() => {
-    updatePreview();
-  }, [selectedType, selectedStyle, selectedColor, seed]);
-
-  // Cargar configuración actual del usuario
-  useEffect(() => {
-    if (currentAvatar && currentType) {
-      if (currentType === 'dicebear') {
-        // Extraer style del URL de DiceBear
-        const match = currentAvatar.match(/\/api\/(\w+)\//);
-        if (match) setSelectedStyle(match[1]);
-      } else if (currentType === 'initials') {
-        // Extraer color del URL de UI Avatars
-        const match = currentAvatar.match(/background=([A-Fa-f0-9]{6})/);
-        if (match) setSelectedColor(match[1]);
-      }
-      setSelectedType(currentType);
+    if (currentType === 'initials' && currentAvatar) {
+      const match = currentAvatar.match(/background=([A-Fa-f0-9]{6})/);
+      if (match) setSelectedColor(match[1]);
     }
+    if (currentType === 'upload' && currentAvatar) {
+      setPreviewUrl(currentAvatar);
+    }
+    setAvatarType(currentType || 'initials');
   }, [currentAvatar, currentType]);
+
+  // Actualizar preview cuando cambia el color
+  useEffect(() => {
+    if (avatarType === 'initials') {
+      updatePreview();
+    }
+  }, [selectedColor, avatarType]);
 
   // Generar iniciales
   const getInitials = (name) => {
@@ -107,86 +64,104 @@ const AvatarSelector = ({ currentAvatar, currentType, userName, userEmail }) => 
       .slice(0, 2);
   };
 
-  // Generar URL del avatar según el tipo
-  const generateAvatarUrl = (type, style, color) => {
-    switch (type) {
-      case 'dicebear':
-        return `https://api.dicebear.com/7.x/${style}/svg?seed=${seed}&size=200`;
-      
-      case 'initials':
-        const initials = getInitials(userName);
-        const selectedColorObj = INITIAL_COLORS.find(c => c.bg === color) || INITIAL_COLORS[0];
-        return `https://ui-avatars.com/api/?name=${initials}&size=200&background=${selectedColorObj.bg}&color=${selectedColorObj.text}&bold=true&font-size=0.4`;
-      
-      default:
-        return `https://api.dicebear.com/7.x/adventurer/svg?seed=${seed}&size=200`;
-    }
+  // Generar URL del avatar de iniciales
+  const generateAvatarUrl = (color) => {
+    const initials = getInitials(userName);
+    const selectedColorObj = INITIAL_COLORS.find(c => c.bg === color) || INITIAL_COLORS[0];
+    return `https://ui-avatars.com/api/?name=${initials}&size=200&background=${selectedColorObj.bg}&color=${selectedColorObj.text}&bold=true&font-size=0.4`;
   };
 
   const updatePreview = () => {
-    const url = generateAvatarUrl(selectedType, selectedStyle, selectedColor);
+    const url = generateAvatarUrl(selectedColor);
     setPreviewUrl(url);
-  };
-
-  const handleStyleSelect = (style) => {
-    setSelectedStyle(style);
-    setSelectedType('dicebear');
   };
 
   const handleColorSelect = (color) => {
     setSelectedColor(color);
-    setSelectedType('initials');
+    setAvatarType('initials');
+    setUploadedFile(null);
+    setUploadError('');
   };
 
-  const handleRandomize = () => {
-    setSeed(Math.random().toString(36).substring(7));
+  // Manejar selección de archivo
+  const handleFileSelect = (event) => {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    setUploadError('');
+
+    // Validar tipo de archivo
+    const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
+    if (!validTypes.includes(file.type)) {
+      setUploadError('Solo se permiten archivos JPG, PNG o WEBP');
+      return;
+    }
+
+    // Validar tamaño (máximo 5MB)
+    const maxSize = 5 * 1024 * 1024; // 5MB
+    if (file.size > maxSize) {
+      setUploadError('La imagen no puede superar los 5MB');
+      return;
+    }
+
+    // Crear preview
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setPreviewUrl(reader.result);
+      setUploadedFile(file);
+      setAvatarType('upload');
+    };
+    reader.readAsDataURL(file);
+  };
+
+  // Abrir selector de archivos
+  const handleUploadClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  // Limpiar archivo subido
+  const handleClearUpload = () => {
+    setUploadedFile(null);
+    setPreviewUrl(generateAvatarUrl(selectedColor));
+    setAvatarType('initials');
+    setUploadError('');
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
   };
 
   const handleSave = async () => {
     try {
-      const avatarUrl = generateAvatarUrl(selectedType, selectedStyle, selectedColor);
-      
-      await updateAvatar({
-        avatar_type: selectedType,
-        avatar_url: avatarUrl,
-        // Metadata adicional para regenerar
-        avatar_style: selectedStyle,
-        avatar_color: selectedColor,
-        avatar_seed: seed
-      });
+      if (avatarType === 'upload' && uploadedFile) {
+        // Subir imagen
+        const formData = new FormData();
+        formData.append('avatar', uploadedFile);
+
+        await updateAvatar(formData, 'upload');
+      } else {
+        // Guardar avatar de iniciales
+        const avatarUrl = generateAvatarUrl(selectedColor);
+        await updateAvatar({
+          avatar_type: 'initials',
+          avatar_url: avatarUrl,
+          avatar_color: selectedColor,
+          avatar_style: null,
+          avatar_seed: null
+        });
+      }
     } catch (error) {
       console.error('Error updating avatar:', error);
     }
   };
 
-  // Filtrar estilos por categoría
-  const filteredStyles = categoryFilter === 'all' 
-    ? DICEBEAR_STYLES 
-    : DICEBEAR_STYLES.filter(s => s.category === categoryFilter);
-
-  const categories = [
-    { id: 'all', name: 'Todos' },
-    { id: 'realistic', name: 'Realista' },
-    { id: 'cartoon', name: 'Cartoon' },
-    { id: 'fun', name: 'Divertido' },
-    { id: 'abstract', name: 'Abstracto' },
-    { id: 'retro', name: 'Retro' }
-  ];
+  const initials = getInitials(userName);
 
   return (
     <div className="avatar-selector">
       {/* Preview Grande */}
       <div className="avatar-preview-section">
         <div className="preview-header">
-          <h3>Vista Previa</h3>
-          <button 
-            className="btn-randomize"
-            onClick={handleRandomize}
-            title="Generar variación aleatoria"
-          >
-            <RefreshCw size={16} />
-            Aleatorio
-          </button>
+          <h3>Tu Avatar</h3>
         </div>
         
         <div className="avatar-preview-large">
@@ -195,74 +170,78 @@ const AvatarSelector = ({ currentAvatar, currentType, userName, userEmail }) => 
               src={previewUrl} 
               alt="Avatar Preview"
               onError={(e) => {
-                e.target.src = `https://ui-avatars.com/api/?name=${getInitials(userName)}&size=200&background=E9531A&color=FFFFFF`;
+                e.target.src = `https://ui-avatars.com/api/?name=${initials}&size=200&background=E9531A&color=FFFFFF`;
               }}
             />
+          )}
+          {avatarType === 'upload' && uploadedFile && (
+            <button 
+              className="clear-upload-btn"
+              onClick={handleClearUpload}
+              title="Eliminar imagen"
+            >
+              <X size={16} />
+            </button>
           )}
         </div>
 
         <p className="preview-info">
-          {selectedType === 'dicebear' && `Estilo: ${DICEBEAR_STYLES.find(s => s.id === selectedStyle)?.name || selectedStyle}`}
-          {selectedType === 'initials' && `Color: ${INITIAL_COLORS.find(c => c.bg === selectedColor)?.name || 'Personalizado'}`}
+          {avatarType === 'upload' 
+            ? '📷 Foto personalizada' 
+            : `${initials} • ${INITIAL_COLORS.find(c => c.bg === selectedColor)?.name || 'Personalizado'}`
+          }
         </p>
       </div>
 
       {/* Selector de Tipo */}
-      <div className="avatar-type-selector">
+      <div className="avatar-type-tabs">
         <button
-          className={`type-btn ${selectedType === 'dicebear' ? 'active' : ''}`}
-          onClick={() => setSelectedType('dicebear')}
+          className={`type-tab ${avatarType === 'initials' ? 'active' : ''}`}
+          onClick={() => {
+            setAvatarType('initials');
+            setUploadedFile(null);
+            updatePreview();
+          }}
         >
-          <Sparkles size={18} />
-          Avatares Generados
+          <span className="tab-icon">{initials}</span>
+          Iniciales
         </button>
         <button
-          className={`type-btn ${selectedType === 'initials' ? 'active' : ''}`}
-          onClick={() => setSelectedType('initials')}
+          className={`type-tab ${avatarType === 'upload' ? 'active' : ''}`}
+          onClick={() => setAvatarType('upload')}
         >
-          <span className="initials-icon">{getInitials(userName)}</span>
-          Iniciales
+          <Image size={20} />
+          Subir Foto
         </button>
       </div>
 
-      {/* Opciones: DiceBear Styles */}
-      {selectedType === 'dicebear' && (
+      {/* OPCIÓN: Iniciales */}
+      {avatarType === 'initials' && (
         <>
-          {/* Filtro de categorías */}
-          <div className="category-filter">
-            {categories.map(cat => (
-              <button
-                key={cat.id}
-                className={`category-btn ${categoryFilter === cat.id ? 'active' : ''}`}
-                onClick={() => setCategoryFilter(cat.id)}
-              >
-                {cat.name}
-              </button>
-            ))}
+          <div className="color-selector-header">
+            <h4>Elige tu color</h4>
+            <p>Selecciona el color que mejor te represente</p>
           </div>
 
-          <div className="avatar-options">
-            {filteredStyles.map(style => {
-              const styleUrl = `https://api.dicebear.com/7.x/${style.id}/svg?seed=${seed}&size=100`;
-              const isSelected = selectedType === 'dicebear' && selectedStyle === style.id;
+          <div className="color-options">
+            {INITIAL_COLORS.map(color => {
+              const isSelected = selectedColor === color.bg;
               
               return (
                 <div
-                  key={style.id}
-                  className={`avatar-option ${isSelected ? 'selected' : ''}`}
-                  onClick={() => handleStyleSelect(style.id)}
+                  key={color.bg}
+                  className={`color-option ${isSelected ? 'selected' : ''}`}
+                  onClick={() => handleColorSelect(color.bg)}
+                  style={{
+                    backgroundColor: `#${color.bg}`,
+                    color: `#${color.text}`
+                  }}
                 >
-                  <div className="avatar-option-preview">
-                    <img 
-                      src={styleUrl} 
-                      alt={style.name}
-                      loading="lazy"
-                    />
-                  </div>
-                  <span className="avatar-option-name">{style.name}</span>
+                  <span className="color-initials">{initials}</span>
+                  <span className="color-name">{color.name}</span>
                   {isSelected && (
                     <div className="selected-badge">
-                      <Check size={16} />
+                      <Check size={20} />
                     </div>
                   )}
                 </div>
@@ -272,33 +251,47 @@ const AvatarSelector = ({ currentAvatar, currentType, userName, userEmail }) => 
         </>
       )}
 
-      {/* Opciones: Colores para Iniciales */}
-      {selectedType === 'initials' && (
-        <div className="color-options">
-          {INITIAL_COLORS.map(color => {
-            const isSelected = selectedType === 'initials' && selectedColor === color.bg;
-            const initials = getInitials(userName);
-            
-            return (
-              <div
-                key={color.bg}
-                className={`color-option ${isSelected ? 'selected' : ''}`}
-                onClick={() => handleColorSelect(color.bg)}
-                style={{
-                  backgroundColor: `#${color.bg}`,
-                  color: `#${color.text}`
-                }}
+      {/* OPCIÓN: Subir Foto */}
+      {avatarType === 'upload' && (
+        <div className="upload-section">
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/jpeg,image/jpg,image/png,image/webp"
+            onChange={handleFileSelect}
+            style={{ display: 'none' }}
+          />
+          
+          {!uploadedFile ? (
+            <div className="upload-area" onClick={handleUploadClick}>
+              <Upload size={48} className="upload-icon" />
+              <h4>Sube tu foto</h4>
+              <p>JPG, PNG o WEBP (máx. 5MB)</p>
+              <button type="button" className="btn-upload-trigger">
+                Seleccionar archivo
+              </button>
+            </div>
+          ) : (
+            <div className="upload-success">
+              <Check size={32} className="success-icon" />
+              <p className="success-text">Imagen cargada correctamente</p>
+              <p className="file-name">{uploadedFile.name}</p>
+              <button 
+                type="button" 
+                className="btn-change-file"
+                onClick={handleUploadClick}
               >
-                <span className="color-initials">{initials}</span>
-                <span className="color-name">{color.name}</span>
-                {isSelected && (
-                  <div className="selected-badge">
-                    <Check size={16} />
-                  </div>
-                )}
-              </div>
-            );
-          })}
+                Cambiar imagen
+              </button>
+            </div>
+          )}
+
+          {uploadError && (
+            <div className="upload-error">
+              <X size={16} />
+              {uploadError}
+            </div>
+          )}
         </div>
       )}
 
