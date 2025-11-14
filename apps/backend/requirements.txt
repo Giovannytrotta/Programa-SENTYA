@@ -1,30 +1,25 @@
 
-
-# Core Flask
 Flask==3.0.0
 Flask-SQLAlchemy==3.1.1
 Flask-Migrate==4.0.5
 Flask-CORS==4.0.0
-
-# Auth & Security
+Flask-Bcrypt==1.0.1
+Flask-Mail==0.9.1
+Flask-Marshmallow==0.15.0
 Flask-JWT-Extended==4.6.0
 authlib==1.2.1
 python-jose[cryptography]==3.3.0
-flask-bcrypt==1.0.1
-
-# Database
-psycopg
+pyotp==2.9.0
+psycopg2-binary==2.9.9
 alembic==1.12.1
-
-# API & Serialization
 marshmallow==3.20.1
+marshmallow-sqlalchemy==0.29.0
 flask-restx==1.3.0
-
-# Development
+Pillow==10.1.0
+qrcode==7.4.2
+Jinja2==3.1.2
 python-dotenv==1.0.0
 pytest==7.4.2
 pytest-flask==1.3.0
 pytest-cov==4.1.0
-
-# Production
 gunicorn==21.2.0
