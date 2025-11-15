@@ -175,8 +175,8 @@
 
 /* ===== FIX PRINCIPAL: Logo imagen responsive ===== */
 .logo-sentya-navbar {
-  width: 250% !important;   /* Siempre ocupa el 100% del contenedor */
-  height: 240% !important;
+  width: 129% !important;   /* Siempre ocupa el 100% del contenedor */
+  height: 200% !important;
   object-fit: contain;      /* Mantiene proporciones */
 }
 
