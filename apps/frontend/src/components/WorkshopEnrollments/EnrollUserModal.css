@@ -1,3 +1,8 @@
+/* ============================================
+   MODAL DE INSCRIPCIÓN - REFACTORIZADO
+   Usando SOLO variables existentes del sistema
+   ============================================ */
+
 .enroll-modal {
   max-width: 600px;
   width: 100%;
@@ -7,7 +12,9 @@
   padding: 24px 32px;
 }
 
-/* Búsqueda */
+/* ============================================
+   BÚSQUEDA
+   ============================================ */
 .search-section {
   margin-bottom: 24px;
 }
@@ -24,7 +31,7 @@
 }
 
 .search-input:focus-within {
-  border-color: rgba(233, 83, 26, 0.5);
+  border-color: rgba(37, 99, 235, 0.5); /* primary-blue con transparencia */
   background: rgba(255, 255, 255, 0.12);
 }
 
@@ -53,7 +60,9 @@
   line-height: 1.4;
 }
 
-/* Lista de usuarios */
+/* ============================================
+   LISTA DE USUARIOS
+   ============================================ */
 .users-list {
   max-height: 400px;
   overflow-y: auto;
@@ -82,15 +91,15 @@
 }
 
 .user-item.selected {
-  background: rgba(233, 83, 26, 0.15);
-  border-left: 3px solid #E9531A;
+  background: rgba(37, 99, 235, 0.15); /* primary-blue con transparencia */
+  border-left: 3px solid var(--primary-blue);
 }
 
 .user-avatar {
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #E9531A, #dc2626);
+  background: var(--gradient-primary);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -127,7 +136,7 @@
 .selected-check {
   width: 24px;
   height: 24px;
-  background: #10b981;
+  background: var(--success-color);
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -138,7 +147,9 @@
   flex-shrink: 0;
 }
 
-/* Loading states */
+/* ============================================
+   ESTADOS DE CARGA
+   ============================================ */
 .loading-users,
 .no-users {
   display: flex;
@@ -159,7 +170,7 @@
   width: 32px;
   height: 32px;
   border: 3px solid rgba(255, 255, 255, 0.1);
-  border-top-color: #E9531A;
+  border-top-color: var(--primary-blue);
   border-radius: 50%;
   animation: spin 1s linear infinite;
   margin-bottom: 12px;
@@ -169,7 +180,9 @@
   to { transform: rotate(360deg); }
 }
 
-/* Scrollbar personalizado */
+/* ============================================
+   SCROLLBAR PERSONALIZADO
+   ============================================ */
 .users-list::-webkit-scrollbar {
   width: 8px;
 }
@@ -180,12 +193,12 @@
 }
 
 .users-list::-webkit-scrollbar-thumb {
-  background: rgba(233, 83, 26, 0.3);
+  background: rgba(37, 99, 235, 0.3); /* primary-blue con transparencia */
   border-radius: 10px;
 }
 
 .users-list::-webkit-scrollbar-thumb:hover {
-  background: rgba(233, 83, 26, 0.5);
+  background: rgba(37, 99, 235, 0.5); /* primary-blue con transparencia */
 }
 
 /* ============================================

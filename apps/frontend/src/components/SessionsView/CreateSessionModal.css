@@ -6,7 +6,7 @@
 }
 
 .workshop-subtitle {
-  color: rgba(255, 255, 255, 0.7);
+  color: var(--text-secondary);
   font-size: 0.875rem;
   margin: 4px 0 0 0;
   font-weight: 400;
@@ -23,17 +23,17 @@
 .form-section h3 {
   font-size: 1rem;
   font-weight: 600;
-  color: white;
+  color: var(--text-primary);
   margin: 0 0 20px 0;
   padding-bottom: 12px;
-  border-bottom: 2px solid rgba(233, 83, 26, 0.3);
+  border-bottom: 2px solid var(--primary-blue);
   display: flex;
   align-items: center;
   gap: 8px;
 }
 
 .form-section h3 svg {
-  color: #E9531A;
+  color: var(--primary-blue);
   flex-shrink: 0;
 }
 
@@ -43,7 +43,7 @@
 
 .form-group label {
   display: block;
-  color: rgba(255, 255, 255, 0.9);
+  color: var(--text-primary);
   font-size: 0.875rem;
   font-weight: 600;
   margin-bottom: 8px;
@@ -54,10 +54,10 @@
 .form-group textarea {
   width: 100%;
   padding: 12px 16px;
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: var(--bg-secondary);
+  border: 1px solid var(--bg-tertiary);
   border-radius: 10px;
-  color: white;
+  color: var(--text-primary);
   font-size: 0.875rem;
   transition: all 0.3s ease;
   box-sizing: border-box;
@@ -67,18 +67,18 @@
 .form-group select:focus,
 .form-group textarea:focus {
   outline: none;
-  border-color: rgba(233, 83, 26, 0.5);
-  background: rgba(255, 255, 255, 0.12);
+  border-color: var(--primary-blue);
+  background: var(--bg-hover);
 }
 
 .form-group select option {
-  background: #1f2937;
-  color: white;
+  background: var(--bg-primary);
+  color: var(--text-primary);
 }
 
 .form-group small {
   display: block;
-  color: rgba(255, 255, 255, 0.5);
+  color: var(--text-muted);
   font-size: 0.75rem;
   margin-top: 4px;
   line-height: 1.4;
@@ -86,7 +86,7 @@
 
 .form-group .error {
   display: block;
-  color: #ef4444;
+  color: var(--error-color);
   font-size: 0.75rem;
   margin-top: 4px;
   font-weight: 500;
@@ -224,10 +224,6 @@
     padding: 10px 12px;
     font-size: 0.8125rem;
   }
-
-  /* .form-group textarea {
-    rows: 2;
-  } */
 
   .form-group small {
     font-size: 0.6875rem;

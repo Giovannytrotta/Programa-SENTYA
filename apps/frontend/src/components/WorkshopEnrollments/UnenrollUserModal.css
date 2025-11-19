@@ -1,3 +1,8 @@
+/* ============================================
+   ENROLLMENT INFO BOX - REFACTORIZADO
+   Usando SOLO variables existentes del sistema
+   ============================================ */
+
 .enrollment-info-box {
   background: rgba(255, 255, 255, 0.05);
   border: 1px solid rgba(255, 255, 255, 0.1);
@@ -16,7 +21,7 @@
   width: 56px;
   height: 56px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #E9531A, #dc2626);
+  background: var(--gradient-primary);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -36,19 +41,22 @@
 }
 
 .waitlist-badge {
-  color: #f59e0b;
+  color: var(--warning-color);
   font-size: 0.875rem;
   font-weight: 600;
   margin: 0;
 }
 
 .enrolled-badge {
-  color: #10b981;
+  color: var(--success-color);
   font-size: 0.875rem;
   font-weight: 600;
   margin: 0;
 }
 
+/* ============================================
+   INPUT DE RAZÓN
+   ============================================ */
 .reason-input {
   margin-top: 20px;
 }
@@ -78,7 +86,7 @@
 
 .reason-input textarea:focus {
   outline: none;
-  border-color: rgba(239, 68, 68, 0.5);
+  border-color: rgba(220, 38, 38, 0.5); /* error-color con transparencia */
   background: rgba(255, 255, 255, 0.12);
 }
 
@@ -96,7 +104,7 @@
 
 .reason-input .error {
   display: block;
-  color: #ef4444;
+  color: var(--error-color);
   font-size: 0.8125rem;
   margin-top: 6px;
   font-weight: 500;

@@ -1,4 +1,7 @@
-/* apps/frontend/src/components/WorkshopsView/DeleteWorkshopModal.css */
+/* ============================================
+   DELETE WORKSHOP MODAL - REFACTORIZADO
+   Usando SOLO variables existentes del sistema
+   ============================================ */
 
 .delete-modal-content {
   background: linear-gradient(135deg, rgba(31, 41, 55, 0.95), rgba(17, 24, 39, 0.95));
@@ -26,7 +29,7 @@
   background: rgba(239, 68, 68, 0.1);
   border: 2px solid rgba(239, 68, 68, 0.3);
   border-radius: 50%;
-  color: #ef4444;
+  color: var(--error-color);
   margin: 0 auto;
   animation: pulse 2s infinite;
 }
@@ -78,7 +81,7 @@
   border-radius: 12px;
   text-align: left;
   margin-bottom: 24px;
-  color: #ef4444;
+  color: var(--error-color);
 }
 
 .warning-message strong {
@@ -111,7 +114,7 @@
 }
 
 .confirmation-input strong {
-  color: #ef4444;
+  color: var(--error-color);
   font-weight: 700;
 }
 
@@ -159,7 +162,7 @@
 .delete-modal-actions .btn-delete {
   flex: 1;
   padding: 12px;
-  background: linear-gradient(135deg, #ef4444, #dc2626);
+  background: linear-gradient(135deg, var(--error-color), var(--error-color));
   border: none;
   border-radius: 12px;
   color: white;
@@ -180,10 +183,251 @@
   transform: none;
 }
 
-/* Responsive */
+/* ============================================
+   RESPONSIVE MEJORADO
+   ============================================ */
+
+/* Tablets */
+@media (max-width: 992px) {
+  .delete-modal-content {
+    max-width: 90%;
+  }
+
+  .delete-modal-header {
+    padding: 28px 28px 0 28px;
+  }
+
+  .warning-icon {
+    width: 72px;
+    height: 72px;
+  }
+
+  .delete-modal-body {
+    padding: 28px;
+  }
+
+  .delete-modal-body h2 {
+    font-size: 1.5rem;
+  }
+
+  .delete-modal-actions {
+    padding: 20px 28px 28px 28px;
+  }
+}
+
+/* Móviles grandes */
 @media (max-width: 768px) {
   .delete-modal-content {
     max-width: 100%;
     border-radius: 0;
+  }
+
+  .delete-modal-header {
+    padding: 24px 24px 0 24px;
+  }
+
+  .warning-icon {
+    width: 64px;
+    height: 64px;
+  }
+
+  .delete-modal-body {
+    padding: 24px;
+  }
+
+  .delete-modal-body h2 {
+    font-size: 1.375rem;
+    margin-bottom: 20px;
+  }
+
+  .workshop-info-box {
+    padding: 16px;
+    margin-bottom: 20px;
+  }
+
+  .workshop-info-box h3 {
+    font-size: 1rem;
+  }
+
+  .workshop-meta {
+    font-size: 0.8125rem;
+  }
+
+  .warning-message {
+    padding: 14px;
+    margin-bottom: 20px;
+  }
+
+  .warning-message p {
+    font-size: 0.8125rem;
+  }
+
+  .info-message {
+    font-size: 0.875rem;
+  }
+
+  .confirmation-input label {
+    font-size: 0.8125rem;
+  }
+
+  .confirmation-input input {
+    padding: 11px 14px;
+    font-size: 0.8125rem;
+  }
+
+  .delete-modal-actions {
+    gap: 12px;
+    padding: 20px 24px 24px 24px;
+  }
+
+  .delete-modal-actions .btn-cancel,
+  .delete-modal-actions .btn-delete {
+    padding: 11px;
+    font-size: 0.9375rem;
+  }
+}
+
+/* Móviles pequeños */
+@media (max-width: 480px) {
+  .delete-modal-header {
+    padding: 20px 20px 0 20px;
+  }
+
+  .warning-icon {
+    width: 56px;
+    height: 56px;
+  }
+
+  .warning-icon svg {
+    width: 28px;
+    height: 28px;
+  }
+
+  .delete-modal-body {
+    padding: 20px;
+  }
+
+  .delete-modal-body h2 {
+    font-size: 1.25rem;
+    margin-bottom: 18px;
+  }
+
+  .workshop-info-box {
+    padding: 14px;
+    margin-bottom: 18px;
+    border-radius: 10px;
+  }
+
+  .workshop-info-box h3 {
+    font-size: 0.9375rem;
+    margin-bottom: 6px;
+  }
+
+  .workshop-meta {
+    font-size: 0.75rem;
+  }
+
+  .warning-message {
+    padding: 12px;
+    gap: 10px;
+    margin-bottom: 18px;
+    border-radius: 10px;
+  }
+
+  .warning-message p {
+    font-size: 0.75rem;
+  }
+
+  .info-message {
+    font-size: 0.8125rem;
+  }
+
+  .confirmation-input label {
+    font-size: 0.75rem;
+    margin-bottom: 6px;
+  }
+
+  .confirmation-input input {
+    padding: 10px 12px;
+    font-size: 0.8125rem;
+    border-radius: 8px;
+  }
+
+  .delete-modal-actions {
+    gap: 10px;
+    padding: 18px 20px 20px 20px;
+  }
+
+  .delete-modal-actions .btn-cancel,
+  .delete-modal-actions .btn-delete {
+    padding: 10px;
+    font-size: 0.875rem;
+    border-radius: 10px;
+  }
+}
+
+/* Landscape para móviles */
+@media (max-height: 600px) and (orientation: landscape) {
+  .delete-modal-content {
+    max-height: 100vh;
+    overflow-y: auto;
+  }
+
+  .delete-modal-header {
+    padding: 16px 20px 0 20px;
+  }
+
+  .warning-icon {
+    width: 48px;
+    height: 48px;
+  }
+
+  .warning-icon svg {
+    width: 24px;
+    height: 24px;
+  }
+
+  .delete-modal-body {
+    padding: 16px 20px;
+  }
+
+  .delete-modal-body h2 {
+    font-size: 1.125rem;
+    margin-bottom: 14px;
+  }
+
+  .workshop-info-box {
+    padding: 12px;
+    margin-bottom: 14px;
+  }
+
+  .workshop-info-box h3 {
+    font-size: 0.875rem;
+    margin-bottom: 4px;
+  }
+
+  .warning-message {
+    padding: 10px;
+    margin-bottom: 14px;
+  }
+
+  .confirmation-input label {
+    font-size: 0.75rem;
+    margin-bottom: 4px;
+  }
+
+  .confirmation-input input {
+    padding: 8px 10px;
+    font-size: 0.75rem;
+  }
+
+  .delete-modal-actions {
+    padding: 14px 20px 16px 20px;
+  }
+
+  .delete-modal-actions .btn-cancel,
+  .delete-modal-actions .btn-delete {
+    padding: 8px;
+    font-size: 0.8125rem;
   }
 }

@@ -1,6 +1,6 @@
 .session-info-box {
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: var(--bg-secondary);
+  border: 1px solid var(--bg-tertiary);
   border-radius: 12px;
   padding: 20px;
   margin-bottom: 24px;
@@ -11,21 +11,21 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  color: rgba(255, 255, 255, 0.9);
+  color: var(--text-primary);
   margin-bottom: 8px;
   font-size: 0.9375rem;
 }
 
 .session-date-info svg,
 .session-time-info svg {
-  color: #E9531A;
+  color: var(--primary-blue);
   flex-shrink: 0;
 }
 
 .session-info-box h3 {
   font-size: 1.125rem;
   font-weight: 600;
-  color: white;
+  color: var(--text-primary);
   margin: 12px 0 0 0;
   line-height: 1.4;
 }

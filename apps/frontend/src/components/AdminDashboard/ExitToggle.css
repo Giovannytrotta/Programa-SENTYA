@@ -1,4 +1,4 @@
-/* ===== EXIT TOGGLE - PUERTA DE SALIDA AOSSA ===== */
+/* ===== EXIT TOGGLE - PUERTA DE SALIDA INSTITUCIONAL ===== */
 
 .exit-toggle-container {
   position: relative;
@@ -14,10 +14,10 @@
   align-items: center;
   gap: 8px;
   padding: 12px 16px;
-  background: rgba(248, 250, 252, 0.1);
+  background: var(--bg-secondary);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(248, 250, 252, 0.2);
+  border: 1px solid var(--bg-tertiary);
   border-radius: 14px;
   cursor: pointer;
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
@@ -27,10 +27,10 @@
 }
 
 .exit-toggle:hover {
-  background: rgba(248, 250, 252, 0.15);
-  border-color: rgba(248, 250, 252, 0.3);
+  background: var(--bg-hover);
+  border-color: var(--bg-tertiary);
   transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(37, 99, 235, 0.15);
+  box-shadow: var(--shadow-md);
 }
 
 .exit-toggle:disabled {
@@ -74,7 +74,7 @@
     inset 1px 1px 2px rgba(255, 255, 255, 0.1);
 }
 
-/* Ventana de la puerta */
+/* Ventana de la puerta - Colores institucionales */
 .door-window {
   position: absolute;
   top: 4px;
@@ -110,7 +110,7 @@
   transform: translate(-50%, -50%);
   width: 16px;
   height: 16px;
-  color: rgba(248, 250, 252, 0.7);
+  color: var(--text-secondary);
   opacity: 0;
   transition: all 0.4s ease;
   z-index: 5;
@@ -124,7 +124,7 @@
 
 /* ===== TEXTO ===== */
 .exit-text {
-  color:#2d3748;
+  color: var(--text-primary);
   font-size: 0.85rem;
   font-weight: 600;
   letter-spacing: 0.025em;
@@ -164,7 +164,7 @@
 }
 
 .exit-toggle:hover .exit-text {
-  color: rgba(255, 0, 0, 0.856);
+  color: var(--error-color);
 }
 
 .exit-toggle:hover .light-beam {
@@ -173,9 +173,9 @@
 
 /* ===== ESTADO OPENING (PUERTA ABIERTA) ===== */
 .exit-toggle.opening {
-  background: rgba(248, 250, 252, 0.2);
-  border-color: rgba(37, 99, 235, 0.4);
-  box-shadow: 0 12px 40px rgba(37, 99, 235, 0.25);
+  background: var(--bg-hover);
+  border-color: var(--primary-blue);
+  box-shadow: var(--shadow-lg);
   transform: translateY(-4px);
 }
 
@@ -188,12 +188,12 @@
 
 .exit-toggle.opening .exit-sign {
   opacity: 1;
-  color: rgba(37, 99, 235, 0.9);
+  color: var(--primary-blue);
   animation: exitGlow 0.6s ease-in-out;
 }
 
 .exit-toggle.opening .exit-text {
-  color: rgba(37, 99, 235, 0.9);
+  color: var(--primary-blue);
   animation: exitPulse 0.6s ease-in-out;
 }
 
@@ -290,7 +290,6 @@
     font-size: 0.8rem;
   }
 
-  /* Simplificar animaciones en móvil */
   .exit-toggle:hover .door-panel {
     transform: rotateY(-10deg);
   }
@@ -318,7 +317,6 @@
     font-size: 0.75rem;
   }
 
-  /* Animación más simple en móviles pequeños */
   .exit-toggle:hover .door-panel {
     transform: rotateY(-8deg);
   }
@@ -331,8 +329,8 @@
 /* ===== MODO ALTO CONTRASTE ===== */
 @media (prefers-contrast: high) {
   .exit-toggle {
-    background: rgba(248, 250, 252, 0.3);
-    border: 2px solid rgba(248, 250, 252, 0.6);
+    background: var(--bg-primary);
+    border: 2px solid var(--bg-tertiary);
   }
 
   .door-frame {
@@ -344,7 +342,7 @@
   }
 
   .exit-text {
-    color: rgba(248, 250, 252, 0.95);
+    color: var(--text-primary);
     font-weight: 700;
   }
 }
@@ -372,12 +370,12 @@
 
 /* ===== FOCUS STATES PARA ACCESIBILIDAD ===== */
 .exit-toggle:focus-visible {
-  outline: 2px solid rgba(37, 99, 235, 0.6);
+  outline: 2px solid var(--primary-blue);
   outline-offset: 2px;
 }
 
 .exit-toggle:focus-visible .exit-text {
-  color: rgba(37, 99, 235, 0.9);
+  color: var(--primary-blue);
 }
 
 /* ===== ESTADOS DE CARGA ===== */
@@ -386,8 +384,8 @@
   display: inline-block;
   width: 8px;
   height: 8px;
-  border: 1px solid rgba(248, 250, 252, 0.3);
-  border-top: 1px solid rgba(248, 250, 252, 0.8);
+  border: 1px solid var(--text-muted);
+  border-top: 1px solid var(--text-primary);
   border-radius: 50%;
   animation: spin 1s linear infinite;
   margin-left: 6px;
