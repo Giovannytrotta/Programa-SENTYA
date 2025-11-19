@@ -1,15 +1,8 @@
-/* src/components/Layout/Layout.css */
-
 .app-layout {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  background: linear-gradient(
-    135deg,
-    rgba(31, 41, 55, 0.95) 0%,
-    rgba(17, 24, 39, 0.95) 50%,
-    rgba(55, 65, 81, 0.95) 100%
-  );
+  background: var(--gradient-bg-simple);
   background-attachment: fixed;
 }
 
@@ -19,13 +12,13 @@
   max-width: 1400px;
   margin: 0 auto;
   padding: 100px 32px 32px; /* 100px top para el navbar fijo */
-  animation: fadeIn 0.5s ease-out;
+  animation: fadeIn 0.4s ease-out;
 }
 
 @keyframes fadeIn {
   from {
     opacity: 0;
-    transform: translateY(20px);
+    transform: translateY(10px);
   }
   to {
     opacity: 1;
@@ -33,7 +26,22 @@
   }
 }
 
-/* Responsive */
+.app-layout::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image:
+    radial-gradient(circle at 20% 80%, rgba(37, 99, 235, 0.02) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, rgba(8, 145, 178, 0.02) 0%, transparent 50%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* RESPONSIVE */
+
 @media (max-width: 768px) {
   .app-content {
     padding: 90px 24px 24px;

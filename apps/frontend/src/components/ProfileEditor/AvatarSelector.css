@@ -1,17 +1,9 @@
-/* ========================================
-   AVATAR SELECTOR - VERSIÓN COMPLETA
-   ======================================== */
-
 .avatar-selector {
   display: flex;
   flex-direction: column;
   gap: 32px;
   padding: 8px;
 }
-
-/* ========================================
-   PREVIEW SECTION
-   ======================================== */
 
 .avatar-preview-section {
   display: flex;
@@ -20,13 +12,12 @@
   gap: 20px;
   padding: 40px 32px;
   background: rgba(0, 0, 0, 0.3);
-  border: 1px solid rgba(233, 83, 26, 0.2);
+  border: 1px solid rgba(37, 99, 235, 0.2);
   border-radius: 16px;
   position: relative;
   overflow: hidden;
 }
 
-/* Gradiente animado de fondo */
 .avatar-preview-section::before {
   content: '';
   position: absolute;
@@ -34,9 +25,9 @@
   background: conic-gradient(
     from 0deg,
     transparent 0deg,
-    rgba(233, 83, 26, 0.08) 90deg,
-    rgba(220, 38, 38, 0.08) 180deg,
-    rgba(233, 83, 26, 0.08) 270deg,
+    rgba(37, 99, 235, 0.08) 90deg,
+    rgba(8, 145, 178, 0.08) 180deg,
+    rgba(37, 99, 235, 0.08) 270deg,
     transparent 360deg
   );
   animation: rotateGradient 8s linear infinite;
@@ -66,20 +57,19 @@
   text-align: center;
 }
 
-/* Avatar preview grande */
 .avatar-preview-large {
   width: 180px;
   height: 180px;
   border-radius: 50%;
   background: rgba(255, 255, 255, 0.05);
-  border: 4px solid rgba(233, 83, 26, 0.4);
+  border: 4px solid rgba(37, 99, 235, 0.4);
   display: flex;
   align-items: center;
   justify-content: center;
   overflow: hidden;
   position: relative;
   box-shadow: 
-    0 12px 40px rgba(233, 83, 26, 0.4),
+    0 12px 40px rgba(37, 99, 235, 0.4),
     inset 0 2px 8px rgba(0, 0, 0, 0.2);
   transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
   z-index: 1;
@@ -87,25 +77,18 @@
 
 .avatar-preview-large:hover {
   transform: scale(1.05);
-  border-color: rgba(233, 83, 26, 0.6);
+  border-color: rgba(37, 99, 235, 0.6);
   box-shadow: 
-    0 16px 56px rgba(233, 83, 26, 0.6),
+    0 16px 56px rgba(37, 99, 235, 0.6),
     inset 0 2px 8px rgba(0, 0, 0, 0.2);
 }
 
-/* Anillo rotatorio alrededor del avatar */
 .avatar-preview-large::before {
   content: '';
   position: absolute;
   inset: -8px;
   border-radius: 50%;
-  background: conic-gradient(
-    from 0deg,
-    var(--orange-primary),
-    var(--red-primary),
-    var(--orange-secondary),
-    var(--orange-primary)
-  );
+  background: var(--gradient-primary);
   opacity: 0.6;
   animation: rotateBorder 3s linear infinite;
   z-index: -1;
@@ -124,7 +107,6 @@
   border-radius: 50%;
 }
 
-/* Botón para limpiar imagen subida */
 .clear-upload-btn {
   position: absolute;
   top: 8px;
@@ -165,17 +147,13 @@
   letter-spacing: 0.5px;
 }
 
-/* ========================================
-   AVATAR TYPE TABS
-   ======================================== */
-
 .avatar-type-tabs {
   display: flex;
   gap: 12px;
   padding: 6px;
   background: rgba(0, 0, 0, 0.3);
   border-radius: 14px;
-  border: 1px solid rgba(233, 83, 26, 0.2);
+  border: 1px solid rgba(37, 99, 235, 0.2);
 }
 
 .type-tab {
@@ -201,14 +179,14 @@
   content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(135deg, rgba(233, 83, 26, 0.1), rgba(220, 38, 38, 0.1));
+  background: linear-gradient(135deg, rgba(37, 99, 235, 0.1), rgba(8, 145, 178, 0.1));
   opacity: 0;
   transition: opacity 0.3s;
 }
 
 .type-tab:hover {
   color: rgba(255, 255, 255, 0.9);
-  border-color: rgba(233, 83, 26, 0.3);
+  border-color: rgba(37, 99, 235, 0.3);
   transform: translateY(-2px);
 }
 
@@ -217,11 +195,11 @@
 }
 
 .type-tab.active {
-  background: linear-gradient(135deg, #E9531A 0%, #dc2626 100%);
-  border-color: rgba(233, 83, 26, 0.5);
+  background: var(--gradient-primary);
+  border-color: rgba(37, 99, 235, 0.5);
   color: white;
   box-shadow: 
-    0 6px 20px rgba(233, 83, 26, 0.4),
+    0 6px 20px rgba(37, 99, 235, 0.4),
     inset 0 1px 0 rgba(255, 255, 255, 0.2);
   transform: translateY(-2px);
 }
@@ -235,10 +213,6 @@
   font-weight: 900;
   line-height: 1;
 }
-
-/* ========================================
-   COLOR SELECTOR HEADER
-   ======================================== */
 
 .color-selector-header {
   text-align: center;
@@ -257,10 +231,6 @@
   color: rgba(255, 255, 255, 0.6);
   margin: 0;
 }
-
-/* ========================================
-   COLOR OPTIONS GRID
-   ======================================== */
 
 .color-options {
   display: grid;
@@ -282,7 +252,7 @@
   align-items: center;
   gap: 12px;
   transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+  box-shadow: var(--shadow-md);
 }
 
 .color-option::before {
@@ -317,16 +287,12 @@
   letter-spacing: 0.5px;
 }
 
-/* Hover effect */
 .color-option:hover {
   transform: translateY(-6px) scale(1.03);
-  box-shadow: 
-    0 12px 32px rgba(0, 0, 0, 0.5),
-    0 0 40px rgba(255, 255, 255, 0.1);
+  box-shadow: var(--shadow-xl);
   border-color: rgba(255, 255, 255, 0.3);
 }
 
-/* Selected state */
 .color-option.selected {
   transform: scale(1.05);
   box-shadow: 
@@ -335,7 +301,6 @@
   border-color: rgba(255, 255, 255, 0.4);
 }
 
-/* Badge de seleccionado */
 .selected-badge {
   position: absolute;
   top: -8px;
@@ -345,13 +310,13 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, #E9531A 0%, #dc2626 100%);
+  background: var(--gradient-primary);
   border-radius: 50%;
   border: 3px solid rgba(8, 9, 9, 0.98);
   color: white;
   box-shadow: 
-    0 6px 20px rgba(233, 83, 26, 0.7),
-    0 0 30px rgba(233, 83, 26, 0.4);
+    0 6px 20px rgba(37, 99, 235, 0.7),
+    0 0 30px rgba(37, 99, 235, 0.4);
   animation: checkBounce 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
   z-index: 10;
 }
@@ -374,17 +339,12 @@
   filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.5));
 }
 
-/* ========================================
-   UPLOAD SECTION
-   ======================================== */
-
 .upload-section {
   display: flex;
   flex-direction: column;
   gap: 20px;
 }
 
-/* Área de subida */
 .upload-area {
   display: flex;
   flex-direction: column;
@@ -393,7 +353,7 @@
   gap: 16px;
   padding: 48px 32px;
   background: rgba(0, 0, 0, 0.3);
-  border: 2px dashed rgba(233, 83, 26, 0.4);
+  border: 2px dashed rgba(37, 99, 235, 0.4);
   border-radius: 16px;
   cursor: pointer;
   transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
@@ -405,16 +365,16 @@
   content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(135deg, rgba(233, 83, 26, 0.05), rgba(220, 38, 38, 0.05));
+  background: linear-gradient(135deg, rgba(37, 99, 235, 0.05), rgba(8, 145, 178, 0.05));
   opacity: 0;
   transition: opacity 0.3s;
 }
 
 .upload-area:hover {
-  border-color: rgba(233, 83, 26, 0.7);
+  border-color: rgba(37, 99, 235, 0.7);
   background: rgba(0, 0, 0, 0.4);
   transform: translateY(-4px);
-  box-shadow: 0 8px 24px rgba(233, 83, 26, 0.3);
+  box-shadow: 0 8px 24px rgba(37, 99, 235, 0.3);
 }
 
 .upload-area:hover::before {
@@ -426,13 +386,13 @@
 }
 
 .upload-icon {
-  color: rgba(233, 83, 26, 0.8);
-  filter: drop-shadow(0 4px 12px rgba(233, 83, 26, 0.4));
+  color: rgba(37, 99, 235, 0.8);
+  filter: drop-shadow(0 4px 12px rgba(37, 99, 235, 0.4));
   transition: all 0.3s;
 }
 
 .upload-area:hover .upload-icon {
-  color: rgba(233, 83, 26, 1);
+  color: var(--primary-blue);
   transform: translateY(-4px);
 }
 
@@ -449,10 +409,9 @@
   margin: 0;
 }
 
-/* Botón trigger de upload */
 .btn-upload-trigger {
   padding: 12px 32px;
-  background: linear-gradient(135deg, #E9531A 0%, #dc2626 100%);
+  background: var(--gradient-primary);
   border: none;
   border-radius: 10px;
   color: white;
@@ -460,22 +419,18 @@
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-  box-shadow: 0 6px 20px rgba(233, 83, 26, 0.4);
+  box-shadow: 0 6px 20px rgba(37, 99, 235, 0.4);
   letter-spacing: 0.3px;
 }
 
 .btn-upload-trigger:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 28px rgba(233, 83, 26, 0.6);
+  box-shadow: 0 8px 28px rgba(37, 99, 235, 0.6);
 }
 
 .btn-upload-trigger:active {
   transform: translateY(0);
 }
-
-/* ========================================
-   UPLOAD SUCCESS STATE
-   ======================================== */
 
 .upload-success {
   display: flex;
@@ -484,8 +439,8 @@
   justify-content: center;
   gap: 16px;
   padding: 40px 32px;
-  background: rgba(16, 185, 129, 0.1);
-  border: 2px solid rgba(16, 185, 129, 0.4);
+  background: rgba(5, 150, 105, 0.1);
+  border: 2px solid rgba(5, 150, 105, 0.4);
   border-radius: 16px;
   position: relative;
   overflow: hidden;
@@ -495,13 +450,13 @@
   content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), transparent);
+  background: linear-gradient(135deg, rgba(5, 150, 105, 0.1), transparent);
   opacity: 0.5;
 }
 
 .success-icon {
-  color: rgba(16, 185, 129, 0.9);
-  filter: drop-shadow(0 4px 12px rgba(16, 185, 129, 0.5));
+  color: var(--success-color);
+  filter: drop-shadow(0 4px 12px rgba(5, 150, 105, 0.5));
   animation: successPop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
@@ -538,11 +493,10 @@
   position: relative;
 }
 
-/* Botón cambiar archivo */
 .btn-change-file {
   padding: 10px 28px;
-  background: rgba(233, 83, 26, 0.15);
-  border: 2px solid rgba(233, 83, 26, 0.4);
+  background: rgba(37, 99, 235, 0.15);
+  border: 2px solid rgba(37, 99, 235, 0.4);
   border-radius: 10px;
   color: rgba(255, 255, 255, 0.9);
   font-size: 14px;
@@ -554,19 +508,15 @@
 }
 
 .btn-change-file:hover {
-  background: rgba(233, 83, 26, 0.25);
-  border-color: rgba(233, 83, 26, 0.6);
+  background: rgba(37, 99, 235, 0.25);
+  border-color: rgba(37, 99, 235, 0.6);
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(233, 83, 26, 0.3);
+  box-shadow: 0 6px 20px rgba(37, 99, 235, 0.3);
 }
 
 .btn-change-file:active {
   transform: translateY(0);
 }
-
-/* ========================================
-   UPLOAD ERROR
-   ======================================== */
 
 .upload-error {
   display: flex;
@@ -593,14 +543,10 @@
   filter: drop-shadow(0 2px 6px rgba(220, 38, 38, 0.5));
 }
 
-/* ========================================
-   SAVE BUTTON
-   ======================================== */
-
 .btn-save {
   width: 100%;
   padding: 16px 32px;
-  background: linear-gradient(135deg, #E9531A 0%, #dc2626 50%, #ea580c 100%);
+  background: var(--gradient-primary);
   border: none;
   border-radius: 12px;
   color: white;
@@ -608,7 +554,7 @@
   font-weight: 700;
   cursor: pointer;
   transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-  box-shadow: 0 8px 24px rgba(233, 83, 26, 0.4);
+  box-shadow: 0 8px 24px rgba(37, 99, 235, 0.4);
   position: relative;
   overflow: hidden;
   letter-spacing: 0.5px;
@@ -619,7 +565,7 @@
   content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(135deg, #ea580c 0%, #E9531A 50%, #dc2626 100%);
+  background: linear-gradient(135deg, var(--primary-cyan) 0%, var(--primary-blue) 50%, var(--primary-green) 100%);
   opacity: 0;
   transition: opacity 0.3s;
 }
@@ -630,12 +576,12 @@
 
 .btn-save:hover {
   transform: translateY(-3px);
-  box-shadow: 0 12px 32px rgba(233, 83, 26, 0.6);
+  box-shadow: 0 12px 32px rgba(37, 99, 235, 0.6);
 }
 
 .btn-save:active {
   transform: translateY(-1px);
-  box-shadow: 0 6px 16px rgba(233, 83, 26, 0.5);
+  box-shadow: 0 6px 16px rgba(37, 99, 235, 0.5);
 }
 
 .btn-save:disabled {
@@ -646,12 +592,10 @@
 
 .btn-save:disabled:hover {
   transform: none;
-  box-shadow: 0 8px 24px rgba(233, 83, 26, 0.4);
+  box-shadow: 0 8px 24px rgba(37, 99, 235, 0.4);
 }
 
-/* ========================================
-   RESPONSIVE
-   ======================================== */
+/* RESPONSIVE */
 
 @media (max-width: 768px) {
   .avatar-selector {
@@ -841,10 +785,6 @@
   }
 }
 
-/* ========================================
-   PERFORMANCE OPTIMIZATIONS
-   ======================================== */
-
 .avatar-preview-large,
 .color-option,
 .type-tab,
@@ -860,23 +800,40 @@
   will-change: transform, opacity;
 }
 
-/* Reducir animaciones para usuarios que lo prefieran */
-@media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-  }
-}
-
-/* ========================================
-   PRINT STYLES
-   ======================================== */
-
 @media print {
   .avatar-selector {
     display: none;
   }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

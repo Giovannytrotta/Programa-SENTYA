@@ -1,0 +1,112 @@
+:root {
+  /* ===== PALETA PRINCIPAL - AZUL INSTITUCIONAL ===== */
+  --primary-blue: #2563eb;
+  --primary-cyan: #0891b2;
+  --primary-green: #059669;
+  
+  /* ===== COLORES SECUNDARIOS ===== */
+  --secondary-blue: #3b82f6;
+  --secondary-cyan: #06b6d4;
+  --secondary-green: #10b981;
+  
+  /* ===== FONDOS CLAROS ===== */
+  --bg-primary: #ffffff;
+  --bg-secondary: #f8fafc;
+  --bg-tertiary: #e2e8f0;
+  --bg-hover: #f1f5f9;
+  
+  /* ===== TEXTOS CON BUEN CONTRASTE ===== */
+  --text-primary: #1e293b;
+  --text-secondary: #475569;
+  --text-muted: #64748b;
+  
+  /* ===== GRADIENTES INSTITUCIONALES ===== */
+  --gradient-primary: linear-gradient(135deg, #2563eb 0%, #0891b2 50%, #059669 100%);
+  --gradient-soft: linear-gradient(135deg, #dbeafe 0%, #cffafe 100%);
+  --gradient-bg: linear-gradient(135deg, #f8fafc 0%, #e0f2fe 50%, #d1fae5 100%);
+  --gradient-bg-simple: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+  
+  /* ===== ESTADOS Y FEEDBACK ===== */
+  --error-color: #dc2626;
+  --error-light: #fca5a5;
+  --success-color: #059669;
+  --warning-color: #f59e0b;
+  
+  /* ===== SOMBRAS ===== */
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.15);
+  --shadow-xl: 0 20px 40px rgba(0, 0, 0, 0.15);
+}
+
+/* ===== RESET GLOBAL ===== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* ===== TIPOGRAFÍA BASE ===== */
+body {
+  font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+  color: var(--text-primary);
+  background: var(--bg-primary);
+  line-height: 1.6;
+}
+
+/* ===== BOTONES RESET ===== */
+button {
+  background: none;
+  border: none;
+  font: inherit;
+  color: inherit;
+  text-decoration: none;
+  cursor: pointer;
+  outline: none;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+}
+
+/* ===== ACCESIBILIDAD GLOBAL ===== */
+*:focus-visible {
+  outline: 3px solid var(--primary-blue);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Reducir animaciones si el usuario lo prefiere */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Alto contraste */
+@media (prefers-contrast: high) {
+  :root {
+    --primary-blue: #1d4ed8;
+    --text-primary: #000000;
+    --bg-tertiary: #cbd5e1;
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

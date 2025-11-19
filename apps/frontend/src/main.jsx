@@ -4,6 +4,7 @@ import { RouterProvider } from 'react-router-dom';
 import { StoreProvider } from './store/useGlobalReducer';
 import { router } from './router.jsx';
 import Notifications from './components/Notifications/Notifications';
+import "./variables.css";
 import './index.css';
 
 ReactDOM.createRoot(document.getElementById('root')).render(

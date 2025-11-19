@@ -124,7 +124,7 @@
 
 /* ===== TEXTO ===== */
 .exit-text {
-  color: rgba(248, 250, 252, 0.8);
+  color:#2d3748;
   font-size: 0.85rem;
   font-weight: 600;
   letter-spacing: 0.025em;
@@ -164,7 +164,7 @@
 }
 
 .exit-toggle:hover .exit-text {
-  color: rgba(248, 250, 252, 0.95);
+  color: rgba(255, 0, 0, 0.856);
 }
 
 .exit-toggle:hover .light-beam {

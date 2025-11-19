@@ -1,48 +1,26 @@
-/* ===== ADMIN LOGIN SENTYA THEME ===== */
-
-/* Variables de colores SENTYA */
-:root {
-  --orange-primary: #E9531A;
-  --red-primary: #dc2626;
-  --orange-secondary: #ea580c;
-  --gray-dark: #333333;
-  --gray-darker: #1f1f1f;
-  --white: #ffffff;
-  --gray-light: #f5f5f5;
-  --gray-medium: #888888;
-  
-  /* Gradientes SENTYA */
-  --sentya-gradient-start: rgba(233, 83, 26, 0.4);
-  --sentya-gradient-mid: rgba(220, 38, 38, 0.3);
-  --sentya-gradient-end: rgba(234, 88, 12, 0.35);
-}
-
-/* Contenedor principal con gradiente SENTYA */
 .admin-login-container {
   min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
   background: linear-gradient(135deg, 
-    var(--gray-darker) 0%, 
-    var(--gray-dark) 50%, 
-    #2d2d2d 100%
+    #1e293b 0%, 
+    #334155 50%, 
+    #475569 100%
   );
   background-size: 400% 400%;
-  animation: sentyaGradientMove 15s ease infinite;
+  animation: gradientMove 15s ease infinite;
   padding: 20px;
   position: relative;
   overflow: hidden;
 }
 
-/* Animación del fondo gradiente más sutil */
-@keyframes sentyaGradientMove {
+@keyframes gradientMove {
   0% { background-position: 0% 50%; }
   50% { background-position: 100% 50%; }
   100% { background-position: 0% 50%; }
 }
 
-/* Efectos de partículas de fondo con colores SENTYA */
 .admin-login-container::before {
   content: '';
   position: absolute;
@@ -51,20 +29,19 @@
   right: 0;
   bottom: 0;
   background-image: 
-    radial-gradient(circle at 25% 75%, var(--sentya-gradient-start) 0%, transparent 50%),
-    radial-gradient(circle at 75% 25%, var(--sentya-gradient-mid) 0%, transparent 50%),
-    radial-gradient(circle at 50% 50%, var(--sentya-gradient-end) 0%, transparent 60%);
-  pointer-events: none; /* 🔑 Las partículas no deben interferir */
-  animation: sentyaFloatParticles 20s ease-in-out infinite;
+    radial-gradient(circle at 25% 75%, rgba(37, 99, 235, 0.15) 0%, transparent 50%),
+    radial-gradient(circle at 75% 25%, rgba(8, 145, 178, 0.12) 0%, transparent 50%),
+    radial-gradient(circle at 50% 50%, rgba(5, 150, 105, 0.1) 0%, transparent 60%);
+  pointer-events: none;
+  animation: floatParticles 20s ease-in-out infinite;
   z-index: 0;
 }
 
-@keyframes sentyaFloatParticles {
+@keyframes floatParticles {
   0%, 100% { transform: translateY(0px) rotate(0deg); opacity: 0.6; }
   50% { transform: translateY(-15px) rotate(3deg); opacity: 0.8; }
 }
 
-/* Wrapper del formulario con efecto glassmorphism SENTYA */
 .admin-login-wrapper {
   background: rgba(255, 255, 255, 0.08);
   backdrop-filter: blur(16px);
@@ -72,17 +49,17 @@
   border-radius: 20px;
   border: 1px solid rgba(255, 255, 255, 0.15);
   box-shadow: 
-    0 10px 35px rgba(233, 83, 26, 0.15),
+    0 10px 35px rgba(37, 99, 235, 0.15),
     inset 0 1px 0 rgba(255, 255, 255, 0.2),
-    0 4px 12px rgba(220, 38, 38, 0.1);
+    0 4px 12px rgba(8, 145, 178, 0.1);
   width: 100%;
   max-width: 440px;
   padding: 40px;
   position: relative;
-  animation: sentyaSlideInUp 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  animation: slideInUp 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  z-index: 1;
 }
 
-/* Efecto de brillo sutil en el borde */
 .admin-login-wrapper::after {
   content: '';
   position: absolute;
@@ -90,25 +67,26 @@
   border-radius: 20px;
   padding: 1px;
   background: linear-gradient(135deg, 
-    var(--orange-primary), 
+    var(--primary-blue), 
     transparent 30%, 
     transparent 70%, 
-    var(--red-primary)
+    var(--primary-cyan)
   );
   mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
   mask-composite: xor;
+  -webkit-mask-composite: xor;
   opacity: 0.3;
-  animation: sentyaBorderGlow 8s ease-in-out infinite;
-  pointer-events: none; /* 🔑 CLAVE: Permitir clics a través del overlay */
-  z-index: -1; /* 🔑 Enviar el overlay al fondo */
+  animation: borderGlow 8s ease-in-out infinite;
+  pointer-events: none;
+  z-index: -1;
 }
 
-@keyframes sentyaBorderGlow {
+@keyframes borderGlow {
   0%, 100% { opacity: 0.3; }
   50% { opacity: 0.6; }
 }
 
-@keyframes sentyaSlideInUp {
+@keyframes slideInUp {
   from {
     opacity: 0;
     transform: translateY(25px);
@@ -119,12 +97,10 @@
   }
 }
 
-/* Formulario */
 .admin-login-form {
   width: 100%;
 }
 
-/* Header del login con branding SENTYA */
 .admin-login-header {
   text-align: center;
   margin-bottom: 32px;
@@ -141,34 +117,34 @@
 .admin-logo {
   font-size: 32px;
   font-weight: 900;
-  background: linear-gradient(135deg, var(--orange-primary) 0%, var(--red-primary) 100%);
+  background: var(--gradient-primary);
   background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   margin: 0;
   letter-spacing: -0.5px;
-  filter: drop-shadow(0 2px 4px rgba(233, 83, 26, 0.2));
+  filter: drop-shadow(0 2px 4px rgba(37, 99, 235, 0.2));
 }
 
 .admin-logo-accent {
   width: 8px;
   height: 8px;
-  background: linear-gradient(135deg, var(--orange-primary) 0%, var(--red-primary) 100%);
+  background: var(--gradient-primary);
   border-radius: 50%;
-  animation: sentyaPulse 3s ease-in-out infinite;
-  box-shadow: 0 0 0 0 rgba(233, 83, 26, 0.4);
+  animation: pulse 3s ease-in-out infinite;
+  box-shadow: 0 0 0 0 rgba(37, 99, 235, 0.4);
 }
 
-@keyframes sentyaPulse {
+@keyframes pulse {
   0%, 100% { 
     transform: scale(1); 
     opacity: 1;
-    box-shadow: 0 0 0 0 rgba(233, 83, 26, 0.4);
+    box-shadow: 0 0 0 0 rgba(37, 99, 235, 0.4);
   }
   50% { 
     transform: scale(1.2); 
     opacity: 0.8;
-    box-shadow: 0 0 0 6px rgba(233, 83, 26, 0);
+    box-shadow: 0 0 0 6px rgba(37, 99, 235, 0);
   }
 }
 
@@ -177,7 +153,7 @@
   font-weight: 700;
   color: rgba(255, 255, 255, 0.95);
   margin: 0 0 8px 0;
-  text-shadow: 0 2px 8px rgba(233, 83, 26, 0.2);
+  text-shadow: 0 2px 8px rgba(37, 99, 235, 0.2);
   letter-spacing: -0.2px;
 }
 
@@ -189,30 +165,28 @@
   letter-spacing: 0.02em;
 }
 
-/* Mensaje de error general con colores SENTYA */
 .admin-error-message.general {
   display: flex;
   align-items: center;
   gap: 8px;
   background: rgba(220, 38, 38, 0.12);
-  color: #fecaca;
+  color: var(--error-light);
   padding: 12px 16px;
   border-radius: 12px;
   border: 1px solid rgba(220, 38, 38, 0.3);
   font-size: 14px;
   margin-bottom: 20px;
   backdrop-filter: blur(10px);
-  animation: sentyaShake 0.5s ease-in-out;
+  animation: shake 0.5s ease-in-out;
   font-weight: 500;
 }
 
-@keyframes sentyaShake {
+@keyframes shake {
   0%, 100% { transform: translateX(0); }
   25% { transform: translateX(-4px); }
   75% { transform: translateX(4px); }
 }
 
-/* Grupos de input con estilo SENTYA */
 .admin-input-group {
   margin-bottom: 20px;
 }
@@ -228,7 +202,6 @@
   overflow: hidden;
 }
 
-/* Efecto de brillo en hover */
 .admin-input-container::before {
   content: '';
   position: absolute;
@@ -236,17 +209,17 @@
   left: -100%;
   width: 100%;
   height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(233, 83, 26, 0.1), transparent);
+  background: linear-gradient(90deg, transparent, rgba(37, 99, 235, 0.1), transparent);
   transition: left 0.5s;
-  pointer-events: none; /* 🔑 Permitir clics a través del efecto */
+  pointer-events: none;
   z-index: 1;
 }
 
 .admin-input-container:hover {
-  border-color: rgba(233, 83, 26, 0.4);
+  border-color: rgba(37, 99, 235, 0.4);
   background: rgba(255, 255, 255, 0.12);
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(233, 83, 26, 0.1);
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.1);
 }
 
 .admin-input-container:hover::before {
@@ -254,11 +227,11 @@
 }
 
 .admin-input-container:focus-within {
-  border-color: var(--orange-primary);
+  border-color: var(--primary-blue);
   background: rgba(255, 255, 255, 0.15);
   box-shadow: 
-    0 0 0 3px rgba(233, 83, 26, 0.15),
-    0 6px 16px rgba(233, 83, 26, 0.2);
+    0 0 0 3px rgba(37, 99, 235, 0.15),
+    0 6px 16px rgba(37, 99, 235, 0.2);
   transform: translateY(-2px);
 }
 
@@ -268,7 +241,6 @@
   box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
 }
 
-/* Campos de input mejorados */
 .admin-input-field {
   width: 100%;
   padding: 16px 50px 16px 20px;
@@ -300,7 +272,6 @@
   cursor: not-allowed;
 }
 
-/* Iconos de input con colores SENTYA */
 .admin-input-icon {
   position: absolute;
   right: 16px;
@@ -316,15 +287,14 @@
 }
 
 .admin-input-container:focus-within .admin-input-icon {
-  color: var(--orange-primary);
+  color: var(--primary-blue);
   transform: translateY(-50%) scale(1.05);
 }
 
 .admin-input-container.error .admin-input-icon {
-  color: rgba(220, 38, 38, 0.8);
+  color: var(--error-color);
 }
 
-/* Botón toggle password mejorado */
 .admin-toggle-password {
   position: absolute;
   right: 16px;
@@ -345,12 +315,12 @@
 }
 
 .admin-toggle-password:hover {
-  background: rgba(233, 83, 26, 0.1);
-  transform: scale(1.05);
+  background: rgba(37, 99, 235, 0.1);
+  color: var(--primary-blue);
 }
 
 .admin-toggle-password:focus {
-  outline: 2px solid var(--orange-primary);
+  outline: 2px solid var(--primary-blue);
   outline-offset: 2px;
 }
 
@@ -359,19 +329,18 @@
   opacity: 0.5;
 }
 
-/* Texto de error mejorado */
 .admin-error-text {
   display: block;
-  color: #fca5a5;
+  color: var(--error-light);
   font-size: 13px;
   margin-top: 6px;
   margin-left: 4px;
   font-weight: 500;
   letter-spacing: 0.02em;
-  animation: sentyaSlideInError 0.3s ease-out;
+  animation: slideInError 0.3s ease-out;
 }
 
-@keyframes sentyaSlideInError {
+@keyframes slideInError {
   from {
     opacity: 0;
     transform: translateY(-6px);
@@ -382,7 +351,6 @@
   }
 }
 
-/* Opciones del formulario mejoradas */
 .admin-form-options {
   display: flex;
   justify-content: space-between;
@@ -392,7 +360,6 @@
   gap: 14px;
 }
 
-/* Checkbox personalizado con estilo SENTYA */
 .admin-checkbox-container {
   display: flex;
   align-items: center;
@@ -426,14 +393,14 @@
 
 .admin-checkbox-container:hover .admin-checkmark {
   background: rgba(255, 255, 255, 0.12);
-  border-color: var(--orange-primary);
-  box-shadow: 0 0 0 2px rgba(233, 83, 26, 0.1);
+  border-color: var(--primary-blue);
+  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.1);
 }
 
 .admin-checkbox-container input:checked ~ .admin-checkmark {
-  background: linear-gradient(135deg, var(--orange-primary) 0%, var(--red-primary) 100%);
-  border-color: var(--orange-primary);
-  box-shadow: 0 2px 8px rgba(233, 83, 26, 0.3);
+  background: var(--gradient-primary);
+  border-color: var(--primary-blue);
+  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.3);
 }
 
 .admin-checkmark:after {
@@ -451,10 +418,10 @@
 
 .admin-checkbox-container input:checked ~ .admin-checkmark:after {
   display: block;
-  animation: sentyaCheckmarkAppear 0.3s ease-out;
+  animation: checkmarkAppear 0.3s ease-out;
 }
 
-@keyframes sentyaCheckmarkAppear {
+@keyframes checkmarkAppear {
   from {
     opacity: 0;
     transform: rotate(45deg) scale(0.5);
@@ -472,9 +439,8 @@
   letter-spacing: 0.02em;
 }
 
-/* Enlace "olvidaste contraseña" mejorado */
 .admin-forgot-password {
-  color: var(--orange-primary);
+  color: var(--primary-blue);
   text-decoration: none;
   font-size: 14px;
   font-weight: 600;
@@ -490,12 +456,12 @@
   height: 2px;
   bottom: -2px;
   left: 0;
-  background: linear-gradient(90deg, var(--orange-primary), var(--red-primary));
+  background: var(--gradient-primary);
   transition: width 0.3s ease;
 }
 
 .admin-forgot-password:hover {
-  color: var(--red-primary);
+  color: var(--primary-cyan);
   transform: translateY(-1px);
 }
 
@@ -503,11 +469,10 @@
   width: 100%;
 }
 
-/* Botón de login con diseño SENTYA premium */
 .admin-login-button {
   width: 100%;
   padding: 16px 24px;
-  background: linear-gradient(135deg, var(--orange-primary) 0%, var(--red-primary) 100%);
+  background: var(--gradient-primary);
   border: none;
   border-radius: 14px;
   color: white;
@@ -523,11 +488,10 @@
   overflow: hidden;
   letter-spacing: 0.02em;
   box-shadow: 
-    0 4px 15px rgba(233, 83, 26, 0.3),
+    0 4px 15px rgba(37, 99, 235, 0.3),
     inset 0 1px 0 rgba(255, 255, 255, 0.2);
 }
 
-/* Efecto de brillo en hover */
 .admin-login-button::before {
   content: '';
   position: absolute;
@@ -546,8 +510,8 @@
 .admin-login-button:hover {
   transform: translateY(-2px);
   box-shadow: 
-    0 6px 20px rgba(233, 83, 26, 0.4),
-    0 2px 8px rgba(220, 38, 38, 0.2),
+    0 6px 20px rgba(37, 99, 235, 0.4),
+    0 2px 8px rgba(8, 145, 178, 0.2),
     inset 0 1px 0 rgba(255, 255, 255, 0.3);
 }
 
@@ -565,16 +529,15 @@
 
 .admin-login-button:disabled:hover {
   transform: none;
-  box-shadow: 0 4px 15px rgba(233, 83, 26, 0.3);
+  box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3);
 }
 
 .admin-login-button:disabled::before {
   display: none;
 }
 
-/* Estados de carga mejorados */
 .admin-login-button.loading {
-  background: linear-gradient(135deg, rgba(233, 83, 26, 0.8), rgba(220, 38, 38, 0.8));
+  background: linear-gradient(135deg, rgba(37, 99, 235, 0.8), rgba(8, 145, 178, 0.8));
   cursor: wait;
 }
 
@@ -584,10 +547,10 @@
   border: 2.5px solid rgba(255, 255, 255, 0.3);
   border-top: 2.5px solid white;
   border-radius: 50%;
-  animation: sentyaSpin 1s linear infinite;
+  animation: spin 1s linear infinite;
 }
 
-@keyframes sentyaSpin {
+@keyframes spin {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
 }
@@ -611,7 +574,6 @@
   transform: translateX(2px);
 }
 
-/* Footer mejorado con branding SENTYA */
 .admin-login-footer {
   margin-top: 32px;
   text-align: center;
@@ -630,7 +592,8 @@
   -webkit-background-clip: text;
 }
 
-/* Responsive Design mejorado para SENTYA */
+/* RESPONSIVE */
+
 @media (max-width: 480px) {
   .admin-login-wrapper {
     padding: 28px 24px;
@@ -659,7 +622,7 @@
   
   .admin-input-field {
     padding: 14px 45px 14px 16px;
-    font-size: 16px; /* Evita zoom en iOS */
+    font-size: 16px;
   }
   
   .admin-login-button {
@@ -692,59 +655,28 @@
   }
 }
 
-/* Mejoras de accesibilidad */
-@media (prefers-reduced-motion: reduce) {
-  * {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-  }
-  
-  .admin-login-wrapper {
-    animation: none;
-  }
-}
 
-/* Tema de alto contraste mejorado */
-@media (prefers-contrast: high) {
-  :root {
-    --orange-primary: #ea580c;
-    --red-primary: #b91c1c;
-  }
-  
-  .admin-login-wrapper {
-    background: rgba(255, 255, 255, 0.15);
-    border: 2px solid rgba(255, 255, 255, 0.4);
-  }
-  
-  .admin-input-container {
-    background: rgba(255, 255, 255, 0.12);
-    border: 2px solid rgba(255, 255, 255, 0.4);
-  }
-  
-  .admin-login-title,
-  .admin-input-field {
-    color: white;
-  }
-  
-  .admin-login-button {
-    box-shadow: 
-      0 6px 18px rgba(233, 83, 26, 0.4),
-      inset 0 1px 0 rgba(255, 255, 255, 0.3);
-  }
-}
 
-/* Modo oscuro nativo */
-@media (prefers-color-scheme: dark) {
-  :root {
-    --gray-light: #0f0f0f;
-  }
-  
-  .admin-login-container {
-    background: linear-gradient(135deg, 
-      rgba(233, 83, 26, 0.25) 0%, 
-      rgba(220, 38, 38, 0.2) 50%, 
-      rgba(234, 88, 12, 0.25) 100%
-    );
-  }
-}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

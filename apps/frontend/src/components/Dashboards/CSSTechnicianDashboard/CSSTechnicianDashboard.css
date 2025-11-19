@@ -1,4 +1,3 @@
-
 .css-technician-dashboard {
   width: 100%;
   animation: fadeIn 0.5s ease-out;
@@ -10,28 +9,30 @@
 }
 
 .css-technician-dashboard .dashboard-header h1 {
-  color: white;
+  color: #1e293b;
   font-size: 2rem;
   font-weight: 700;
   margin: 0 0 8px 0;
+  font-family: 'Segoe UI', system-ui, sans-serif;
 }
 
 .css-technician-dashboard .dashboard-header p {
-  color: rgba(255, 255, 255, 0.7);
+  color: #475569;
   font-size: 1rem;
   margin: 0;
 }
 
 /* Center Info Card */
 .css-technician-dashboard .center-info-card {
-  background: linear-gradient(135deg, rgba(233, 83, 26, 0.15), rgba(220, 38, 38, 0.15));
-  border: 1px solid rgba(233, 83, 26, 0.3);
+  background: linear-gradient(135deg, rgba(37, 99, 235, 0.1), rgba(8, 145, 178, 0.1));
+  border: 2px solid #2563eb;
   border-radius: 16px;
   padding: 24px;
   margin-bottom: 32px;
   display: flex;
   align-items: center;
   gap: 20px;
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.1);
 }
 
 .css-technician-dashboard .center-icon-large {
@@ -40,7 +41,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, #E9531A, #dc2626);
+  background: linear-gradient(135deg, #2563eb, #0891b2);
   border-radius: 12px;
   color: white;
   flex-shrink: 0;
@@ -54,17 +55,18 @@
 .css-technician-dashboard .center-details h2 {
   font-size: 1.5rem;
   font-weight: 700;
-  color: white;
+  color: #1e293b;
   margin: 0 0 8px 0;
   word-wrap: break-word;
   overflow-wrap: break-word;
+  font-family: 'Segoe UI', system-ui, sans-serif;
 }
 
 .css-technician-dashboard .center-meta {
   display: flex;
   gap: 16px;
   flex-wrap: wrap;
-  color: rgba(255, 255, 255, 0.8);
+  color: #475569;
   font-size: 0.875rem;
 }
 
@@ -90,9 +92,8 @@
 }
 
 .css-technician-dashboard .stat-card {
-  background: rgba(255, 255, 255, 0.05);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: white;
+  border: 2px solid #e2e8f0;
   border-radius: 16px;
   padding: 24px;
   display: flex;
@@ -100,12 +101,14 @@
   gap: 16px;
   transition: all 0.3s;
   cursor: pointer;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 .css-technician-dashboard .stat-card:hover {
-  background: rgba(255, 255, 255, 0.08);
+  background: #f8fafc;
   transform: translateY(-4px);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 8px 24px rgba(37, 99, 235, 0.15);
+  border-color: #2563eb;
 }
 
 .css-technician-dashboard .stat-icon {
@@ -141,14 +144,15 @@
 }
 
 .css-technician-dashboard .stat-content h3 {
-  color: rgba(255, 255, 255, 0.7);
+  color: #64748b;
   font-size: 0.875rem;
-  font-weight: 500;
+  font-weight: 600;
   margin: 0 0 4px 0;
+  font-family: 'Segoe UI', system-ui, sans-serif;
 }
 
 .css-technician-dashboard .stat-number {
-  color: white;
+  color: #1e293b;
   font-size: 2rem;
   font-weight: 700;
   margin: 0;
@@ -157,12 +161,12 @@
 
 /* Content Sections */
 .css-technician-dashboard .content-section {
-  background: rgba(255, 255, 255, 0.05);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: white;
+  border: 2px solid #e2e8f0;
   border-radius: 16px;
   padding: 32px;
   margin-bottom: 24px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 .css-technician-dashboard .section-header {
@@ -171,14 +175,15 @@
   align-items: center;
   margin-bottom: 24px;
   padding-bottom: 16px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  border-bottom: 2px solid #e2e8f0;
 }
 
 .css-technician-dashboard .section-header h2 {
-  color: white;
+  color: #1e293b;
   font-size: 1.5rem;
-  font-weight: 600;
+  font-weight: 700;
   margin: 0;
+  font-family: 'Segoe UI', system-ui, sans-serif;
 }
 
 .css-technician-dashboard .btn-view-all {
@@ -186,9 +191,9 @@
   align-items: center;
   gap: 6px;
   padding: 8px 16px;
-  background: rgba(233, 83, 26, 0.2);
-  color: #E9531A;
-  border: 1px solid rgba(233, 83, 26, 0.3);
+  background: rgba(37, 99, 235, 0.1);
+  color: #2563eb;
+  border: 2px solid #2563eb;
   border-radius: 8px;
   font-weight: 600;
   font-size: 0.875rem;
@@ -196,10 +201,12 @@
   transition: all 0.3s ease;
   white-space: nowrap;
   flex-shrink: 0;
+  font-family: 'Segoe UI', system-ui, sans-serif;
 }
 
 .css-technician-dashboard .btn-view-all:hover {
-  background: rgba(233, 83, 26, 0.3);
+  background: #2563eb;
+  color: white;
   transform: translateX(4px);
 }
 
@@ -210,9 +217,12 @@
   gap: 20px;
 }
 
+span{
+  color:#2563eb;
+}
 .css-technician-dashboard .workshop-card {
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: #f8fafc;
+  border: 2px solid #e2e8f0;
   border-radius: 12px;
   overflow: hidden;
   cursor: pointer;
@@ -220,16 +230,16 @@
 }
 
 .css-technician-dashboard .workshop-card:hover {
-  background: rgba(255, 255, 255, 0.06);
-  border-color: rgba(233, 83, 26, 0.3);
+  background: white;
+  border-color: #2563eb;
   transform: translateY(-4px);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 8px 24px rgba(37, 99, 235, 0.15);
 }
 
 .css-technician-dashboard .workshop-color-bar {
   height: 4px;
   width: 100%;
-  background: linear-gradient(135deg, #E9531A, #dc2626);
+  background: linear-gradient(135deg, #2563eb, #0891b2);
 }
 
 .css-technician-dashboard .workshop-content {
@@ -237,20 +247,21 @@
 }
 
 .css-technician-dashboard .workshop-content h3 {
-  color: white;
+  color: #1e293b;
   font-size: 1.125rem;
   font-weight: 600;
   margin: 0 0 12px 0;
   word-wrap: break-word;
   overflow-wrap: break-word;
   line-height: 1.4;
+  font-family: 'Segoe UI', system-ui, sans-serif;
 }
 
 .css-technician-dashboard .workshop-meta {
   display: flex;
   flex-direction: column;
   gap: 8px;
-  color: rgba(255, 255, 255, 0.6);
+  color: #64748b;
   font-size: 0.875rem;
 }
 
@@ -276,15 +287,15 @@
 }
 
 .css-technician-dashboard .workshop-status.active {
-  background: rgba(16, 185, 129, 0.2);
-  color: #10b981;
-  border: 1px solid rgba(16, 185, 129, 0.3);
+  background: rgba(16, 185, 129, 0.1);
+  color: #059669;
+  border: 1px solid #10b981;
 }
 
 .css-technician-dashboard .workshop-status.pending {
-  background: rgba(245, 158, 11, 0.2);
-  color: #f59e0b;
-  border: 1px solid rgba(245, 158, 11, 0.3);
+  background: rgba(245, 158, 11, 0.1);
+  color: #d97706;
+  border: 1px solid #f59e0b;
 }
 
 /* Users Summary */
@@ -295,16 +306,18 @@
 }
 
 .css-technician-dashboard .user-role-card {
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: #f8fafc;
+  border: 2px solid #e2e8f0;
   border-radius: 12px;
   padding: 20px;
   transition: all 0.3s;
 }
 
 .css-technician-dashboard .user-role-card:hover {
-  background: rgba(255, 255, 255, 0.06);
+  background: white;
   transform: translateY(-4px);
+  border-color: #2563eb;
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.1);
 }
 
 .css-technician-dashboard .user-role-header {
@@ -341,21 +354,22 @@
 }
 
 .css-technician-dashboard .role-info h4 {
-  color: white;
+  color: #1e293b;
   font-size: 0.875rem;
   font-weight: 600;
   margin: 0 0 4px 0;
+  font-family: 'Segoe UI', system-ui, sans-serif;
 }
 
 .css-technician-dashboard .role-count {
-  color: rgba(255, 255, 255, 0.7);
+  color: #64748b;
   font-size: 0.75rem;
 }
 
 .css-technician-dashboard .user-count {
   font-size: 2rem;
   font-weight: 700;
-  color: white;
+  color: #1e293b;
   margin: 0;
 }
 
@@ -381,27 +395,30 @@
   transition: all 0.3s ease;
   flex: 1;
   min-width: 200px;
+  font-family: 'Segoe UI', system-ui, sans-serif;
 }
 
 .css-technician-dashboard .action-btn.primary {
-  background: linear-gradient(135deg, #E9531A, #dc2626);
+  background: linear-gradient(135deg, #2563eb, #0891b2);
   color: white;
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
 }
 
 .css-technician-dashboard .action-btn.primary:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(233, 83, 26, 0.4);
+  box-shadow: 0 8px 24px rgba(37, 99, 235, 0.4);
 }
 
 .css-technician-dashboard .action-btn.secondary {
-  background: rgba(255, 255, 255, 0.08);
-  color: white;
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: white;
+  color: #2563eb;
+  border: 2px solid #2563eb;
 }
 
 .css-technician-dashboard .action-btn.secondary:hover {
-  background: rgba(255, 255, 255, 0.12);
+  background: #f0f9ff;
   transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.15);
 }
 
 /* Empty State */
@@ -411,7 +428,7 @@
   align-items: center;
   justify-content: center;
   padding: 60px 20px;
-  color: rgba(255, 255, 255, 0.5);
+  color: #94a3b8;
   text-align: center;
 }
 
@@ -432,14 +449,14 @@
   align-items: center;
   justify-content: center;
   min-height: 400px;
-  color: rgba(255, 255, 255, 0.7);
+  color: #64748b;
 }
 
 .css-technician-dashboard .loading-spinner {
   width: 48px;
   height: 48px;
-  border: 4px solid rgba(255, 255, 255, 0.1);
-  border-top-color: #E9531A;
+  border: 4px solid #e2e8f0;
+  border-top-color: #2563eb;
   border-radius: 50%;
   animation: spin 1s linear infinite;
   margin-bottom: 16px;
@@ -930,7 +947,7 @@
 
   .css-technician-dashboard .loading-spinner {
     animation: none;
-    border-top-color: rgba(233, 83, 26, 0.5);
+    border-top-color: rgba(37, 99, 235, 0.5);
   }
 
   .css-technician-dashboard {
@@ -938,24 +955,12 @@
   }
 }
 
-/* 🎨 Modo oscuro mejorado */
-@media (prefers-color-scheme: dark) {
-  .css-technician-dashboard .stat-card:hover,
-  .css-technician-dashboard .workshop-card:hover,
-  .css-technician-dashboard .user-role-card:hover {
-    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.4);
-  }
-}
-
 /* 🔍 Mejora para usuarios con zoom alto */
 @media (min-width: 1px) {
   .css-technician-dashboard .center-details h2,
   .css-technician-dashboard .workshop-content h3,
-  .css-technician-dashboar  .role-info h4 {
+  .css-technician-dashboard .role-info h4 {
     word-wrap: break-word;
     overflow-wrap: break-word;
   }
 }
-
-
-

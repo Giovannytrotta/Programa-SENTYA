@@ -9,14 +9,15 @@
 }
 
 .dashboard-header h1 {
-  color: white;
+  color: #1e293b;
   font-size: 2rem;
   font-weight: 700;
   margin: 0 0 8px 0;
+  font-family: 'Segoe UI', system-ui, sans-serif;
 }
 
 .dashboard-header p {
-  color: rgba(255, 255, 255, 0.7);
+  color: #475569;
   font-size: 1rem;
   margin: 0;
 }
@@ -30,9 +31,8 @@
 }
 
 .stat-card {
-  background: rgba(255, 255, 255, 0.05);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: white;
+  border: 2px solid #e2e8f0;
   border-radius: 16px;
   padding: 24px;
   display: flex;
@@ -40,13 +40,14 @@
   gap: 16px;
   transition: all 0.3s;
   cursor: pointer;
-  position: relative;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 .stat-card:hover {
-  background: rgba(255, 255, 255, 0.08);
+  background: #f8fafc;
   transform: translateY(-4px);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 8px 24px rgba(37, 99, 235, 0.15);
+  border-color: #2563eb;
 }
 
 .stat-icon {
@@ -65,7 +66,7 @@
 }
 
 .stat-icon.workshops {
-  background: linear-gradient(135deg, #E9531A, #dc2626);
+  background: linear-gradient(135deg, #2563eb, #0891b2);
 }
 
 .stat-icon.sessions {
@@ -81,14 +82,15 @@
 }
 
 .stat-content h3 {
-  color: rgba(255, 255, 255, 0.7);
+  color: #64748b;
   font-size: 0.875rem;
-  font-weight: 500;
+  font-weight: 600;
   margin: 0 0 8px 0;
+  font-family: 'Segoe UI', system-ui, sans-serif;
 }
 
 .stat-number {
-  color: white;
+  color: #1e293b;
   font-size: 2.5rem;
   font-weight: 700;
   margin: 0;
@@ -96,23 +98,23 @@
 }
 
 .stat-arrow {
-  color: rgba(255, 255, 255, 0.3);
+  color: #cbd5e1;
   transition: all 0.3s;
 }
 
 .stat-card:hover .stat-arrow {
-  color: rgba(255, 255, 255, 0.7);
+  color: #2563eb;
   transform: translateX(4px);
 }
 
 /* Content Sections */
 .content-section {
-  background: rgba(255, 255, 255, 0.05);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: white;
+  border: 2px solid #e2e8f0;
   border-radius: 16px;
   padding: 32px;
   margin-bottom: 24px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 .section-header {
@@ -121,14 +123,15 @@
   align-items: center;
   margin-bottom: 24px;
   padding-bottom: 16px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  border-bottom: 2px solid #e2e8f0;
 }
 
 .section-header h2 {
-  color: white;
+  color: #1e293b;
   font-size: 1.5rem;
-  font-weight: 600;
+  font-weight: 700;
   margin: 0;
+  font-family: 'Segoe UI', system-ui, sans-serif;
 }
 
 .btn-view-all {
@@ -136,18 +139,20 @@
   align-items: center;
   gap: 6px;
   padding: 8px 16px;
-  background: rgba(233, 83, 26, 0.2);
-  color: #E9531A;
-  border: 1px solid rgba(233, 83, 26, 0.3);
+  background: rgba(37, 99, 235, 0.1);
+  color: #2563eb;
+  border: 2px solid #2563eb;
   border-radius: 8px;
   font-weight: 600;
   font-size: 0.875rem;
   cursor: pointer;
   transition: all 0.3s ease;
+  font-family: 'Segoe UI', system-ui, sans-serif;
 }
 
 .btn-view-all:hover {
-  background: rgba(233, 83, 26, 0.3);
+  background: #2563eb;
+  color: white;
   transform: translateX(4px);
 }
 
@@ -159,8 +164,8 @@
 }
 
 .status-card {
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: #f8fafc;
+  border: 2px solid #e2e8f0;
   border-radius: 12px;
   padding: 20px;
   display: flex;
@@ -170,8 +175,10 @@
 }
 
 .status-card:hover {
-  background: rgba(255, 255, 255, 0.06);
+  background: white;
   transform: translateY(-4px);
+  border-color: #2563eb;
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.1);
 }
 
 .status-indicator {
@@ -182,14 +189,15 @@
 }
 
 .status-info h3 {
-  color: rgba(255, 255, 255, 0.7);
+  color: #64748b;
   font-size: 0.875rem;
-  font-weight: 500;
+  font-weight: 600;
   margin: 0 0 8px 0;
+  font-family: 'Segoe UI', system-ui, sans-serif;
 }
 
 .status-count {
-  color: white;
+  color: #1e293b;
   font-size: 2rem;
   font-weight: 700;
   margin: 0;
@@ -207,15 +215,16 @@
   display: flex;
   gap: 16px;
   padding: 20px;
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: #f8fafc;
+  border: 2px solid #e2e8f0;
   border-radius: 12px;
   transition: all 0.3s;
 }
 
 .activity-item:hover {
-  background: rgba(255, 255, 255, 0.06);
-  border-color: rgba(233, 83, 26, 0.3);
+  background: white;
+  border-color: #2563eb;
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.1);
 }
 
 .activity-icon {
@@ -224,7 +233,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, #E9531A, #dc2626);
+  background: linear-gradient(135deg, #2563eb, #0891b2);
   border-radius: 12px;
   color: white;
   flex-shrink: 0;
@@ -235,16 +244,17 @@
 }
 
 .activity-content h3 {
-  color: white;
+  color: #1e293b;
   font-size: 1.125rem;
   font-weight: 600;
   margin: 0 0 8px 0;
+  font-family: 'Segoe UI', system-ui, sans-serif;
 }
 
 .activity-meta {
   display: flex;
   gap: 16px;
-  color: rgba(255, 255, 255, 0.6);
+  color: #64748b;
   font-size: 0.875rem;
   flex-wrap: wrap;
 }
@@ -258,27 +268,27 @@
 }
 
 .status-badge.active {
-  background: rgba(16, 185, 129, 0.2);
-  color: #10b981;
-  border: 1px solid rgba(16, 185, 129, 0.3);
+  background: rgba(16, 185, 129, 0.1);
+  color: #059669;
+  border: 1px solid #10b981;
 }
 
 .status-badge.pending {
-  background: rgba(245, 158, 11, 0.2);
-  color: #f59e0b;
-  border: 1px solid rgba(245, 158, 11, 0.3);
+  background: rgba(245, 158, 11, 0.1);
+  color: #d97706;
+  border: 1px solid #f59e0b;
 }
 
 .status-badge.paused {
-  background: rgba(107, 114, 128, 0.2);
-  color: #9ca3af;
-  border: 1px solid rgba(107, 114, 128, 0.3);
+  background: rgba(107, 114, 128, 0.1);
+  color: #475569;
+  border: 1px solid #94a3b8;
 }
 
 .status-badge.finished {
-  background: rgba(59, 130, 246, 0.2);
-  color: #3b82f6;
-  border: 1px solid rgba(59, 130, 246, 0.3);
+  background: rgba(59, 130, 246, 0.1);
+  color: #2563eb;
+  border: 1px solid #3b82f6;
 }
 
 /* Quick Actions */
@@ -303,27 +313,30 @@
   transition: all 0.3s ease;
   flex: 1;
   min-width: 200px;
+  font-family: 'Segoe UI', system-ui, sans-serif;
 }
 
 .action-btn.primary {
-  background: linear-gradient(135deg, #E9531A, #dc2626);
+  background: linear-gradient(135deg, #2563eb, #0891b2);
   color: white;
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
 }
 
 .action-btn.primary:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(233, 83, 26, 0.4);
+  box-shadow: 0 8px 24px rgba(37, 99, 235, 0.4);
 }
 
 .action-btn.secondary {
-  background: rgba(255, 255, 255, 0.08);
-  color: white;
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: white;
+  color: #2563eb;
+  border: 2px solid #2563eb;
 }
 
 .action-btn.secondary:hover {
-  background: rgba(255, 255, 255, 0.12);
+  background: #f0f9ff;
   transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.15);
 }
 
 .action-btn.admin-panel {
@@ -344,7 +357,7 @@
   align-items: center;
   justify-content: center;
   padding: 60px 20px;
-  color: rgba(255, 255, 255, 0.5);
+  color: #94a3b8;
   text-align: center;
 }
 
@@ -365,14 +378,14 @@
   align-items: center;
   justify-content: center;
   min-height: 400px;
-  color: rgba(255, 255, 255, 0.7);
+  color: #64748b;
 }
 
 .loading-spinner {
   width: 48px;
   height: 48px;
-  border: 4px solid rgba(255, 255, 255, 0.1);
-  border-top-color: #E9531A;
+  border: 4px solid #e2e8f0;
+  border-top-color: #2563eb;
   border-radius: 50%;
   animation: spin 1s linear infinite;
   margin-bottom: 16px;

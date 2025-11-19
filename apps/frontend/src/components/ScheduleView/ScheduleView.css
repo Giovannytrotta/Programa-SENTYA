@@ -1,5 +1,5 @@
 /* ============================================
-   🎯 SCHEDULE VIEW - REFACTORIZADO LIMPIO
+   🎯 SCHEDULE VIEW - REFACTORIZADO CON VARIABLES
    ============================================ */
 
 .schedule-container {
@@ -19,12 +19,12 @@
 .schedule-header-content h1 {
   font-size: clamp(1.75rem, 4vw, 2.5rem);
   font-weight: 700;
-  color: #ffffff;
+  color: var(--text-primary);
   margin: 0 0 0.5rem 0;
 }
 
 .schedule-header-content p {
-  color: rgba(255, 255, 255, 0.7);
+  color: var(--text-secondary);
   font-size: clamp(0.875rem, 2vw, 1.1rem);
   margin: 0;
 }
@@ -44,17 +44,18 @@
   align-items: center;
   gap: 1rem;
   padding: 1.5rem;
-  background: rgba(255, 255, 255, 0.08);
+  background: var(--bg-primary);
   backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid var(--bg-tertiary);
   border-radius: 1rem;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: var(--shadow-sm);
 }
 
 .schedule-stat-card:hover {
   transform: translateY(-4px);
-  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.3);
-  background: rgba(255, 255, 255, 0.12);
+  box-shadow: var(--shadow-lg);
+  background: var(--bg-hover);
 }
 
 .schedule-stat-icon {
@@ -69,15 +70,15 @@
 }
 
 .schedule-stat-icon-today {
-  background: linear-gradient(135deg, #E9531A, #dc2626);
+  background: linear-gradient(135deg, var(--primary-blue), var(--error-color));
 }
 
 .schedule-stat-icon-upcoming {
-  background: linear-gradient(135deg, #3b82f6, #2563eb);
+  background: linear-gradient(135deg, var(--secondary-blue), var(--primary-blue));
 }
 
 .schedule-stat-icon-completed {
-  background: linear-gradient(135deg, #10b981, #059669);
+  background: linear-gradient(135deg, var(--secondary-green), var(--primary-green));
 }
 
 .schedule-stat-icon-total {
@@ -92,13 +93,13 @@
 .schedule-stat-value {
   font-size: clamp(1.5rem, 4vw, 2rem);
   font-weight: 700;
-  color: white;
+  color: var(--text-primary);
   line-height: 1;
 }
 
 .schedule-stat-label {
   font-size: 0.875rem;
-  color: rgba(255, 255, 255, 0.7);
+  color: var(--text-secondary);
   margin-top: 0.25rem;
 }
 
@@ -116,7 +117,7 @@
 .schedule-view-toggles {
   display: flex;
   gap: 0.5rem;
-  background: rgba(255, 255, 255, 0.08);
+  background: var(--bg-secondary);
   padding: 0.25rem;
   border-radius: 0.75rem;
 }
@@ -128,7 +129,7 @@
   padding: 0.625rem 1rem;
   background: none;
   border: none;
-  color: rgba(255, 255, 255, 0.7);
+  color: var(--text-secondary);
   border-radius: 0.5rem;
   font-weight: 600;
   font-size: 0.875rem;
@@ -137,13 +138,13 @@
 }
 
 .schedule-view-btn:hover {
-  background: rgba(255, 255, 255, 0.1);
-  color: white;
+  background: var(--bg-hover);
+  color: var(--text-primary);
 }
 
 .schedule-view-btn-active {
-  background: rgba(233, 83, 26, 0.2);
-  color: #E9531A;
+  background: rgba(37, 99, 235, 0.15);
+  color: var(--primary-blue);
 }
 
 .schedule-view-btn svg {
@@ -155,10 +156,10 @@
   align-items: center;
   gap: 0.5rem;
   padding: 0.75rem 1rem;
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: var(--bg-secondary);
+  border: 1px solid var(--bg-tertiary);
   border-radius: 0.75rem;
-  color: rgba(255, 255, 255, 0.7);
+  color: var(--text-secondary);
   flex: 1;
   min-width: 200px;
   max-width: 300px;
@@ -171,7 +172,7 @@
 .schedule-filter select {
   background: transparent;
   border: none;
-  color: white;
+  color: var(--text-primary);
   padding: 0.5rem 0.75rem;
   border-radius: 0.5rem;
   font-size: 0.875rem;
@@ -181,13 +182,13 @@
 }
 
 .schedule-filter select option {
-  background: #1f2937;
-  color: white;
+  background: var(--bg-primary);
+  color: var(--text-primary);
 }
 
 .schedule-btn-today {
   padding: 0.625rem 1.25rem;
-  background: linear-gradient(135deg, #E9531A, #dc2626);
+  background: linear-gradient(135deg, var(--primary-blue), var(--error-color));
   color: white;
   border: none;
   border-radius: 0.625rem;
@@ -199,7 +200,7 @@
 
 .schedule-btn-today:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(233, 83, 26, 0.4);
+  box-shadow: var(--shadow-md);
 }
 
 /* ============================================
@@ -219,17 +220,18 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: var(--bg-secondary);
+  border: 1px solid var(--bg-tertiary);
   border-radius: 0.625rem;
-  color: white;
+  color: var(--text-primary);
   cursor: pointer;
   transition: all 0.3s ease;
 }
 
 .schedule-nav-btn:hover {
-  background: rgba(255, 255, 255, 0.15);
+  background: var(--bg-hover);
   transform: translateY(-2px);
+  box-shadow: var(--shadow-sm);
 }
 
 .schedule-nav-btn svg {
@@ -239,7 +241,7 @@
 .schedule-period {
   font-size: clamp(1.25rem, 3vw, 1.5rem);
   font-weight: 700;
-  color: white;
+  color: var(--text-primary);
   margin: 0;
   text-transform: capitalize;
   text-align: center;
@@ -249,8 +251,8 @@
    📅 WEEK VIEW
    ============================================ */
 .schedule-week-container {
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: var(--bg-secondary);
+  border: 1px solid var(--bg-tertiary);
   border-radius: 1rem;
   padding: 1.5rem;
 }
@@ -262,22 +264,23 @@
 }
 
 .schedule-day-col {
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: var(--bg-primary);
+  border: 1px solid var(--bg-tertiary);
   border-radius: 1rem;
   overflow: hidden;
   transition: all 0.3s ease;
 }
 
 .schedule-day-col:hover {
-  background: rgba(255, 255, 255, 0.08);
-  border-color: rgba(255, 255, 255, 0.15);
+  background: var(--bg-hover);
+  border-color: var(--bg-tertiary);
+  box-shadow: var(--shadow-sm);
 }
 
 .schedule-day-col-today {
-  border-color: rgba(233, 83, 26, 0.6);
-  box-shadow: 0 0 24px rgba(233, 83, 26, 0.25);
-  background: rgba(233, 83, 26, 0.05);
+  border-color: var(--primary-blue);
+  box-shadow: 0 0 24px rgba(37, 99, 235, 0.25);
+  background: rgba(37, 99, 235, 0.05);
 }
 
 .schedule-day-header {
@@ -285,13 +288,13 @@
   flex-direction: column;
   align-items: center;
   padding: 1.25rem 1rem;
-  background: rgba(255, 255, 255, 0.05);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  background: var(--bg-secondary);
+  border-bottom: 1px solid var(--bg-tertiary);
 }
 
 .schedule-day-name {
   font-size: 0.875rem;
-  color: rgba(255, 255, 255, 0.6);
+  color: var(--text-muted);
   text-transform: capitalize;
   font-weight: 600;
   letter-spacing: 0.5px;
@@ -300,12 +303,12 @@
 .schedule-day-num {
   font-size: 1.875rem;
   font-weight: 700;
-  color: white;
+  color: var(--text-primary);
   margin-top: 0.375rem;
 }
 
 .schedule-day-col-today .schedule-day-num {
-  color: #E9531A;
+  color: var(--primary-blue);
 }
 
 .schedule-day-content {
@@ -318,7 +321,7 @@
 
 .schedule-no-sessions {
   text-align: center;
-  color: rgba(255, 255, 255, 0.4);
+  color: var(--text-muted);
   font-size: 0.875rem;
   padding: 3.75rem 1rem;
 }
@@ -328,7 +331,7 @@
    ============================================ */
 .schedule-session-card {
   padding: 1.125rem;
-  background: rgba(255, 255, 255, 0.08);
+  background: var(--bg-secondary);
   border-left: 4px solid;
   border-radius: 0.875rem;
   cursor: pointer;
@@ -347,16 +350,16 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: linear-gradient(135deg, rgba(255,255,255,0.12) 0%, transparent 100%);
+  background: var(--gradient-soft);
   opacity: 0;
   transition: opacity 0.3s ease;
   pointer-events: none;
 }
 
 .schedule-session-card:hover {
-  background: rgba(255, 255, 255, 0.14);
+  background: var(--bg-hover);
   transform: translateY(-6px);
-  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.3);
+  box-shadow: var(--shadow-lg);
 }
 
 .schedule-session-card:hover::before {
@@ -387,10 +390,10 @@
   align-items: center;
   gap: 0.375rem;
   padding: 0.375rem 0.75rem;
-  background: rgba(0, 0, 0, 0.25);
+  background: var(--bg-tertiary);
   border-radius: 0.5rem;
   font-size: 0.8125rem;
-  color: rgba(255, 255, 255, 0.9);
+  color: var(--text-primary);
   font-weight: 600;
 }
 
@@ -405,29 +408,29 @@
   width: 2rem;
   height: 2rem;
   border-radius: 0.5rem;
-  background: rgba(0, 0, 0, 0.25);
+  background: var(--bg-tertiary);
   flex-shrink: 0;
 }
 
 .schedule-status-completed {
-  color: #10b981;
-  background: rgba(16, 185, 129, 0.15);
+  color: var(--success-color);
+  background: rgba(5, 150, 105, 0.15);
 }
 
 .schedule-status-cancelled {
-  color: #ef4444;
-  background: rgba(239, 68, 68, 0.15);
+  color: var(--error-color);
+  background: rgba(220, 38, 38, 0.15);
 }
 
 .schedule-status-scheduled {
-  color: #3b82f6;
+  color: var(--secondary-blue);
   background: rgba(59, 130, 246, 0.15);
 }
 
 .schedule-session-title {
   font-size: 1.0625rem;
   font-weight: 700;
-  color: white;
+  color: var(--text-primary);
   margin: 0;
   line-height: 1.4;
   overflow: hidden;
@@ -439,7 +442,7 @@
 
 .schedule-session-topic {
   font-size: 0.8125rem;
-  color: rgba(255, 255, 255, 0.65);
+  color: var(--text-muted);
   line-height: 1.5;
   margin: 0;
   overflow: hidden;
@@ -454,7 +457,7 @@
   align-items: flex-start;
   gap: 0.375rem;
   font-size: 0.75rem;
-  color: rgba(255, 255, 255, 0.55);
+  color: var(--text-muted);
   line-height: 1.4;
   margin-top: auto;
 }
@@ -476,11 +479,10 @@
    📆 MONTH VIEW - MEJORADO UX/UI
    ============================================ */
 .schedule-month-container {
-  background: rgba(30, 41, 59, 0.6); /* Más sólido y oscuro */
-  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: var(--bg-secondary);
+  border: 1px solid var(--bg-tertiary);
   border-radius: 1rem;
   padding: 1.5rem;
-  /* SIN backdrop-filter blur - causaba el efecto difuminado */
 }
 
 .schedule-month-weekdays {
@@ -494,7 +496,7 @@
   text-align: center;
   font-size: 0.875rem;
   font-weight: 600;
-  color: rgba(203, 213, 225, 0.9); /* Más visible */
+  color: var(--text-secondary);
   padding: 0.5rem;
   letter-spacing: 0.5px;
   text-transform: uppercase;
@@ -509,12 +511,11 @@
 /* Celdas vacías (días de otros meses) */
 .schedule-month-day-empty {
   min-height: 100px;
-  /* Celda completamente vacía y transparente */
 }
 
 .schedule-month-day {
-  background: rgba(51, 65, 85, 0.5); /* Más opaco y visible */
-  border: 2px solid rgba(148, 163, 184, 0.3); /* Borde más visible */
+  background: var(--bg-primary);
+  border: 2px solid var(--bg-tertiary);
   border-radius: 0.75rem;
   padding: 0.75rem;
   cursor: pointer;
@@ -526,55 +527,55 @@
 }
 
 .schedule-month-day:hover {
-  background: rgba(71, 85, 105, 0.7); /* Más sólido en hover */
-  border-color: rgba(203, 213, 225, 0.5); /* Borde más claro en hover */
+  background: var(--bg-hover);
+  border-color: var(--primary-blue);
   transform: scale(1.02);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3); /* Sombra para profundidad */
+  box-shadow: var(--shadow-md);
 }
 
 .schedule-month-day-has-sessions {
-  background: rgba(71, 85, 105, 0.6); /* Más visible */
-  border-color: rgba(251, 146, 60, 0.6); /* Naranja más visible */
+  background: var(--bg-hover);
+  border-color: var(--warning-color);
 }
 
 .schedule-month-day-has-sessions:hover {
-  background: rgba(88, 28, 135, 0.15); /* Toque púrpura en hover */
-  border-color: rgba(249, 115, 22, 0.8); /* Naranja intenso */
-  box-shadow: 0 0 20px rgba(249, 115, 22, 0.2); /* Glow naranja */
+  background: rgba(88, 28, 135, 0.05);
+  border-color: var(--primary-cyan);
+  box-shadow: 0 0 20px rgba(8, 145, 178, 0.2);
 }
 
 /* Días de otros meses - MÁS OSCUROS */
 .schedule-month-day-other {
-  opacity: 0.25;
-  background: rgba(30, 41, 59, 0.3); /* Más oscuro */
-  border-color: rgba(100, 116, 139, 0.1);
+  opacity: 0.35;
+  background: var(--bg-tertiary);
+  border-color: var(--bg-tertiary);
 }
 
 .schedule-month-day-other .schedule-month-day-number {
-  color: rgba(148, 163, 184, 0.3);
+  color: var(--text-muted);
 }
 
 /* Día de hoy - DESTACA MUCHO */
 .schedule-month-day-today {
-  background: rgba(124, 45, 18, 0.3); /* Fondo naranja sutil */
-  border-color: #f97316; /* Naranja brillante sólido */
+  background: rgba(37, 99, 235, 0.1);
+  border-color: var(--primary-blue);
   border-width: 3px;
-  box-shadow: 0 0 24px rgba(249, 115, 22, 0.4), 
-              inset 0 0 20px rgba(249, 115, 22, 0.1); /* Doble glow */
+  box-shadow: 0 0 24px rgba(37, 99, 235, 0.3), 
+              inset 0 0 20px rgba(37, 99, 235, 0.1);
 }
 
 .schedule-month-day-today .schedule-month-day-number {
-  color: #fb923c; /* Naranja claro brillante */
+  color: var(--primary-blue);
   font-size: 1.5rem;
-  text-shadow: 0 0 10px rgba(249, 115, 22, 0.5); /* Glow en el número */
+  text-shadow: 0 0 10px rgba(37, 99, 235, 0.3);
 }
 
 .schedule-month-day-number {
   font-size: 1.25rem;
   font-weight: 700;
-  color: #f1f5f9; /* Blanco más cálido y visible */
+  color: var(--text-primary);
   line-height: 1;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.4); /* Sombra más fuerte */
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 /* 🔥 NUEVOS BADGES HORIZONTALES EN LUGAR DE BOLITAS */
@@ -597,28 +598,24 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.5), /* Sombra más fuerte */
-              0 0 10px rgba(0, 0, 0, 0.3); /* Glow oscuro */
+  box-shadow: var(--shadow-sm);
   transition: all 0.2s ease;
-  border: 1px solid rgba(0, 0, 0, 0.3); /* Borde oscuro para contraste */
+  border: 1px solid rgba(0, 0, 0, 0.1);
 }
 
 .schedule-month-session-badge:hover {
   transform: scale(1.05);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6),
-              0 0 16px rgba(0, 0, 0, 0.4);
-  filter: brightness(1.1); /* Más brillante en hover */
+  box-shadow: var(--shadow-md);
+  filter: brightness(1.1);
 }
 
 .schedule-month-session-badge svg {
   flex-shrink: 0;
-  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.5)); /* Sombra en icono */
 }
 
 .schedule-month-session-badge span {
   overflow: hidden;
   text-overflow: ellipsis;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5); /* Texto más legible */
 }
 
 .schedule-badge-completed {
@@ -635,21 +632,20 @@
   font-size: 0.6875rem;
   color: white;
   font-weight: 700;
-  background: linear-gradient(135deg, #f97316, #ea580c); /* Gradiente naranja sólido */
+  background: linear-gradient(135deg, var(--warning-color), #ea580c);
   padding: 0.25rem 0.5rem;
   border-radius: 0.375rem;
   text-align: center;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
-  border: 1px solid rgba(0, 0, 0, 0.3);
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+  box-shadow: var(--shadow-sm);
+  border: 1px solid rgba(0, 0, 0, 0.1);
 }
 
 /* ============================================
    📋 LIST VIEW
    ============================================ */
 .schedule-list-container {
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: var(--bg-secondary);
+  border: 1px solid var(--bg-tertiary);
   border-radius: 1rem;
   padding: 1.5rem;
 }
@@ -664,17 +660,17 @@
   display: flex;
   gap: 1.25rem;
   padding: 1.5rem;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: var(--bg-primary);
+  border: 1px solid var(--bg-tertiary);
   border-radius: 1rem;
   cursor: pointer;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .schedule-list-item:hover {
-  background: rgba(255, 255, 255, 0.1);
+  background: var(--bg-hover);
   transform: translateX(8px);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+  box-shadow: var(--shadow-md);
 }
 
 .schedule-list-date {
@@ -684,9 +680,9 @@
   justify-content: center;
   width: 4.5rem;
   height: 4.5rem;
-  background: linear-gradient(135deg, #E9531A, #dc2626);
+  background: linear-gradient(135deg, var(--primary-blue), var(--error-color));
   border-radius: 1rem;
-  box-shadow: 0 4px 16px rgba(233, 83, 26, 0.3);
+  box-shadow: var(--shadow-md);
   flex-shrink: 0;
 }
 
@@ -713,7 +709,7 @@
 .schedule-list-content h3 {
   font-size: 1.25rem;
   font-weight: 600;
-  color: white;
+  color: var(--text-primary);
   margin: 0 0 0.5rem 0;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -722,7 +718,7 @@
 
 .schedule-list-content p {
   font-size: 0.9375rem;
-  color: rgba(255, 255, 255, 0.6);
+  color: var(--text-secondary);
   margin: 0 0 0.75rem 0;
   line-height: 1.5;
   overflow: hidden;
@@ -736,7 +732,7 @@
   display: flex;
   gap: 1.25rem;
   font-size: 0.875rem;
-  color: rgba(255, 255, 255, 0.7);
+  color: var(--text-secondary);
   flex-wrap: wrap;
 }
 
@@ -747,7 +743,7 @@
 }
 
 .schedule-list-meta svg {
-  color: #E9531A;
+  color: var(--primary-blue);
   flex-shrink: 0;
 }
 
@@ -763,7 +759,7 @@
   align-items: center;
   justify-content: center;
   padding: 5rem 1.25rem;
-  color: rgba(255, 255, 255, 0.5);
+  color: var(--text-muted);
 }
 
 .schedule-empty-state svg {
@@ -785,7 +781,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.7);
+  background: rgba(0, 0, 0, 0.6);
   backdrop-filter: blur(4px);
   display: flex;
   align-items: center;
@@ -796,14 +792,15 @@
 }
 
 .schedule-modal {
-  background: linear-gradient(135deg, #1f2937 0%, #111827 100%);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: var(--gradient-bg-simple);
+  border: 1px solid var(--bg-tertiary);
   border-radius: 1.5rem;
   max-width: 600px;
   width: 100%;
   max-height: 90vh;
   overflow: auto;
   animation: slideUp 0.3s ease-out;
+  box-shadow: var(--shadow-xl);
 }
 
 .schedule-modal-header {
@@ -811,13 +808,13 @@
   justify-content: space-between;
   align-items: center;
   padding: 1.5rem;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  border-bottom: 1px solid var(--bg-tertiary);
 }
 
 .schedule-modal-header h2 {
   font-size: 1.5rem;
   font-weight: 700;
-  color: white;
+  color: var(--text-primary);
   margin: 0;
   padding-right: 1.25rem;
 }
@@ -825,7 +822,7 @@
 .schedule-modal-header button {
   background: none;
   border: none;
-  color: rgba(255, 255, 255, 0.7);
+  color: var(--text-secondary);
   cursor: pointer;
   padding: 0.5rem;
   display: flex;
@@ -834,7 +831,7 @@
 }
 
 .schedule-modal-header button:hover {
-  color: white;
+  color: var(--text-primary);
 }
 
 .schedule-modal-content {
@@ -846,15 +843,15 @@
   align-items: center;
   gap: 0.75rem;
   padding: 1rem;
-  background: rgba(255, 255, 255, 0.05);
+  background: var(--bg-secondary);
   border-radius: 0.75rem;
   margin-bottom: 0.75rem;
-  color: white;
+  color: var(--text-primary);
   font-size: 1rem;
 }
 
 .schedule-modal-item svg {
-  color: #E9531A;
+  color: var(--primary-blue);
   flex-shrink: 0;
 }
 
@@ -865,12 +862,12 @@
 .schedule-modal-section h3 {
   font-size: 1rem;
   font-weight: 600;
-  color: rgba(255, 255, 255, 0.7);
+  color: var(--text-secondary);
   margin: 0 0 0.75rem 0;
 }
 
 .schedule-modal-section p {
-  color: white;
+  color: var(--text-primary);
   font-size: 1rem;
   line-height: 1.6;
   margin: 0;
@@ -889,7 +886,7 @@
   display: flex;
   gap: 0.75rem;
   padding: 1rem;
-  background: rgba(255, 255, 255, 0.05);
+  background: var(--bg-secondary);
   border-radius: 0.75rem;
   margin-bottom: 0.75rem;
   cursor: pointer;
@@ -897,14 +894,14 @@
 }
 
 .schedule-modal-session:hover {
-  background: rgba(255, 255, 255, 0.1);
+  background: var(--bg-hover);
 }
 
 .schedule-modal-session-time {
   display: flex;
   align-items: center;
   gap: 0.375rem;
-  color: rgba(255, 255, 255, 0.7);
+  color: var(--text-secondary);
   flex-shrink: 0;
 }
 
@@ -918,14 +915,14 @@
 }
 
 .schedule-modal-session-info h4 {
-  color: white;
+  color: var(--text-primary);
   font-size: 1rem;
   font-weight: 600;
   margin: 0 0 0.25rem 0;
 }
 
 .schedule-modal-session-info p {
-  color: rgba(255, 255, 255, 0.6);
+  color: var(--text-secondary);
   font-size: 0.875rem;
   margin: 0;
 }
@@ -948,15 +945,15 @@
 .schedule-spinner {
   width: 3rem;
   height: 3rem;
-  border: 4px solid rgba(255, 255, 255, 0.1);
-  border-top-color: #E9531A;
+  border: 4px solid var(--bg-tertiary);
+  border-top-color: var(--primary-blue);
   border-radius: 50%;
   animation: spin 1s linear infinite;
   margin-bottom: 1rem;
 }
 
 .schedule-loading p {
-  color: rgba(255, 255, 255, 0.7);
+  color: var(--text-secondary);
   font-size: 1rem;
   margin: 0;
 }
@@ -1307,7 +1304,7 @@
 
   .schedule-spinner {
     animation: none;
-    border-top-color: rgba(233, 83, 26, 0.5);
+    border-top-color: rgba(37, 99, 235, 0.5);
   }
 }
 
