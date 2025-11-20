@@ -67,7 +67,7 @@ const SentyaLanding = () => {
 
               <div className="aossa-logo">
 
-                <img className="img-aossa" src="https://aossa.es/wp-content/uploads/2021/07/logo-aossa-global.png" alt="logo Aossa" />
+                <img className="img-aossa" src="/Aossa.png" alt="logo Aossa" />
 
               </div>
 
@@ -533,7 +533,7 @@ Comenzar mi experiencia
 
               <span className="footer-by">by</span>
 
-              <img className="img-aossa" src="https://aossa.es/wp-content/uploads/2021/07/logo-aossa-global.png" alt="logo Aossa" />
+              <img className="img-aossa" src="/Aossa.png" alt="logo Aossa" />
 
             </div>
 
