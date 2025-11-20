@@ -23,7 +23,7 @@ const UsersView = () => {
             'administrator': 'Administrador',
             'coordinator': 'Coordinador',
             'professional': 'Profesional',
-            'client': 'Cliente',
+            'client': 'Usuario',
             'css_technician': 'Técnico CSS'
         };
         return labels[role] || role;
