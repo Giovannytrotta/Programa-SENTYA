@@ -296,7 +296,7 @@ const CSSTechnicianDashboard = () => {
                 <Users size={20} />
               </div>
               <div className="role-info">
-                <h4>Clientes</h4>
+                <h4>Usuarios</h4>
                 <span className="role-count">
                   {usersByRole.client} {usersByRole.client === 1 ? 'usuario' : 'usuarios'}
                 </span>

@@ -93,7 +93,7 @@ const UsersView = () => {
                         <option value="administrator">Administradores</option>
                         <option value="coordinator">Coordinadores</option>
                         <option value="professional">Profesionales</option>
-                        <option value="client">Clientes</option>
+                        <option value="client">Usuarios</option>
                         <option value="css_technician">Técnicos CSS</option>
                     </select>
                 </div>
