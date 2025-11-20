@@ -68,6 +68,10 @@ button {
   -moz-appearance: none;
 }
 
+input::placeholder, textarea::placeholder {
+  color: #1e293b !important;
+}
+
 /* ===== ACCESIBILIDAD GLOBAL ===== */
 *:focus-visible {
   outline: 3px solid var(--primary-blue);

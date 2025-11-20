@@ -1168,7 +1168,7 @@ const AdminDashboard = () => {
                                     </svg>
                                 </div>
                                 <h3 style={{
-                                    color: 'rgba(255, 255, 255, 0.95)',
+                                    color: 'rgba(14, 12, 12, 0.95)',
                                     margin: '0 0 8px 0',
                                     fontSize: '1.25rem',
                                     fontWeight: '700'
@@ -1176,11 +1176,11 @@ const AdminDashboard = () => {
                                     ¿Eliminar usuario?
                                 </h3>
                                 <p style={{
-                                    color: 'rgba(255, 255, 255, 0.7)',
+                                    color: 'rgba(15, 13, 13, 0.67)',
                                     margin: '0',
                                     lineHeight: '1.5'
                                 }}>
-                                    Estás a punto de eliminar a <strong style={{ color: 'rgba(255, 255, 255, 0.9)' }}>
+                                    Estás a punto de eliminar a <strong style={{ color: 'rgba(15, 14, 14, 0.9)' }}>
                                         {selectedUser.name} {selectedUser.last_name}
                                     </strong>
                                 </p>
@@ -1195,7 +1195,7 @@ const AdminDashboard = () => {
                                         background: 'rgba(255, 255, 255, 0.08)',
                                         border: '1px solid rgba(255, 255, 255, 0.15)',
                                         borderRadius: '12px',
-                                        color: 'rgba(255, 255, 255, 0.8)',
+                                        color: 'rgba(15, 13, 13, 0.8)',
                                         fontWeight: '600',
                                         cursor: 'pointer',
                                         transition: 'all 0.3s ease'
