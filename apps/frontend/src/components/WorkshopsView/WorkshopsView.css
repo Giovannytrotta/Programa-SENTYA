@@ -370,13 +370,13 @@
 }
 
 .btn-action.dropdown {
-  background: rgba(255, 255, 255, 0.08);
-  color: white;
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(14, 13, 13, 0.719);
+  color:#ffffff ;
+  border: 1px solid rgba(14, 13, 13, 0.658);
 }
 
 .btn-action.dropdown:hover {
-  background: rgba(255, 255, 255, 0.12);
+  background: rgba(12, 11, 11, 0.12);
 }
 
 /* ===== NO WORKSHOPS ===== */

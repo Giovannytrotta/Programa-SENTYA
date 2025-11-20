@@ -996,6 +996,7 @@
         align-items: center;
         gap: 12px;
         margin-bottom: 16px;
+        color:var(--text-primary) !important;
     }
 
     .user-info::before {

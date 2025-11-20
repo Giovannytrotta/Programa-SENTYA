@@ -36,7 +36,7 @@
 }
 
 .search-input svg {
-  color: rgba(255, 255, 255, 0.5);
+  color: rgba(14, 13, 13, 0.788);
   flex-shrink: 0;
 }
 
@@ -44,13 +44,13 @@
   flex: 1;
   background: none;
   border: none;
-  color: white;
+  color:black;
   font-size: 0.875rem;
   outline: none;
 }
 
 .search-input input::placeholder {
-  color: rgba(255, 255, 255, 0.5);
+  color: rgba(20, 20, 20, 0.849);
 }
 
 .search-hint {
@@ -115,7 +115,7 @@
 }
 
 .user-info h4 {
-  color: white;
+  color: #000000af;
   font-size: 0.9375rem;
   font-weight: 600;
   margin: 0 0 4px 0;
@@ -125,7 +125,7 @@
 }
 
 .user-info p {
-  color: rgba(255, 255, 255, 0.6);
+  color: rgba(15, 14, 14, 0.6);
   font-size: 0.8125rem;
   margin: 0;
   overflow: hidden;
@@ -169,7 +169,7 @@
 .loading-spinner-small {
   width: 32px;
   height: 32px;
-  border: 3px solid rgba(255, 255, 255, 0.1);
+  border: 3px solid rgba(12, 12, 12, 0.918);
   border-top-color: var(--primary-blue);
   border-radius: 50%;
   animation: spin 1s linear infinite;

@@ -12,12 +12,12 @@
 .header-title h1 {
   font-size: 2rem;
   font-weight: 700;
-  color: var(--text-primary);
+  color: var(--text-primary) !important;
   margin: 0 0 8px 0;
 }
 
 .header-title .subtitle {
-  color: var(--text-secondary);
+  color: var(--text-secondary) !important;
   font-size: 1rem;
   margin: 0;
 }

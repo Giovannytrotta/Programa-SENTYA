@@ -208,6 +208,7 @@
 .profile-editor-content {
   padding: 32px;
   overflow-y: auto;
+  background: white !important;
   flex: 1;
   position: relative;
 }

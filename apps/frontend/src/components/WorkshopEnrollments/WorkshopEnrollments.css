@@ -18,9 +18,9 @@
   gap: 0.5rem;
   padding: 0.625rem 1rem;
   background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(12, 11, 11, 0.801);
   border-radius: 0.625rem;
-  color: white;
+  color:#1e293b ;
   font-weight: 500;
   font-size: 0.9375rem;
   cursor: pointer;
@@ -57,13 +57,13 @@
 .header-info h1 {
   font-size: 2rem;
   font-weight: 700;
-  color: white;
+  color: #1e293b !important;
   margin: 0 0 0.5rem 0;
   line-height: 1.2;
 }
 
 .subtitle {
-  color: rgba(255, 255, 255, 0.7);
+  color: #1e293b !important;
   font-size: 1rem;
   margin: 0;
 }
@@ -108,18 +108,20 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  border: 2px solid #1e293b !important;
+  border-radius: 10%;
   margin-bottom: 0.75rem;
   gap: 1rem;
 }
 
 .capacity-label {
-  color: rgba(255, 255, 255, 0.7);
+  color: rgba(15, 15, 15, 0.7);
   font-size: 0.875rem;
   font-weight: 500;
 }
 
 .capacity-numbers {
-  color: white;
+  color: rgba(15, 15, 15, 0.7);
   font-size: 1.25rem;
   font-weight: 700;
 }
@@ -224,8 +226,8 @@
   align-items: center;
   gap: 0.75rem;
   padding: 0.75rem 1rem;
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(8, 8, 8, 0.315);
+  border: 1px solid rgba(8, 8, 8, 0.192);
   border-radius: 0.75rem;
   margin-bottom: 2rem;
 }
@@ -397,18 +399,18 @@
   align-items: center;
   justify-content: center;
   padding: 4rem 2rem;
-  background: rgba(255, 255, 255, 0.03);
+  background: rgba(5, 5, 5, 0.205);
   border-radius: 0.75rem;
   text-align: center;
 }
 
 .empty-state svg {
-  color: rgba(255, 255, 255, 0.3);
+  color: rgb(7, 7, 7);
   margin-bottom: 1rem;
 }
 
 .empty-state p {
-  color: rgba(255, 255, 255, 0.5);
+  color: rgba(15, 15, 15, 0.664);
   font-size: 1rem;
   margin: 0 0 1.25rem 0;
 }
@@ -419,7 +421,7 @@
   gap: 0.5rem;
   padding: 0.625rem 1.25rem;
   background: var(--gradient-primary);
-  color: white;
+  color:#1e293b !important;
   border: none;
   border-radius: 0.625rem;
   font-weight: 600;
