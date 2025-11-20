@@ -754,7 +754,7 @@ button {
   }
 
   .img-aossa {
-    height: 40px !important;
+    height: 80px !important;
   }
 
   .brand-subtitle {
@@ -810,6 +810,10 @@ button {
   .hero-title {
     font-size: 2rem;
   }
+.img-aossa {
+    height: 80px !important;
+  }
+
 
   .hero-description {
     font-size: 1rem;
