@@ -199,7 +199,7 @@ const UserLogin = () => {
                 </>
               ) : (
                 <>
-                  <span>Acceder a SENTYA</span>
+                  <span className='text-span-x'>Acceder a SENTYA</span>
                   <ArrowRightIcon />
                 </>
               )}

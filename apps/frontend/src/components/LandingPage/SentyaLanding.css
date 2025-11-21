@@ -864,7 +864,12 @@ button {
 .button-text-z {
   position: relative;
   z-index: 10;
-  color:#000000;
+  color:white;
+}
+.button-text-y {
+  position: relative;
+  z-index: 10;
+  color:rgb(8, 8, 8);
 }
 
 /* Focus visible para accesibilidad */

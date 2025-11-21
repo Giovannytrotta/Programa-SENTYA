@@ -187,7 +187,7 @@ const SentyaLanding = () => {
 
                   >
 
-                    <span className="button-text-z">Accede al Tutorial</span>
+                    <span className="button-text-y">Accede al Tutorial</span>
 
 
                   </button>

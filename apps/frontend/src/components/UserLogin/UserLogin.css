@@ -21,8 +21,8 @@
   pointer-events: none;
 }
 
-.user-login span {
-  color: var(--text-primary) !important;
+.text-span-x {
+  color: white  ;
 }
 
 .user-login-container {
